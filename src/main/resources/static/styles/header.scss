@@ -1,0 +1,95 @@
+@use "global";
+//noinspection CssUnknownTarget
+#header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  z-index: 99;
+  background-color: #fff;
+  border-bottom: 1px solid #ebebeb;
+  transition: background-color 0.3s ease;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &.scrolled {
+    background-color: rgba(255, 255, 255, 1);
+  }
+
+  &:not(.scrolled) {
+    background-color: transparent;
+  }
+
+  .wrapper {
+    min-width: 1024px;
+    max-width: 1920px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .logo {
+      width: 250px;
+      font-size: 1rem;
+    }
+
+    .gnb {
+      ul {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+
+        li {
+          list-style: none;
+          padding: 0 10px;
+
+          a {
+            text-decoration: none;
+            color: inherit;
+
+            .notification-badge {
+              background-color: var(--main-color);
+              color: white;
+              padding: 0.2rem 0.6rem;
+              margin: 0 0.2rem;
+              border-radius: 1rem;
+              font-size: 0.8rem;
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+            }
+          }
+        }
+      }
+    }
+
+    .utility {
+      button, form, a {
+        all: unset;
+        cursor: pointer;
+        margin: 0 0.4rem;
+      }
+
+      .site-map {
+        .icon {
+          display: inline-block;
+          width: 1rem;
+          height: 1rem;
+          background-image: url("/images/hamburger_icon.svg");
+          background-size: cover;
+          background-repeat: no-repeat;
+          background-position: center;
+        }
+      }
+
+      .sign-in {
+        .icon {
+
+        }
+      }
+    }
+  }
+
+}

@@ -112,6 +112,14 @@ public class User extends BaseEntity {
         return user;
     }
 
+    public static User create(String username, Email email) {
+        User user = new User();
+        user.username = username;
+        user.email = email;
+        user.initializeAccountPolicy();
+        return user;
+    }
+
     /**
      * 계정을 수정합니다.
      * @param name          이름

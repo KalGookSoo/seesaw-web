@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+<header id="header" th:fragment="header">
+    <div class="wrapper">
+        <h1 class="logo">홈 | 대전포스트잇 ♣대전독서모임</h1>
+        <nav class="gnb">
+            <ul>
+                <li><a href="#" class="home">홈</a></li>
+                <li><a href="#">모임소개</a></li>
+                <li><a href="#">모임 활동<span class="notification-badge">3</span></a></li>
+                <li><a href="#">알림장<span class="notification-badge">2</span></a></li>
+            </ul>
+        </nav>
+        <div class="utility">
+            <button type="button" class="site-map"><!--/*<span class="icon"></span>*/-->전체보기</button>
+            <a class="sign-in" sec:authorize="isAnonymous()" th:href="@{/oauth2/authorization/naver}" th:text="#{label.sign.in}"></a>
+            <form sec:authorize="isAuthenticated()" th:action="@{/sign-out}" th:method="post">
+                <button type="submit" class="sign-out" th:text="#{label.sign.out}"></button>
+            </form>
+        </div>
+    </div>
+</header>
+
+</html>

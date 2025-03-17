@@ -37,65 +37,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     private final CmsMessageSource messageSource;
 
-    /**
-     * 요청이 잘못된 경우
-     * @param e IllegalArgumentException
-     * @return 400 에러 화면
-     */
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(IllegalArgumentException.class)
-    public String handleIllegalArgumentException(IllegalArgumentException e) {
-        logger.error(e.getMessage());
-        return "error/400";
-    }
-
-    /**
-     * 해당 자원을 찾을 수 없는 경우
-     * @param e NoSuchElementException
-     * @return 404 에러 화면
-     */
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoSuchElementException.class)
-    public String handleNoSuchElementException(NoSuchElementException e) {
-        logger.error(e.getMessage());
-        return "error/404";
+    public ResponseEntity<String> handleNoSuchElementException(NoSuchElementException e) {
+        logger.warn(e.getMessage());
+        String message = messageSource.getMessage("error.not.found");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(message);
     }
 
-    /**
-     * 자원에 대한 접근 권한이 없는 경우
-     * @param e AccessDeniedException
-     * @return 계정 인증 화면
-     */
-    @ExceptionHandler(AccessDeniedException.class)
-    public String handleAccessDeniedException(AccessDeniedException e) {
-        logger.error(e.getMessage());
-        return "redirect:/sign-in";
-    }
-
-    /**
-     * 인증되지 않은 사용자가 접근한 경우
-     * @param e AuthenticationException
-     * @return 계정 인증 화면
-     */
-    @ExceptionHandler(AuthenticationException.class)
-    public String handleAuthenticationException(AuthenticationException e) {
-        logger.error(e.getMessage());
-        return "redirect:/sign-in";
-    }
-
-    /**
-     * 핸들링할 수 없는 오류가 발생한 경우
-     * @param e RuntimeException
-     * @return 500 에러 화면
-     */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(RuntimeException.class)
-    public String handleRuntimeException(RuntimeException e) {
-        logger.error(e.getMessage());
-        return "error/500";
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
         logger.error(e.getMessage());

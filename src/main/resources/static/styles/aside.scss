@@ -1,0 +1,16 @@
+@use "global";
+#aside {
+  position: fixed;
+  top: 0;
+  //right: -205px;
+  z-index: 100;
+  transform: translateX(0);
+  transition: right 0.3s ease;
+
+  width: 205px;
+  height: 100%;
+
+  padding: 30px 75px 64px 40px;
+  background-color: var(--main-color);
+}
+

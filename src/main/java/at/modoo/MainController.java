@@ -19,4 +19,9 @@ public class MainController {
         return "index";
     }
 
+    @GetMapping("/demo")
+    public String demo() {
+        return "main";
+    }
+
 }

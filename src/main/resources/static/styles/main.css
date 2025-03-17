@@ -1,0 +1,22 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  font-size: 16px;
+}
+
+:root {
+  --main-color: #cc4202;
+}
+
+#main {
+  width: 100%;
+  background-image: url("/images/main_background.jpeg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/*# sourceMappingURL=main.css.map */

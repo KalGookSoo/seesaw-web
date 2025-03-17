@@ -1,43 +1,27 @@
 package at.modoo.config;
 
-import at.modoo.repository.UserPrincipalRepository;
-import at.modoo.security.repository.RememberMeTokenRepository;
-import at.modoo.security.service.JpaPersistentTokenRepository;
-import at.modoo.service.DefaultUserDetailsService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import at.modoo.service.PrincipalOauth2UserService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.*;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
+import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
+import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
+import org.springframework.security.config.annotation.web.configurers.oauth2.client.OAuth2LoginConfigurer;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.RememberMeServices;
-import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
-import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.UUID;
 
 @Configuration
 @EnableWebSecurity
@@ -45,63 +29,21 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-
-    private static final String LOGIN_PAGE_PATH = "/sign-in";
-
-    private static final String USERNAME_PARAM = "username";
-
-    private static final String PASSWORD_PARAM = "password";
-
-    private static final String LOGOUT_PATH = "/sign-out";
-
-    private final UserPrincipalRepository userPrincipalRepository;
-
-    private final RememberMeTokenRepository tokenRepository;
-
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return new DefaultUserDetailsService(userPrincipalRepository);
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public PersistentTokenRepository persistentTokenRepository() {
-        return new JpaPersistentTokenRepository(tokenRepository);
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager() {
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService());
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
-
-        ProviderManager providerManager = new ProviderManager(authenticationProvider);
-        providerManager.setEraseCredentialsAfterAuthentication(false);
-
-        return providerManager;
-    }
+    private final PrincipalOauth2UserService principalOauth2UserService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http.csrf(this::hanbdleCsrfPolicies);
+        http.csrf(this::handleCsrfPolicies);
         http.cors(this::handleCorsPolicies);
         http.authorizeHttpRequests(this::handleAuthorizeHttpRequests);
-        http.formLogin(this::handleFormLogin);
-        http.userDetailsService(userDetailsService());
+        http.oauth2Login(this::handleOauth2Login);
         http.logout(this::configureLogout);
-        http.rememberMe(this::handleRememberMe);
-        http.sessionManagement(this::handleSessionPolicies);
 
         return http.build();
     }
 
-    private void hanbdleCsrfPolicies(CsrfConfigurer<HttpSecurity> config) {
+    private void handleCsrfPolicies(CsrfConfigurer<HttpSecurity> config) {
         config.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
     }
 
@@ -117,22 +59,6 @@ public class SecurityConfig {
         });
     }
 
-    @Bean
-    public RememberMeServices rememberMeServices() {
-        PersistentTokenBasedRememberMeServices services = new PersistentTokenBasedRememberMeServices(
-                UUID.randomUUID().toString(),
-                userDetailsService(),
-                persistentTokenRepository()
-        );
-        services.setAlwaysRemember(false);
-        return services;
-    }
-
-    @Bean
-    public HttpSessionEventPublisher httpSessionEventPublisher() {
-        return new HttpSessionEventPublisher();
-    }
-
     private void handleAuthorizeHttpRequests(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry config) {
         // TODO /swagger resources 관련 ROLE_ADMIN만 접근할 수 있도록 할 것
         config.requestMatchers(new AntPathRequestMatcher("/managers/**")).hasAnyRole("MANAGER", "ADMIN")
@@ -141,37 +67,25 @@ public class SecurityConfig {
                 .permitAll();
     }
 
-    private void handleFormLogin(FormLoginConfigurer<HttpSecurity> config) {
-        config.loginPage(LOGIN_PAGE_PATH)
-                .usernameParameter(USERNAME_PARAM)
-                .passwordParameter(PASSWORD_PARAM)
-                .successHandler(new SavedRequestAwareAuthenticationSuccessHandler())
-                .failureHandler(this::handleBadCredentialsException);
-    }
-
-    private void handleBadCredentialsException(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
-        logger.error(exception.getMessage());
-        response.sendRedirect(LOGIN_PAGE_PATH);
+    private void handleOauth2Login(OAuth2LoginConfigurer<HttpSecurity> httpSecurityOAuth2LoginConfigurer) {
+        httpSecurityOAuth2LoginConfigurer.userInfoEndpoint(
+                userInfoEndpoint -> userInfoEndpoint.userService(principalOauth2UserService)
+        ).successHandler((request, response, authentication) -> {
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            response.setStatus(200);
+            response.sendRedirect("/demo");
+        });
     }
 
     private void configureLogout(LogoutConfigurer<HttpSecurity> config) {
-        config.logoutUrl(LOGOUT_PATH).permitAll();
-    }
-
-    private void handleRememberMe(RememberMeConfigurer<HttpSecurity> httpSecurityRememberMeConfigurer) {
-        String key = UUID.randomUUID().toString();
-        int tokenValiditySeconds = 60 * 60 * 24;
-        httpSecurityRememberMeConfigurer.key(key)
-                .rememberMeParameter("remember-me")
-                .userDetailsService(userDetailsService())
-                .tokenRepository(persistentTokenRepository())
-                .tokenValiditySeconds(tokenValiditySeconds);
-    }
-
-    private void handleSessionPolicies(SessionManagementConfigurer<HttpSecurity> config) {
-        config.maximumSessions(1)
-                .maxSessionsPreventsLogin(true)
-                .expiredUrl(LOGIN_PAGE_PATH);
+        config.logoutUrl("/sign-out")
+                .invalidateHttpSession(true)
+                .clearAuthentication(true)
+                .deleteCookies("JSESSIONID")
+                .logoutSuccessHandler((request, response, authentication) -> {
+                    response.setStatus(200);
+                    response.sendRedirect("/demo");
+                });
     }
 
 }

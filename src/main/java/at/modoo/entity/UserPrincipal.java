@@ -3,19 +3,24 @@ package at.modoo.entity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
  * 사용자 인증 주체
  */
-public class UserPrincipal implements UserDetails {
+public class UserPrincipal implements UserDetails, OAuth2User {
 
     private final User user;
 
-    public UserPrincipal(User user) {
+    private final Map<String, Object> attributes;
+
+    public UserPrincipal(User user, Map<String, Object> attributes) {
         this.user = user;
+        this.attributes = attributes;
     }
 
     public String getId() {
@@ -90,4 +95,18 @@ public class UserPrincipal implements UserDetails {
                 "Granted Authorities=" + getAuthorities() + "]";
     }
 
+    @Override
+    public String getName() {
+        return "";
+    }
+
+    @Override
+    public <A> A getAttribute(String name) {
+        return OAuth2User.super.getAttribute(name);
+    }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
 }
