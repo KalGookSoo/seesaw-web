@@ -1,8 +1,43 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Header</title>
+    <link rel="stylesheet" href="/static/styles/aside.css" th:href="@{/styles/aside.css}">
+    <script src="/static/scripts/aside.js" th:src="@{/scripts/aside.js}"></script>
+</head>
+
     <aside id="aside" th:fragment="aside">
-        aside
+        <header>
+            <h1 class="logo">홈 | 대전포스트잇 ♣대전독서모임</h1>
+            <button type="button" name="close">✖</button>
+        </header>
+        <section class="profile"></section>
+        <section class="site-map">
+            <details>
+                <summary>
+                    <a href="#" class="home">홈</a>
+                </summary>
+            </details>
+            <details>
+                <summary>
+                    <a href="#">모임소개</a>
+                </summary>
+            </details>
+            <details>
+                <summary>
+                    <a href="#">모임 활동<span class="notification-badge">3</span></a>
+                </summary>
+            </details>
+            <details>
+                <summary>
+                    <a href="#">알림장<span class="notification-badge">2</span></a>
+                </summary>
+            </details>
+        </section>
+        <footer class="copyright">ⓒ daejeonstickybook powered by doyevskyi</footer>
     </aside>
 
 </html>

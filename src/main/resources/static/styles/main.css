@@ -13,10 +13,6 @@ html {
 
 #main {
   width: 100%;
-  background-image: url("/images/main_background.jpeg");
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
 }
 
 /*# sourceMappingURL=main.css.map */

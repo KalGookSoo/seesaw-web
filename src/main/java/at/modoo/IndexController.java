@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  * 메인 컨트롤러
  */
 @Controller
-public class MainController {
+public class IndexController {
 
     /**
      * 메인 화면을 반환합니다.
@@ -17,11 +17,6 @@ public class MainController {
     @GetMapping("/")
     public String index() {
         return "index";
-    }
-
-    @GetMapping("/demo")
-    public String demo() {
-        return "main";
     }
 
 }

@@ -10,13 +10,28 @@
     <title>홈 | 대전포스트잇 ♣대전독서모임</title>
 
     <!-- CSS -->
+    <link rel="stylesheet" th:href="@{/styles/bootstrap.css}">
     <link rel="stylesheet" th:href="@{/styles/header.css}">
     <link rel="stylesheet" th:href="@{/styles/main.css}">
     <link rel="stylesheet" th:href="@{/styles/footer.css}">
     <link rel="stylesheet" th:href="@{/styles/aside.css}">
-    <style></style>
+
+    <style>
+        #aside-dialog {
+            left: auto;
+            height: 100vh;
+
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+            border: none;
+        }
+        #aside-dialog::backdrop {
+            background: transparent;
+        }
+
+    </style>
 
     <!-- JS -->
+    <script th:src="@{/scripts/bootstrap.js}"></script>
     <script th:src="@{/scripts/header.js}"></script>
     <script th:src="@{/scripts/main.js}"></script>
     <script th:src="@{/scripts/footer.js}"></script>
@@ -36,6 +51,9 @@
         <th:block layout:fragment="content"></th:block>
     </main>
     <footer th:replace="~{footer :: footer}"></footer>
-<!--    <aside th:replace="~{aside :: aside}"></aside>-->
+
+    <dialog id="aside-dialog">
+        <th:block th:replace="~{aside :: aside}"></th:block>
+    </dialog>
 </body>
 </html>

@@ -12,15 +12,38 @@ html {
 }
 
 #aside {
-  position: fixed;
-  top: 0;
-  z-index: 100;
-  transform: translateX(0);
-  transition: right 0.3s ease;
-  width: 205px;
-  height: 100%;
-  padding: 30px 75px 64px 40px;
+  width: 280px;
+  height: 100vh;
   background-color: var(--main-color);
+  padding: 30px;
+}
+#aside header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--main-color);
+  color: white;
+}
+#aside header .logo {
+  font-size: 0.6rem;
+}
+#aside header button[name=close] {
+  all: unset;
+  cursor: pointer;
+}
+#aside .site-map details summary a {
+  all: unset;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.6);
+}
+#aside .site-map details summary a.active {
+  color: white;
+}
+#aside .copyright {
+  padding: 88px 30px 40px 40px;
+  font-style: italic;
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.3019607843);
 }
 
 /*# sourceMappingURL=aside.css.map */

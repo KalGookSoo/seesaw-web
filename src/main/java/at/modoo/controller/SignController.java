@@ -24,7 +24,7 @@ public class SignController {
 //        String accessToken = naverOAuthClient.getAccessToken(code);
 //        OAuth2UserDetail userDetail = naverOAuthClient.authenticate(accessToken);
 //        defaultOAuth2UserService.loadUser()
-        return "redirect:/demo";
+        return "redirect:/";
     }
 
 }

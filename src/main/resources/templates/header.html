@@ -1,5 +1,14 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Header</title>
+    <link rel="stylesheet" href="/static/styles/header.css" th:href="@{/styles/header.css}">
+    <script src="/static/scripts/header.js" th:src="@{/scripts/header.js}"></script>
+</head>
 
 <header id="header" th:fragment="header">
     <div class="wrapper">
@@ -13,8 +22,9 @@
             </ul>
         </nav>
         <div class="utility">
-            <button type="button" class="site-map"><!--/*<span class="icon"></span>*/-->전체보기</button>
-            <a class="sign-in" sec:authorize="isAnonymous()" th:href="@{/oauth2/authorization/naver}" th:text="#{label.sign.in}"></a>
+            <button type="button" class="site-map open-aside"><!--/*<span class="icon"></span>*/-->전체보기</button>
+            <a class="sign-in" sec:authorize="isAnonymous()" th:href="@{/oauth2/authorization/naver}"
+               th:text="#{label.sign.in}"></a>
             <form sec:authorize="isAuthenticated()" th:action="@{/sign-out}" th:method="post">
                 <button type="submit" class="sign-out" th:text="#{label.sign.out}"></button>
             </form>

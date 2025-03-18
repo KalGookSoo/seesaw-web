@@ -1,16 +1,54 @@
 @use "global";
+
 #aside {
-  position: fixed;
-  top: 0;
-  //right: -205px;
-  z-index: 100;
-  transform: translateX(0);
-  transition: right 0.3s ease;
-
-  width: 205px;
-  height: 100%;
-
-  padding: 30px 75px 64px 40px;
+  width: 280px;
+  height: 100vh;
   background-color: var(--main-color);
-}
+  padding: 30px;
 
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--main-color);
+    color: white;
+
+    .logo {
+      font-size: 0.6rem;
+    }
+
+    button[name="close"] {
+      all: unset;
+      cursor: pointer;
+    }
+  }
+
+  .profile {
+
+  }
+
+  .site-map {
+    details {
+      summary {
+        //list-style: none;
+        a {
+          all: unset;
+          cursor: pointer;
+          color: #FFFFFF99;
+        }
+
+        a.active {
+          color: white;
+        }
+      }
+    }
+  }
+
+  .copyright {
+    padding: 88px 30px 40px 40px;
+    font-style: italic;
+    font-size: 0.6rem;
+    color: #FFFFFF4D;
+  }
+
+}

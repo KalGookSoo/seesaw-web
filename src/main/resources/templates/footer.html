@@ -1,6 +1,14 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
-    <footer id="footer" th:fragment="footer">
-        footer
-    </footer>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Footer</title>
+    <link rel="stylesheet" href="/static/styles/footer.css" th:href="@{/styles/footer.css}">
+    <script src="/static/scripts/footer.js" th:src="@{/scripts/footer.js}"></script>
+</head>
+<footer id="footer" th:fragment="footer">
+    footer
+</footer>
 </html>

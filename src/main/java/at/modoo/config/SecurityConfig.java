@@ -73,7 +73,7 @@ public class SecurityConfig {
         ).successHandler((request, response, authentication) -> {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             response.setStatus(200);
-            response.sendRedirect("/demo");
+            response.sendRedirect("/");
         });
     }
 
@@ -84,7 +84,7 @@ public class SecurityConfig {
                 .deleteCookies("JSESSIONID")
                 .logoutSuccessHandler((request, response, authentication) -> {
                     response.setStatus(200);
-                    response.sendRedirect("/demo");
+                    response.sendRedirect("/");
                 });
     }
 
