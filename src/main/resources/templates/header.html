@@ -11,15 +11,13 @@
 </head>
 
 <header id="header" th:fragment="header">
-    <div class="wrapper">
-        <h1 class="logo">홈 | 대전포스트잇 ♣대전독서모임</h1>
-        <nav class="gnb">
-            <ul>
-                <li><a href="#" class="home">홈</a></li>
-                <li><a href="#">모임소개</a></li>
-                <li><a href="#">모임 활동<span class="notification-badge">3</span></a></li>
-                <li><a href="#">알림장<span class="notification-badge">2</span></a></li>
-            </ul>
+    <div class="wrapper d-flex align-items-center justify-content-between">
+        <div class="logo">홈 | 대전포스트잇 ♣대전독서모임</div>
+        <nav class="gnb d-flex align-items-center justify-content-start">
+            <div class="li px-2"><a href="#" class="home">홈</a></div>
+            <div class="li px-2"><a href="#">모임소개</a></div>
+            <div class="li px-2"><a href="#">모임 활동<span class="notification-badge">3</span></a></div>
+            <div class="li px-2"><a href="#">알림장<span class="notification-badge">2</span></a></div>
         </nav>
         <div class="utility">
             <button type="button" class="site-map open-aside"><!--/*<span class="icon"></span>*/-->전체보기</button>

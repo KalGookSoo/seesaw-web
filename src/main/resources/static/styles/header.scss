@@ -26,9 +26,6 @@
   .wrapper {
     min-width: 1024px;
     max-width: 1920px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
 
     .logo {
       width: 250px;
@@ -36,30 +33,24 @@
     }
 
     .gnb {
-      ul {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
 
-        li {
-          list-style: none;
-          padding: 0 10px;
+      .li {
+        //padding: 0 10px;
 
-          a {
-            text-decoration: none;
-            color: inherit;
+        a {
+          text-decoration: none;
+          color: inherit;
 
-            .notification-badge {
-              background-color: var(--main-color);
-              color: white;
-              padding: 0.2rem 0.6rem;
-              margin: 0 0.2rem;
-              border-radius: 1rem;
-              font-size: 0.8rem;
-              display: inline-flex;
-              align-items: center;
-              justify-content: center;
-            }
+          .notification-badge {
+            background-color: var(--main-color);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            margin: 0 0.2rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
           }
         }
       }

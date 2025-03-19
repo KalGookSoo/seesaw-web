@@ -2,7 +2,6 @@
 
 #index-home {
 
-
   .profile-section {
     background-image: url('/images/main_background.jpeg');
     background-size: cover;
@@ -12,6 +11,10 @@
     .profile {
       width: 900px;
       height: 860px;
+
+      h2 {
+        font-size: 1.2rem;
+      }
 
       .image {
         img {
@@ -25,10 +28,50 @@
     }
   }
 
-  .board {
+  .intro-section {
+    margin: 80px 0;
+
+    h6 {
+      color: var(--main-color);
+    }
+  }
+
+  .board-section {
+    header {
+      border-bottom: 1px solid #ccc;
+      margin-bottom: 20px;
+
+      h5 {
+        color: var(--main-color);
+      }
+
+      a {
+        all: unset;
+        cursor: pointer;
+      }
+    }
+
     article {
-      width: 350px;
-      height: 170px;
+      margin-bottom: 80px;
+
+      .title {
+
+      }
+
+      .content {
+        height: 110px;
+
+        .thumbnail {
+          width: 110px;
+
+        }
+      }
+
+      .author {
+
+      }
+
+
     }
   }
 

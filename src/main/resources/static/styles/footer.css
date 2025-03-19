@@ -1,20 +1,40 @@
 * {
   padding: 0;
   margin: 0;
+  color: inherit;
 }
 
 html {
   font-size: 16px;
+  color: var(--font-color);
+}
+html body {
+  color: inherit;
+}
+html body a {
+  all: unset;
+  cursor: pointer;
 }
 
 :root {
   --main-color: #cc4202;
+  --font-color: #333333;
 }
 
 #footer {
   width: 100%;
-  height: 280px;
   background-color: #000000;
+  padding-top: 60px;
+}
+#footer section {
+  padding: 0 90px;
+}
+#footer .content {
+  min-height: 160px;
+}
+#footer .banner {
+  background-color: #111111;
+  height: 60px;
 }
 
 /*# sourceMappingURL=footer.css.map */

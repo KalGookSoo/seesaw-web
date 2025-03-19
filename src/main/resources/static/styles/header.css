@@ -1,14 +1,24 @@
 * {
   padding: 0;
   margin: 0;
+  color: inherit;
 }
 
 html {
   font-size: 16px;
+  color: var(--font-color);
+}
+html body {
+  color: inherit;
+}
+html body a {
+  all: unset;
+  cursor: pointer;
 }
 
 :root {
   --main-color: #cc4202;
+  --font-color: #333333;
 }
 
 #header {
@@ -34,28 +44,16 @@ html {
 #header .wrapper {
   min-width: 1024px;
   max-width: 1920px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 }
 #header .wrapper .logo {
   width: 250px;
   font-size: 1rem;
 }
-#header .wrapper .gnb ul {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-}
-#header .wrapper .gnb ul li {
-  list-style: none;
-  padding: 0 10px;
-}
-#header .wrapper .gnb ul li a {
+#header .wrapper .gnb .li a {
   text-decoration: none;
   color: inherit;
 }
-#header .wrapper .gnb ul li a .notification-badge {
+#header .wrapper .gnb .li a .notification-badge {
   background-color: var(--main-color);
   color: white;
   padding: 0.2rem 0.6rem;
