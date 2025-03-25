@@ -1,0 +1,26 @@
+.title-section {
+  margin-top: 160px;
+}
+.title-section h4 {
+  color: var(--main-color);
+  border-bottom: 1px solid var(--main-color);
+}
+.title-section hr {
+  position: relative;
+  top: -25px;
+}
+
+.carousel-section {
+  margin-bottom: 160px;
+}
+.carousel-section .carousel-item {
+  height: 600px;
+}
+.carousel-section .carousel-indicators {
+  bottom: -40px;
+}
+.carousel-section .carousel-indicators [data-bs-target] {
+  width: 100px;
+}
+
+/*# sourceMappingURL=content.css.map */

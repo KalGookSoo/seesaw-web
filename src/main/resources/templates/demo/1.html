@@ -10,47 +10,93 @@
 <head>
 
     <title>홈 | 대전포스트잇 ♣대전독서모임</title>
-    <!--/* <link rel="stylesheet" href="/static/styles/index.css" th:href="@{/styles/index.css}"> */-->
+    <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
     <script th:inline="javascript"></script>
 </head>
 
 <body layout:fragment="content">
-<section class="container-sm">
-    모임소개
+<section class="container-sm title-section">
+    <h4 class="title d-inline-block">모임소개</h4>
     <hr>
 </section>
-<section class="container-sm">carousel</section>
-<section class="container-sm">독서모임: 대전 포스트잇</section>
-<section class="container-sm">
-    <div>대전 독서 모임 '대전 포스트잇' !!</div>
-    <div>매년 새해가 되면 다이어트와 함께</div>
-    <div>'한 달에 한 권 책 읽기' 에 도전하는 우리...</div>
-    <div>조그만 포스트잇에 센스 있는 한 줄 평으로</div>
-    <div>시작해보는 건 어떨까요?</div>
+<section class="container-sm carousel-section">
+    <div id="carousel-indicators" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carousel-indicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1">
+                <img alt="캐러셀이미지" class="d-block w-100" th:src="@{/images/carousel_1.jpeg}">
+            </button>
+            <button type="button" data-bs-target="#carousel-indicators" data-bs-slide-to="1" aria-label="Slide 2">
+                <img alt="캐러셀이미지" class="d-block w-100" th:src="@{/images/carousel_2.jpeg}">
+            </button>
+            <button type="button" data-bs-target="#carousel-indicators" data-bs-slide-to="2" aria-label="Slide 3">
+                <img alt="캐러셀이미지" class="d-block w-100" th:src="@{/images/carousel_3.jpeg}">
+            </button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active" data-bs-interval="1500">
+                <img alt="캐러셀이미지" class="d-block w-100" th:src="@{/images/carousel_1.jpeg}">
+            </div>
+            <div class="carousel-item" data-bs-interval="1500">
+                <img alt="캐러셀이미지" class="d-block w-100" th:src="@{/images/carousel_2.jpeg}">
+            </div>
+            <div class="carousel-item" data-bs-interval="1500">
+                <img alt="캐러셀이미지" class="d-block w-100" th:src="@{/images/carousel_3.jpeg}">
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carousel-indicators" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carousel-indicators" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
 </section>
-<section class="container-sm">
-    대전 포스트잇은<br>
-    매월 마지막 주 토요일에 정기 모임 한 번!<br>
-    <br>
-    포스트잇에 자신만의 한 줄 평을 시작으로<br>
-    서로에게 책을 추천하는 시간을 가집니다.<br>
-    <br>
-    평소 자유 독서는 아래 링크의 단체채팅방에서<br>
-    이야기 나누며 책 모임을 만들어갑니다.<br>
-    <br>
-    <br>
-    << 찾아오시는 법 >><br>
-    <br>
-    < 모임 단체 채팅방 ><br>
-    * 카톡 오픈채팅에서 '대전포스트잇' 검색 *<br>
-    https://open.kakao.com/o/g5set5ng<br>
-    <br>
-    < 모임장 연락방법 ><br>
-    * 카카오톡 오픈프로필 '서담' 검색 *<br>
-    http://open.kakao.com/me/seodaam<br>
-    <br>
-    * Instagram *<br>
-    midnightstory_seodam<br>
+<section class="container-sm my-3">
+    <div>
+        독서모임: 대전 포스트잇
+    </div>
+</section>
+<section class="container-sm my-3">
+    <div style="text-align: center; color: #999999">
+        대전 독서 모임 '대전 포스트잇' !!<br>
+        매년 새해가 되면 다이어트와 함께<br>
+        '한 달에 한 권 책 읽기' 에 도전하는 우리...<br>
+        조그만 포스트잇에 센스 있는 한 줄 평으로<br>
+        시작해보는 건 어떨까요?<br>
+    </div>
+</section>
+<section class="container-sm my-3">
+    <div>
+        <hr>
+    </div>
+</section>
+<section class="container-sm my-3">
+    <div style="text-align: center;">
+        대전 포스트잇은<br>
+        매월 마지막 주 토요일에 정기 모임 한 번!<br>
+        <br>
+        포스트잇에 자신만의 한 줄 평을 시작으로<br>
+        서로에게 책을 추천하는 시간을 가집니다.<br>
+        <br>
+        평소 자유 독서는 아래 링크의 단체채팅방에서<br>
+        이야기 나누며 책 모임을 만들어갑니다.<br>
+        <br>
+        <br>
+        << 찾아오시는 법 >><br>
+        <br>
+        < 모임 단체 채팅방 ><br>
+        * 카톡 오픈채팅에서 '대전포스트잇' 검색 *<br>
+        https://open.kakao.com/o/g5set5ng<br>
+        <br>
+        < 모임장 연락방법 ><br>
+        * 카카오톡 오픈프로필 '서담' 검색 *<br>
+        http://open.kakao.com/me/seodaam<br>
+        <br>
+        * Instagram *<br>
+        midnightstory_seodam<br>
+    </div>
 </section>
 </body>
 </html>

@@ -1,0 +1,67 @@
+* {
+  padding: 0;
+  margin: 0;
+  color: inherit;
+}
+
+html {
+  font-size: 16px;
+  color: var(--font-color);
+}
+html body {
+  color: inherit;
+}
+:root {
+  --main-color: #cc4202;
+  --font-color: #333333;
+}
+
+.profile-section {
+  background-image: url("/images/main_background.jpeg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.profile-section .profile {
+  width: 900px;
+  height: 860px;
+}
+.profile-section .profile h2 {
+  font-size: 1.2rem;
+}
+.profile-section .profile .image img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.intro-section {
+  margin: 80px 0;
+}
+.intro-section h6 {
+  color: var(--main-color);
+}
+
+.board-section header {
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 20px;
+}
+.board-section header h5 {
+  color: var(--main-color);
+}
+.board-section header a {
+  all: unset;
+  cursor: pointer;
+}
+.board-section article {
+  margin-bottom: 80px;
+}
+.board-section article .content {
+  height: 110px;
+}
+.board-section article .content .thumbnail {
+  width: 110px;
+}
+
+/*# sourceMappingURL=index.css.map */
