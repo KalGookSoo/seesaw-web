@@ -11,10 +11,6 @@
   border-bottom: 1px solid #ebebeb;
   transition: background-color 0.3s ease;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
   &.scrolled {
     background-color: rgba(255, 255, 255, 1);
   }
@@ -24,44 +20,21 @@
   }
 
   .wrapper {
-    min-width: 1024px;
-    max-width: 1920px;
-
     .logo {
       width: 250px;
       font-size: 1rem;
     }
 
     .gnb {
-
-      .li {
-        //padding: 0 10px;
-
-        a {
-          text-decoration: none;
-          color: inherit;
-
-          .notification-badge {
-            background-color: var(--main-color);
-            color: white;
-            padding: 0.2rem 0.6rem;
-            margin: 0 0.2rem;
-            border-radius: 1rem;
-            font-size: 0.8rem;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-          }
+      a {
+        .notification-badge {
+          background-color: var(--main-color);
+          border-radius: 1rem;
         }
       }
     }
 
     .utility {
-      button, form, a {
-        all: unset;
-        cursor: pointer;
-        margin: 0 0.4rem;
-      }
 
       .site-map {
         .icon {

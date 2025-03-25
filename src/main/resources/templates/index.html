@@ -15,134 +15,139 @@
 </head>
 
 <body layout:fragment="content">
-<section id="index-home">
-    <section class="profile-section d-flex flex-column justify-content-center align-items-center">
-        <div class="profile d-flex flex-column justify-content-center align-items-center">
-            <p class="image"><img alt="프로필이미지" th:src="@{/images/profile.jpeg}"/></p>
-            <h2>대전포스트잇 ♣대전독서모임</h2>
-            <p>대전독서모임 홈페이지</p>
-        </div>
-    </section>
-    <section class="intro-section d-flex flex-column justify-content-center align-items-center">
-        <h6>대전 독서모임 인원 모집 중</h6>
-        <span>독서 모임을 시작으로 대전시에서 주최하는 다양한 문화 및 지원 행사에 참여하고 싶으신 분들 환영합니다!</span>
-    </section>
-    <section class="board-section container-lg">
-        <header class="d-flex justify-content-between align-items-center">
-            <h5>모임 활동</h5>
-            <p><a href="#">더보기</a></p>
-        </header>
-        <div class="container">
-            <div class="row row-cols-1 row-cols-md-3 g-4">
-                <article class="col">
-                    <a href="#">
-                        <div class="title d-flex justify-content-between align-items-center mb-2">
-                            <div>아웃오브블루</div>
-                            <div><span>🗨</span>2</div>
-                        </div>
-                        <div class="content d-flex align-items-center justify-content-between mb-2">
-                            <div><small class="text-muted">서담님의 선물☆따숩♡</small></div>
-                            <div class="thumbnail"><img src="/images/sample1.jpeg" alt="썸네일"></div>
-                        </div>
-                        <div class="author d-flex justify-content-start align-items-center">
-                            <small class="text-muted">sias****</small>
-                            <small class="text-muted">2025.2.23</small>
-                        </div>
-                    </a>
-                </article>
-                <article class="col">
-                    <a href="#">
-                        <div class="title d-flex justify-content-between align-items-center mb-2">
-                            <div>푸른 들판을 걷다</div>
-                            <div><span>🗨</span>1</div>
-                        </div>
-                        <div class="content d-flex align-items-center justify-content-between mb-2">
-                            <div><small class="text-muted">클레어키건 작가 신작..아일랜드설화인듯.. 소설인듯..단편집이라지만 많이 아숩.ㅠ잼잇는 영화  잘보고있는데 갑쟈기 끊나버림. 그래서 그소녀는 어찌됬고그여잔 어디로갓고 남</small></div>
-                            <div class="thumbnail"><img src="/images/sample2.jpeg" alt="썸네일"></div>
-                        </div>
-                        <div class="author d-flex justify-content-start align-items-center">
-                            <small class="text-muted">sias****</small>
-                            <small class="text-muted">2025.2.21</small>
-                        </div>
-                    </a>
-                </article>
-                <article class="col">
-                    <a href="#">
-                        <div class="title d-flex justify-content-between align-items-center mb-2">
-                            <div>나는 나로 살기로 했다</div>
-                            <div><span>🗨</span>1</div>
-                        </div>
-                        <div class="content d-flex align-items-center justify-content-between mb-2">
-                            <div><small class="text-muted">머리로 알고는있지만 하지못하는 맘먹기!!!긍정긍정!!!올해는 좀더 강한 정신력!!</small></div>
-                            <div class="thumbnail"><img src="/images/sample3.jpeg" alt="썸네일"></div>
-                        </div>
-                        <div class="author d-flex justify-content-start align-items-center">
-                            <small class="text-muted">sias****</small>
-                            <small class="text-muted">2025.2.6</small>
-                        </div>
-                    </a>
-                </article>
-            </div>
-        </div>
-    </section>
-    <section class="board-section container-lg">
-        <header class="d-flex justify-content-between align-items-center">
-            <h5>알림장</h5>
-            <p><a href="#">더보기</a></p>
-        </header>
-        <div class="container">
-            <div class="row row-cols-1 row-cols-md-3 g-4">
-                <article class="col">
-                    <a href="#">
-                        <div class="title d-flex justify-content-between align-items-center mb-2">
-                            <div>[대전문화재단] 2025년 생활문화 활성화지원 공모 신...</div>
-                            <!--<div><span>🗨</span>2</div>-->
-                        </div>
-                        <div class="content d-flex align-items-center justify-content-between mb-2">
-                            <div><small class="text-muted">안녕하세요.대전포스트잇 모임장 서담입니다.홈페이지 이전 건으로 최근 모임 홈페이지 사용을 자제하고 있으나,이번 대전문화재단 주관 지원사업 공모에 대한 자세한 계획 및 내용은공지는 전체적으로 드려야 할 것 같아서 글을 썼습니다.2025년 재단법인 대전문화재단생활문화 지원사</small></div>
-                            <!--<div class="thumbnail"></div>-->
-                        </div>
-                        <div class="author d-flex justify-content-start align-items-center">
-                            <small class="text-muted">관리자</small>
-                            <small class="text-muted">2025.2.14</small>
-                        </div>
-                    </a>
-                </article>
-                <article class="col">
-                    <a href="#">
-                        <div class="title d-flex justify-content-between align-items-center mb-2">
-                            <div>[대전포스트잇] 2024년 책꽂이 정산 결과 및 2025년...</div>
-                            <!--<div><span>🗨</span>1</div>-->
-                        </div>
-                        <div class="content d-flex align-items-center justify-content-between mb-2">
-                            <div><small class="text-muted">클레어키건 작가 신작..아일랜드설화인듯.. 소설인듯..단편집이라지만 많이 아숩.ㅠ잼잇는 영화  잘보고있는데 갑쟈기 끊나버림. 그래서 그소녀는 어찌됬고그여잔 어디로갓고 남</small></div>
-                            <div class="thumbnail"><img src="/images/sample4.png" alt="썸네일"></div>
-                        </div>
-                        <div class="author d-flex justify-content-start align-items-center">
-                            <small class="text-muted">관리자</small>
-                            <small class="text-muted">2025.1.2</small>
-                        </div>
-                    </a>
-                </article>
-                <article class="col">
-                    <a href="#">
-                        <div class="title d-flex justify-content-between align-items-center mb-2">
-                            <div>[대전포스트잇] 2024년도 책꽂이 정산</div>
-                            <div><span>🗨</span>2</div>
-                        </div>
-                        <div class="content d-flex align-items-center justify-content-between mb-2">
-                            <div><small class="text-muted">안녕하세요, 서담입니다. 올해 봄, 꽃이 한창일 무렵 모임을 시작해 벌써 다음 해를 준비하게 되었습니다. 운영해 오면서 아쉬움도 뿌듯함도 많은 감정들이 지나간 해였네요. 이대로 떠나보내기엔 아쉬운 마음에 저희 모임활동의 결과물 중 하나인 책꽂이 정산을 하고 모임활동에 참여 해 주신</small></div>
-                            <!--<div class="thumbnail"></div>-->
-                        </div>
-                        <div class="author d-flex justify-content-start align-items-center">
-                            <small class="text-muted">관리자</small>
-                            <small class="text-muted">2024.12.20</small>
-                        </div>
-                    </a>
-                </article>
-            </div>
-        </div>
-    </section>
+<section class="profile-section d-flex flex-column justify-content-center align-items-center">
+    <div class="profile d-flex flex-column justify-content-center align-items-center">
+        <p class="image"><img alt="프로필이미지" th:src="@{/images/profile.jpeg}"/></p>
+        <h2>대전포스트잇 ♣대전독서모임</h2>
+        <p>대전독서모임 홈페이지</p>
+    </div>
 </section>
+<section class="intro-section d-flex flex-column justify-content-center align-items-center">
+    <h6>대전 독서모임 인원 모집 중</h6>
+    <span>독서 모임을 시작으로 대전시에서 주최하는 다양한 문화 및 지원 행사에 참여하고 싶으신 분들 환영합니다!</span>
+</section>
+<section class="board-section container-lg">
+    <header class="d-flex justify-content-between align-items-center">
+        <h5>모임 활동</h5>
+        <p><a href="#">더보기</a></p>
+    </header>
+    <div class="container">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            <article class="col">
+                <a href="#">
+                    <div class="title d-flex justify-content-between align-items-center mb-2">
+                        <div>아웃오브블루</div>
+                        <div><span class="mx-2">🗨</span>2</div>
+                    </div>
+                    <div class="content d-flex align-items-start justify-content-between mb-2">
+                        <div><small class="text-muted">서담님의 선물☆따숩♡</small></div>
+                        <div class="thumbnail"><img src="/images/sample1.jpeg" alt="썸네일"></div>
+                    </div>
+                    <div class="author d-flex justify-content-start align-items-center">
+                        <small class="text-muted">sias****</small>
+                        <small class="text-muted mx-2">|</small>
+                        <small class="text-muted">2025.2.23</small>
+                    </div>
+                </a>
+            </article>
+            <article class="col">
+                <a href="#">
+                    <div class="title d-flex justify-content-between align-items-center mb-2">
+                        <div>푸른 들판을 걷다</div>
+                        <div><span class="mx-2">🗨</span>1</div>
+                    </div>
+                    <div class="content d-flex align-items-start justify-content-between mb-2">
+                        <div><small class="text-muted">클레어키건 작가 신작..아일랜드설화인듯.. 소설인듯..단편집이라지만 많이 아숩.ㅠ잼잇는 영화  잘보고있는데 갑쟈기 끊나버림. 그래서 그소녀는 어찌됬고그여잔 어디로갓고 남</small></div>
+                        <div class="thumbnail"><img src="/images/sample2.jpeg" alt="썸네일"></div>
+                    </div>
+                    <div class="author d-flex justify-content-start align-items-center">
+                        <small class="text-muted">sias****</small>
+                        <small class="text-muted mx-2">|</small>
+                        <small class="text-muted">2025.2.21</small>
+                    </div>
+                </a>
+            </article>
+            <article class="col">
+                <a href="#">
+                    <div class="title d-flex justify-content-between align-items-center mb-2">
+                        <div>나는 나로 살기로 했다</div>
+                        <div><span class="mx-2">🗨</span>1</div>
+                    </div>
+                    <div class="content d-flex align-items-start justify-content-between mb-2">
+                        <div><small class="text-muted">머리로 알고는있지만 하지못하는 맘먹기!!!긍정긍정!!!올해는 좀더 강한 정신력!!</small></div>
+                        <div class="thumbnail"><img src="/images/sample3.jpeg" alt="썸네일"></div>
+                    </div>
+                    <div class="author d-flex justify-content-start align-items-center">
+                        <small class="text-muted">sias****</small>
+                        <small class="text-muted mx-2">|</small>
+                        <small class="text-muted">2025.2.6</small>
+                    </div>
+                </a>
+            </article>
+        </div>
+    </div>
+</section>
+<section class="board-section container-lg">
+    <header class="d-flex justify-content-between align-items-center">
+        <h5>알림장</h5>
+        <p><a href="#">더보기</a></p>
+    </header>
+    <div class="container">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            <article class="col">
+                <a href="#">
+                    <div class="title d-flex justify-content-between align-items-center mb-2">
+                        <div>[대전문화재단] 2025년 생활문화 활성화지원 공모 신...</div>
+                        <!--<div><span class=mx-2>🗨</span>2</div>-->
+                    </div>
+                    <div class="content d-flex align-items-start justify-content-between mb-2">
+                        <div><small class="text-muted">안녕하세요.대전포스트잇 모임장 서담입니다.홈페이지 이전 건으로 최근 모임 홈페이지 사용을 자제하고 있으나,이번 대전문화재단 주관 지원사업 공모에 대한 자세한 계획 및 내용은공지는 전체적으로 드려야 할 것 같아서 글을 썼습니다.2025년 재단법인 대전문화재단생활문화 지원사</small></div>
+                        <!--<div class="thumbnail"></div>-->
+                    </div>
+                    <div class="author d-flex justify-content-start align-items-center">
+                        <small class="text-muted">관리자</small>
+                        <small class="text-muted mx-2">|</small>
+                        <small class="text-muted">2025.2.14</small>
+                    </div>
+                </a>
+            </article>
+            <article class="col">
+                <a href="#">
+                    <div class="title d-flex justify-content-between align-items-center mb-2">
+                        <div>[대전포스트잇] 2024년 책꽂이 정산 결과 및 2025년...</div>
+                        <!--<div><span class=mx-2>🗨</span>1</div>-->
+                    </div>
+                    <div class="content d-flex align-items-start justify-content-between mb-2">
+                        <div><small class="text-muted">클레어키건 작가 신작..아일랜드설화인듯.. 소설인듯..단편집이라지만 많이 아숩.ㅠ잼잇는 영화  잘보고있는데 갑쟈기 끊나버림. 그래서 그소녀는 어찌됬고그여잔 어디로갓고 남</small></div>
+                        <div class="thumbnail"><img src="/images/sample4.png" alt="썸네일"></div>
+                    </div>
+                    <div class="author d-flex justify-content-start align-items-center">
+                        <small class="text-muted">관리자</small>
+                        <small class="text-muted mx-2">|</small>
+                        <small class="text-muted">2025.1.2</small>
+                    </div>
+                </a>
+            </article>
+            <article class="col">
+                <a href="#">
+                    <div class="title d-flex justify-content-between align-items-center mb-2">
+                        <div>[대전포스트잇] 2024년도 책꽂이 정산</div>
+                        <div><span class="mx-2">🗨</span>2</div>
+                    </div>
+                    <div class="content d-flex align-items-start justify-content-between mb-2">
+                        <div><small class="text-muted">안녕하세요, 서담입니다. 올해 봄, 꽃이 한창일 무렵 모임을 시작해 벌써 다음 해를 준비하게 되었습니다. 운영해 오면서 아쉬움도 뿌듯함도 많은 감정들이 지나간 해였네요. 이대로 떠나보내기엔 아쉬운 마음에 저희 모임활동의 결과물 중 하나인 책꽂이 정산을 하고 모임활동에 참여 해 주신</small></div>
+                        <!--<div class="thumbnail"></div>-->
+                    </div>
+                    <div class="author d-flex justify-content-start align-items-center">
+                        <small class="text-muted">관리자</small>
+                        <small class="text-muted mx-2">|</small>
+                        <small class="text-muted">2024.12.20</small>
+                    </div>
+                </a>
+            </article>
+        </div>
+    </div>
+</section>
+
 </body>
 </html>

@@ -11,11 +11,6 @@ html {
 html body {
   color: inherit;
 }
-html body a {
-  all: unset;
-  cursor: pointer;
-}
-
 :root {
   --main-color: #cc4202;
   --font-color: #333333;

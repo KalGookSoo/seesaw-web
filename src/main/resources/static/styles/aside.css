@@ -11,11 +11,6 @@ html {
 html body {
   color: inherit;
 }
-html body a {
-  all: unset;
-  cursor: pointer;
-}
-
 :root {
   --main-color: #cc4202;
   --font-color: #333333;
@@ -28,9 +23,6 @@ html body a {
   padding: 30px;
 }
 #aside header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   background-color: var(--main-color);
   color: white;
 }
