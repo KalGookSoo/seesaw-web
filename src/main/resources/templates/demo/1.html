@@ -15,47 +15,11 @@
 </head>
 
 <body layout:fragment="content">
-<section class="container-sm title-section">
-    <h4 class="title d-inline-block">모임소개</h4>
-    <hr>
-</section>
-<section class="container-sm carousel-section">
-    <div id="carousel-indicators" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-indicators">
-            <button type="button" data-bs-target="#carousel-indicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1">
-                <img alt="캐러셀이미지" class="d-block w-100" th:src="@{/images/carousel_1.jpeg}">
-            </button>
-            <button type="button" data-bs-target="#carousel-indicators" data-bs-slide-to="1" aria-label="Slide 2">
-                <img alt="캐러셀이미지" class="d-block w-100" th:src="@{/images/carousel_2.jpeg}">
-            </button>
-            <button type="button" data-bs-target="#carousel-indicators" data-bs-slide-to="2" aria-label="Slide 3">
-                <img alt="캐러셀이미지" class="d-block w-100" th:src="@{/images/carousel_3.jpeg}">
-            </button>
-        </div>
-        <div class="carousel-inner">
-            <div class="carousel-item active" data-bs-interval="1500">
-                <img alt="캐러셀이미지" class="d-block w-100" th:src="@{/images/carousel_1.jpeg}">
-            </div>
-            <div class="carousel-item" data-bs-interval="1500">
-                <img alt="캐러셀이미지" class="d-block w-100" th:src="@{/images/carousel_2.jpeg}">
-            </div>
-            <div class="carousel-item" data-bs-interval="1500">
-                <img alt="캐러셀이미지" class="d-block w-100" th:src="@{/images/carousel_3.jpeg}">
-            </div>
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carousel-indicators" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carousel-indicators" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
-    </div>
-</section>
+<section th:replace="~{components/static_content_title :: title(title='모임소개')}"></section>
+<section th:replace="~{components/carousel :: carousel}"></section>
 <section class="container-sm my-3">
-    <div>
-        독서모임: 대전 포스트잇
+    <div style="text-align: center; color: var(--main-color)">
+        <h4>독서모임: 대전 포스트잇</h4>
     </div>
 </section>
 <section class="container-sm my-3">

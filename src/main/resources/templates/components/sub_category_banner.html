@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<body>
+<section class="sub-category-banner" th:fragment="subCategoryBanner">
+    <div class="d-flex justify-content-center align-items-center gap-3">
+        <div th:each="category : ${categories}">
+            <a th:href="@{/articles/list(categoryId=${category.id})}" th:text="${category.name}"></a>
+        </div>
+    </div>
+</section>
+</body>
+</html>

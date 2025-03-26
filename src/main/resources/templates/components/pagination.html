@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<!--suppress HtmlFormInputWithoutLabel -->
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<body>
+<section th:fragment="pagination" class="container-sm board-pagination-section d-flex justify-content-between align-items-center">
+    <div><button class="btn" type="button">선택삭제</button></div>
+    <div>
+        <nav class="pagination">
+
+            <div class="page-item">
+                <a class="page-link" href="#" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="d-none">Previous</span>
+                </a>
+            </div>
+            <div class="page-item"><a class="page-link" href="#">1</a></div>
+            <div class="page-item"><a class="page-link" href="#">2</a></div>
+            <div class="page-item"><a class="page-link" href="#">3</a></div>
+            <div class="page-item">
+                <a class="page-link" href="#" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="d-none">Next</span>
+                </a>
+            </div>
+
+        </nav>
+    </div>
+    <div>
+        <button class="btn" type="button">내가 쓴 글</button>
+        <button class="btn" type="button">글쓰기</button>
+    </div>
+</section>
+</body>
+</html>

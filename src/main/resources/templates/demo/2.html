@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!--suppress HtmlFormInputWithoutLabel -->
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
@@ -8,15 +7,22 @@
 >
 
 <head>
-
     <title>홈 | 대전포스트잇 ♣대전독서모임</title>
-    <!--/* <link rel="stylesheet" href="/static/styles/index.css" th:href="@{/styles/index.css}"> */-->
+    <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
     <script th:inline="javascript"></script>
 </head>
 
 <body layout:fragment="content">
-<section>
-    2
+<section class="sub-category-banner d-flex justify-content-center align-items-center">
+    <div class="container-sm d-flex justify-content-center align-items-center">
+        <div><a href="#" class="btn">2025'책꽂이</a></div>
+        <div><a href="#" class="btn">2024'책꽂이</a></div>
+        <div><a href="#" class="btn">자유게시판</a></div>
+    </div>
 </section>
+<section th:replace="~{components/board_title :: title(title='2025\'책꽂이')}"></section>
+<section th:replace="~{components/board_table :: table}"></section>
+<section th:replace="~{components/pagination :: pagination}"></section>
+<section th:replace="~{components/board_table_search :: tableSearch}"></section>
 </body>
 </html>

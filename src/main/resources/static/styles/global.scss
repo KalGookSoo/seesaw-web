@@ -15,10 +15,16 @@ html {
       //all: unset;
       //cursor: pointer;
     }
+
+    .table {
+      th {
+        font-weight: normal;
+      }
+    }
   }
 }
 
 :root {
   --main-color: #cc4202;
-  --font-color: #333333;
+  --font-color: #666666;
 }

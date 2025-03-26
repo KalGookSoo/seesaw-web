@@ -1,7 +1,24 @@
+#main {
+  margin-top: 80px;
+}
+
+.sub-category-banner {
+  background-color: #fafafa;
+  width: 100%;
+  height: 3rem;
+  z-index: 99;
+  border-bottom: 1px solid #ebebeb;
+
+  position: fixed;
+  top: 80px;
+  left: 0;
+
+}
+
 .title-section {
   margin-top: 160px;
 
-  h4 {
+  .title {
     color: var(--main-color);
     border-bottom: 1px solid var(--main-color);
   }
