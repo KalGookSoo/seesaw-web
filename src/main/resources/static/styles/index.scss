@@ -51,13 +51,15 @@
 
   article {
     margin-bottom: 80px;
+    overflow: hidden;
 
     .title {
-
+      white-space: nowrap;
     }
 
     .content {
       height: 110px;
+      text-overflow: ellipsis;
 
       .thumbnail {
         width: 110px;

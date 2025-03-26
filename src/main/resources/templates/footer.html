@@ -9,22 +9,26 @@
     <script src="/static/scripts/footer.js" th:src="@{/scripts/footer.js}"></script>
 </head>
 <footer id="footer" th:fragment="footer">
-    <section class="container-sm content d-flex justify-content-between">
-        <div class="inner">
+    <section class="content-section container-sm content d-flex justify-content-between">
+        <div class="left">
             <div>
-                <div><a class="btn" href="#" target="_blank">홈 | 대전포스트잇 ♣대전독서모임</a><!--/*검색엔진노출링크*/--></div>
-                <div>🙋</div><!--/*검색엔진노출방법제공Dialog*/-->
+                <a class="btn" href="#" target="_blank">대전포스트잇 ♣대전독서모임@</a><!--/*검색엔진노출링크*/-->
+                <span><button type="button" class="btn">﹖</button></span><!--/*검색엔진노출방법제공Dialog*/-->
             </div>
-            <div class="d-flex justify-content-start align-items-center">
-                <div><a class="btn" href="#" target="_blank">카페</a></div><!--/*카페*/-->
-                <div><a class="btn" href="#" target="_blank">블로그</a></div><!--/*블로그*/-->
-                <div><a class="btn" href="#" target="_blank">페이스북</a></div><!--/*페이스북*/-->
-                <div><a class="btn" href="#" target="_blank">밴드</a></div><!--/*밴드*/-->
+            <div>
+                <a href="#">신고하기</a>
             </div>
         </div>
-        <div class="sns"></div>
+        <div class="right">
+            <div class="d-flex justify-content-start align-items-center">
+                <div><a class="btn" href="#" target="_blank">카페</a></div>
+                <div><a class="btn" href="#" target="_blank">블로그</a></div>
+                <div><a class="btn" href="#" target="_blank">페이스북</a></div>
+                <div><a class="btn" href="#" target="_blank">밴드</a></div>
+            </div>
+        </div>
     </section>
-    <section class="banner d-flex align-items-center justify-content-center">
+    <section class="banner-section d-flex align-items-center justify-content-center">
         <div>doyevskyi가 제작한 홈페이지입니다.</div>
     </section>
 </footer>

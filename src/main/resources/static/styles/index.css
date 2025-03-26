@@ -56,9 +56,14 @@ html body {
 }
 .board-section article {
   margin-bottom: 80px;
+  overflow: hidden;
+}
+.board-section article .title {
+  white-space: nowrap;
 }
 .board-section article .content {
   height: 110px;
+  text-overflow: ellipsis;
 }
 .board-section article .content .thumbnail {
   width: 110px;
