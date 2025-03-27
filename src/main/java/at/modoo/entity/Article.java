@@ -51,6 +51,10 @@ public class Article extends BaseEntity {
     @Comment("본문")
     private String content;
 
+    @Enumerated(EnumType.STRING)
+    @Comment("타입")
+    private ArticleType type;
+
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonManagedReference
@@ -105,6 +109,7 @@ public class Article extends BaseEntity {
         Article article = new Article();
         article.title = command.getTitle();
         article.content = Jsoup.clean(command.getContent(), Safelist.relaxed());
+        article.type = command.getArticleType();
         return article;
     }
 

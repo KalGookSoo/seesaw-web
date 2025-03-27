@@ -1,5 +1,6 @@
 package at.modoo.command;
 
+import at.modoo.entity.ArticleType;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -32,11 +33,14 @@ public class CreateArticleCommand {
     @NotNull
     private String content;
 
+    @Parameter(description = "본문", required = true)
+    @Schema(description = "본문", example = "본문")
+    @NotBlank
+    @NotNull
+    private ArticleType articleType;
+
     @Parameter(description = "첨부파일")
     @Schema(description = "첨부파일", example = "첨부파일")
     private List<MultipartFile> multipartFiles = new ArrayList<>();
 
-    public CreateArticleCommand(String categoryId) {
-        this.categoryId = categoryId;
-    }
 }
