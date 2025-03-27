@@ -3,8 +3,8 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <body>
 <section th:fragment="table" class="container-sm board-table-section">
-    <table class="table table-hover">
-        <caption class="d-none">List of users</caption>
+    <table class="table table-hover small">
+        <caption class="d-none" th:text="|#{entity.article} #{label.list}|"></caption>
         <colgroup>
             <col style="width: 52px">
             <col style="width: 52px">
@@ -16,7 +16,7 @@
         <tr>
             <th class="py-3 text-center" scope="col"><input type="checkbox"></th>
             <th class="py-3 text-center" scope="col">번호</th>
-            <th class="py-3 text-start" scope="col">글제목</th>
+            <th class="py-3 text-center" scope="col">글제목</th>
             <th class="py-3 text-center" scope="col">글쓴이</th>
             <th class="py-3 text-center" scope="col">작성일</th>
         </tr>
