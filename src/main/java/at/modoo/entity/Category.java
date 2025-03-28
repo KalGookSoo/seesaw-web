@@ -1,10 +1,10 @@
 package at.modoo.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import at.modoo.command.CreateCategoryCommand;
 import at.modoo.command.UpdateCategoryCommand;
 import at.modoo.core.hierarchy.Hierarchical;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -32,7 +32,7 @@ import static lombok.AccessLevel.PROTECTED;
 @DynamicInsert
 @DynamicUpdate
 @Comment("카테고리")
-public class Category extends BaseEntity implements Hierarchical<Category> {
+public class Category extends BaseEntity implements Hierarchical<Category, String> {
 
     @Comment("이름")
     private String name;
@@ -47,11 +47,13 @@ public class Category extends BaseEntity implements Hierarchical<Category> {
     @Comment("공개여부")
     private boolean isPublic;
 
+    @Comment("부모 식별자")
+    @Column(length = 36)
+    private String parentId;
+
+    @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @Comment("부모 식별자")
-    @JoinColumn(name = "parent_id", referencedColumnName = "id")
     @JsonBackReference
     private Category parent;
 
@@ -75,9 +77,9 @@ public class Category extends BaseEntity implements Hierarchical<Category> {
     @JsonManagedReference
     private List<Notification> notifications = new ArrayList<>();
 
+    @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @OneToMany(mappedBy = "parent")
     @JsonManagedReference
     private List<Category> children = new ArrayList<>();
 
@@ -103,7 +105,8 @@ public class Category extends BaseEntity implements Hierarchical<Category> {
     @Override
     public void addChild(Category child) {
         children.add(child);
-        parent = this;
+        child.parentId = getId();
+        child.parent = this;
     }
 
 }

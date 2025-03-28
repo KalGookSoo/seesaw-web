@@ -1,10 +1,10 @@
 package at.modoo.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import at.modoo.command.CreateMenuCommand;
 import at.modoo.command.UpdateMenuCommand;
 import at.modoo.core.hierarchy.Hierarchical;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -31,7 +31,7 @@ import static lombok.AccessLevel.PROTECTED;
 @DynamicInsert
 @DynamicUpdate
 @Comment("메뉴")
-public class Menu extends BaseEntity implements Hierarchical<Menu> {
+public class Menu extends BaseEntity implements Hierarchical<Menu, String> {
 
     @Comment("이름")
     private String name;
@@ -42,17 +42,19 @@ public class Menu extends BaseEntity implements Hierarchical<Menu> {
     @Comment("순번")
     private Integer sequence;
 
+    @Comment("부모 식별자")
+    @Column(length = 36)
+    private String parentId;
+
+    @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @Comment("부모 식별자")
-    @JoinColumn(name = "parent_id", referencedColumnName = "id")
     @JsonBackReference
     private Menu parent;
 
+    @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @OneToMany(mappedBy = "parent")
     @JsonManagedReference
     private List<Menu> children = new ArrayList<>();
 
@@ -86,7 +88,8 @@ public class Menu extends BaseEntity implements Hierarchical<Menu> {
     @Override
     public void addChild(Menu child) {
         children.add(child);
-        parent = this;
+        child.parentId = getId();
+        child.parent = this;
     }
 
 }

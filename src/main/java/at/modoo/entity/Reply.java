@@ -25,7 +25,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Table(name = "tb_reply")
 @Comment("답글")
 @DynamicInsert
-public class Reply extends BaseEntity implements Hierarchical<Reply> {
+public class Reply extends BaseEntity implements Hierarchical<Reply, String> {
 
     @Comment("공개여부")
     private boolean isPublic;
@@ -34,18 +34,20 @@ public class Reply extends BaseEntity implements Hierarchical<Reply> {
     @Lob
     private String content;
 
+    @Comment("부모 식별자")
+    @Column(length = 36)
+    private String parentId;
+
+    @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonBackReference
-    @Comment("상위 답글 식별자")
-    @ManyToOne
-    @JoinColumn(name = "parent_id", referencedColumnName = "id")
     private Reply parent;
 
+    @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonManagedReference
-    @OneToMany(mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Reply> children = new ArrayList<>();
 
     @EqualsAndHashCode.Exclude
@@ -101,6 +103,7 @@ public class Reply extends BaseEntity implements Hierarchical<Reply> {
     @Override
     public void addChild(Reply child) {
         children.add(child);
+        child.parentId = getId();
         child.parent = this;
     }
 

@@ -1,8 +1,8 @@
 package at.modoo.entity;
 
+import at.modoo.core.hierarchy.Hierarchical;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import at.modoo.core.hierarchy.Hierarchical;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -27,7 +27,7 @@ import static lombok.AccessLevel.PROTECTED;
 @DynamicInsert
 @DynamicUpdate
 @Comment("사이트")
-public class Site extends BaseEntity implements Hierarchical<Site> {
+public class Site extends BaseEntity implements Hierarchical<Site, String> {
 
     @Comment("이름")
     private String name;
@@ -78,17 +78,19 @@ public class Site extends BaseEntity implements Hierarchical<Site> {
     @Comment("소개")
     private String introduction;
 
+    @Comment("부모 식별자")
+    @Column(length = 36)
+    private String parentId;
+
+    @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @Comment("부모 식별자")
-    @JoinColumn(name = "parent_id", referencedColumnName = "id")
     @JsonBackReference
     private Site parent;
 
+    @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @OneToMany(mappedBy = "parent")
     @JsonManagedReference
     private List<Site> children = new ArrayList<>();
 
@@ -117,7 +119,8 @@ public class Site extends BaseEntity implements Hierarchical<Site> {
     @Override
     public void addChild(Site child) {
         children.add(child);
-        parent = this;
+        child.parentId = getId();
+        child.parent = this;
     }
 
 }

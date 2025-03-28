@@ -1,13 +1,15 @@
 package at.modoo.core.hierarchy;
 
-public interface Hierarchical<T extends Hierarchical<T>> {
+public interface Hierarchical<T extends Hierarchical<T, ID>, ID> {
 
-    T getParent();
+    ID getId();
+
+    ID getParentId();
 
     void addChild(T child);
 
     default boolean isRoot() {
-        return getParent() == null;
+        return getParentId() == null;
     }
 
     default boolean hasParent() {
