@@ -59,14 +59,8 @@ public class Site extends BaseEntity implements Hierarchical<Site, String> {
     @Comment("주소")
     private Address address;
 
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "first", column = @Column(name = "first_contact_number")),
-            @AttributeOverride(name = "middle", column = @Column(name = "middle_contact_number")),
-            @AttributeOverride(name = "last", column = @Column(name = "last_contact_number"))
-    })
     @Comment("연락처")
-    private ContactNumber contactNumber;
+    private String contactNumber;
 
     @Column(length = 36)
     @Comment("프로필 이미지 식별자")
@@ -105,7 +99,6 @@ public class Site extends BaseEntity implements Hierarchical<Site, String> {
         site.imageExposed = command.isImageExposed();
         site.tags = command.getTags();
         site.address = command.getAddress();
-        site.contactNumber = command.getContactNumber();
         site.profileImageId = command.getProfileImageId();
         return site;
     }
