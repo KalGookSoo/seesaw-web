@@ -1,0 +1,81 @@
+### 2025 책꽂이
+POST https://www.modoo.at/apps/board/GetMessageList.json
+Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+Accept: application/json, text/javascript, */*; q=0.01
+Accept-Language: ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+Priority: u=1, i
+Sec-CH-UA: "Chromium";v="134", "Not:A-Brand";v="24", "Google Chrome";v="134"
+Sec-CH-UA-Mobile: ?0
+Sec-CH-UA-Platform: "macOS"
+Sec-Fetch-Dest: empty
+Sec-Fetch-Mode: cors
+Sec-Fetch-Site: same-origin
+X-Requested-With: XMLHttpRequest
+Referer: https://www.modoo.at/management
+Referrer-Policy: unsafe-url
+
+siteId=4156905&appId=76&cid=5cazkz7h&startNo=1&count=8&replyAttr=1
+
+<> 2025책꽂이.json
+
+### 2024 책꽂이
+POST https://www.modoo.at/apps/board/GetMessageList.json
+accept: application/json, text/javascript, */*; q=0.01
+accept-language: ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+content-type: application/x-www-form-urlencoded; charset=UTF-8
+priority: u=1, i
+sec-ch-ua: "Chromium";v="134", "Not:A-Brand";v="24", "Google Chrome";v="134"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "macOS"
+sec-fetch-dest: empty
+sec-fetch-mode: cors
+sec-fetch-site: same-origin
+x-requested-with: XMLHttpRequest
+referer: https://www.modoo.at/management
+referrer-policy: unsafe-url
+
+siteId=4156905&appId=76&cid=96zqk2qn&startNo=1&count=100&replyAttr=1
+
+<> 2024책꽂이.json
+
+### 공지사항
+POST https://www.modoo.at/apps/board/GetMessageList.json
+accept: application/json, text/javascript, */*; q=0.01
+accept-language: ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+content-type: application/x-www-form-urlencoded; charset=UTF-8
+priority: u=1, i
+sec-ch-ua: "Chromium";v="134", "Not:A-Brand";v="24", "Google Chrome";v="134"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "macOS"
+sec-fetch-dest: empty
+sec-fetch-mode: cors
+sec-fetch-site: same-origin
+x-requested-with: XMLHttpRequest
+referer: https://www.modoo.at/management
+referrer-policy: unsafe-url
+
+siteId=4156905&appId=76&cid=4h2he818&startNo=1&count=100&replyAttr=1
+
+<> 공지사항.json
+
+### 모임후기
+POST https://www.modoo.at/apps/board/GetMessageList.json
+accept: application/json, text/javascript, */*; q=0.01
+accept-language: ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+content-type: application/x-www-form-urlencoded; charset=UTF-8
+priority: u=1, i
+sec-ch-ua: "Chromium";v="134", "Not:A-Brand";v="24", "Google Chrome";v="134"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "macOS"
+sec-fetch-dest: empty
+sec-fetch-mode: cors
+sec-fetch-site: same-origin
+x-requested-with: XMLHttpRequest
+referer: https://www.modoo.at/management
+referrer-policy: unsafe-url
+
+siteId=4156905&appId=76&cid=8hpmrjty&startNo=1&count=100&replyAttr=1
+
+<> 모임후기.json
+
+###
