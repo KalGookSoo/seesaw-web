@@ -1,11 +1,10 @@
 package at.modoo.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.*;
+import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -26,11 +25,8 @@ import static lombok.AccessLevel.PROTECTED;
 @DynamicUpdate
 public class View extends BaseEntity {
 
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonBackReference
-    @ManyToOne
-    @JoinColumn(name = "article_id", referencedColumnName = "id")
-    private Article article;
+    @Comment("게시글 식별자")
+    @Column(length = 36)
+    private String articleId;
 
 }

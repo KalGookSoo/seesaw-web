@@ -1,6 +1,7 @@
 package at.modoo.entity;
 
 import jakarta.persistence.Embeddable;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,15 +17,16 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @EqualsAndHashCode
 @NoArgsConstructor(access = PROTECTED)
+@AllArgsConstructor
 public class Address implements Serializable {
 
     private String zipcode;
 
-    private String detail;
+    private String value;
 
     @Override
     public String toString() {
-        return detail + " [" + zipcode + "]";
+        return value + " [" + zipcode + "]";
     }
 
 }

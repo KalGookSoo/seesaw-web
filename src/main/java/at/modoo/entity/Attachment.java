@@ -1,10 +1,6 @@
 package at.modoo.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.annotations.Comment;
@@ -12,8 +8,6 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
 import java.util.UUID;
 
 import static lombok.AccessLevel.PROTECTED;
@@ -45,36 +39,6 @@ public class Attachment extends BaseEntity {
 
     @Comment("크기")
     private long size;
-
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonManagedReference
-    @ManyToMany(mappedBy = "attachments")
-    private final Set<Article> articles = new LinkedHashSet<>();
-
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonBackReference
-    @OneToOne(mappedBy = "profileImage")
-    private Site siteWithProfileImage;
-
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonBackReference
-    @OneToOne(mappedBy = "backgroundImage")
-    private Site siteWithBackgroundImage;
-
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonBackReference
-    @OneToOne(mappedBy = "thumbnail")
-    private Article articleWithThumbnail;
-
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonManagedReference
-    @ManyToMany(mappedBy = "attachments")
-    private final Set<Reply> replies = new LinkedHashSet<>();
 
     public static Attachment create(String pathName, MultipartFile multipartFile) {
         Attachment attachment = new Attachment();

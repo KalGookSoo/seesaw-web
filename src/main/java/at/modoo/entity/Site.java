@@ -1,5 +1,6 @@
 package at.modoo.entity;
 
+import at.modoo.command.CreateSiteCommand;
 import at.modoo.core.hierarchy.Hierarchical;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -38,13 +39,8 @@ public class Site extends BaseEntity implements Hierarchical<Site, String> {
     @Comment("설명")
     private String description;
 
-    @Enumerated(EnumType.STRING)
-    @Comment("분류")
-    private SiteDistribution distribution;
-
-    @Enumerated(EnumType.STRING)
-    @Comment("타입")
-    private SiteType type;
+    @Comment("분류코드")
+    private String distributionCode;
 
     @Comment("검색엔진 노출여부")
     private boolean searchEngineExposed;
@@ -57,8 +53,8 @@ public class Site extends BaseEntity implements Hierarchical<Site, String> {
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "zipcode", column = @Column(name = "address_zipcode")),
-            @AttributeOverride(name = "detail", column = @Column(name = "address_detail"))
+            @AttributeOverride(name = "zipcode", column = @Column(name = "zipcode")),
+            @AttributeOverride(name = "value", column = @Column(name = "address"))
     })
     @Comment("주소")
     private Address address;
@@ -72,11 +68,9 @@ public class Site extends BaseEntity implements Hierarchical<Site, String> {
     @Comment("연락처")
     private ContactNumber contactNumber;
 
-    @Comment("공개여부")
-    private boolean isPublic;
-
-    @Comment("소개")
-    private String introduction;
+    @Column(length = 36)
+    @Comment("프로필 이미지 식별자")
+    private String profileImageId;
 
     @Comment("부모 식별자")
     @Column(length = 36)
@@ -94,33 +88,26 @@ public class Site extends BaseEntity implements Hierarchical<Site, String> {
     @JsonManagedReference
     private List<Site> children = new ArrayList<>();
 
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonManagedReference
-    @OneToMany(mappedBy = "site", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<Category> categories = new ArrayList<>();
-
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonManagedReference
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "profile_image_id", referencedColumnName = "id")
-    @Comment("프로필이미지")
-    private Attachment profileImage;
-
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonManagedReference
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "background_image_id", referencedColumnName = "id")
-    @Comment("배경이미지")
-    private Attachment backgroundImage;
-
     @Override
     public void addChild(Site child) {
         children.add(child);
         child.parentId = getId();
         child.parent = this;
+    }
+
+    public static Site create(CreateSiteCommand command) {
+        Site site = new Site();
+        site.name = command.getName();
+        site.url = command.getUrl();
+        site.description = command.getDescription();
+        site.distributionCode = command.getDistributionCode();
+        site.searchEngineExposed = command.isSearchEngineExposed();
+        site.imageExposed = command.isImageExposed();
+        site.tags = command.getTags();
+        site.address = command.getAddress();
+        site.contactNumber = command.getContactNumber();
+        site.profileImageId = command.getProfileImageId();
+        return site;
     }
 
 }
