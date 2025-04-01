@@ -9,9 +9,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
-public abstract class PageVO {
+public abstract class PageVO implements Serializable {
 
     @Parameter(description = "페이지 인덱스", schema = @Schema(defaultValue = "0"))
     @Schema(description = "페이지 인덱스", defaultValue = "0")

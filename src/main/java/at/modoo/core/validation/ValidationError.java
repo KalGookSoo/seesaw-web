@@ -5,10 +5,12 @@ import lombok.Getter;
 import lombok.ToString;
 import org.springframework.validation.FieldError;
 
+import java.io.Serializable;
+
 @EqualsAndHashCode
 @ToString
 @Getter
-public final class ValidationError {
+public final class ValidationError implements Serializable {
     private final String code;
     private final String message;
     private final String field;

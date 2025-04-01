@@ -63,7 +63,7 @@ public class OpenApiFactory {
         Contact contact = new Contact()
                 .name("kimdoyeob")
                 .email("ga.miro3721@gmail.com")
-                .url("https://github.com/KalGookSoo/spring-boot-cms");
+                .url("https://github.com/KalGookSoo/modoo");
 
         License license = new License()
                 .name("Apache 2.0")
