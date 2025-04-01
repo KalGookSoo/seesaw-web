@@ -46,6 +46,7 @@ public class Article extends BaseEntity {
 
     @Lob
     @Comment("본문")
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     @Enumerated(EnumType.STRING)
