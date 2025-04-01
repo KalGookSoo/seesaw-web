@@ -9,7 +9,9 @@ import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import static lombok.AccessLevel.PROTECTED;
@@ -76,6 +78,18 @@ public class Article extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "attachment_id")
     )
     private Set<Attachment> attachments = new LinkedHashSet<>();
+
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @JsonManagedReference
+    @OneToMany(mappedBy = "article", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<Reply> replies = new ArrayList<>();
+
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @JsonManagedReference
+    @OneToMany(mappedBy = "article", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<View> views = new ArrayList<>();
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude

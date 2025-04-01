@@ -46,6 +46,9 @@ public class Category extends BaseEntity implements Hierarchical<Category, Strin
     @Comment("공개여부")
     private boolean isPublic;
 
+    @Comment("순서")
+    private Integer sequence;
+
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonBackReference
