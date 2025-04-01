@@ -1,9 +1,10 @@
 package at.modoo.service;
 
-import at.modoo.entity.Authority;
-import at.modoo.entity.Email;
-import at.modoo.entity.User;
-import at.modoo.entity.UserPrincipal;
+import at.modoo.model.Authority;
+import at.modoo.model.vo.Email;
+import at.modoo.model.User;
+import at.modoo.model.UserPrincipal;
+import at.modoo.model.vo.Role;
 import at.modoo.oauth2.provider.NaverUserDetail;
 import at.modoo.oauth2.provider.OAuth2UserDetail;
 import at.modoo.repository.UserRepository;
@@ -35,7 +36,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                 .map(user -> new UserPrincipal(user, oAuth2User.getAttributes()))
                 .orElseGet(() -> {
                     User user = User.create(username, new Email(email.split("@")[0], email.split("@")[1]));
-                    Authority authority = Authority.create("ROLE_USER", user);
+                    Authority authority = Authority.create(Role.ROLE_USER, user);
                     user.addAuthority(authority);
                     return new UserPrincipal(userRepository.save(user), oAuth2User.getAttributes());
                 });

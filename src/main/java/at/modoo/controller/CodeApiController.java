@@ -1,7 +1,7 @@
 package at.modoo.controller;
 
 import at.modoo.core.hierarchy.HierarchicalFactory;
-import at.modoo.entity.Code;
+import at.modoo.model.Code;
 import at.modoo.service.CodeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

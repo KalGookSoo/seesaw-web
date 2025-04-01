@@ -1,7 +1,8 @@
 package at.modoo.command;
 
-import at.modoo.entity.Address;
+import at.modoo.model.vo.Address;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class CreateSiteCommand {
@@ -14,6 +15,7 @@ public class CreateSiteCommand {
     private boolean imageExposed;
     private String tags;
     private Address address;
-    private String profileImageId;
+    private String contactNumber;
+    private MultipartFile profileImage;
 
 }

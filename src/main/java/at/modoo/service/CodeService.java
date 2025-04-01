@@ -1,6 +1,6 @@
 package at.modoo.service;
 
-import at.modoo.entity.Code;
+import at.modoo.model.Code;
 
 import java.util.List;
 

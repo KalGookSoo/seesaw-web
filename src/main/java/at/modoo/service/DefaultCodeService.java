@@ -1,15 +1,13 @@
 package at.modoo.service;
 
 import at.modoo.core.hierarchy.HierarchicalFactory;
-import at.modoo.entity.Code;
+import at.modoo.model.Code;
 import at.modoo.repository.CodeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service

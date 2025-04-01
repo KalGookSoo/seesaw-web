@@ -1,6 +1,6 @@
 package at.modoo.repository;
 
-import at.modoo.entity.User;
+import at.modoo.model.User;
 import at.modoo.search.UserSearch;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.EntityManager;

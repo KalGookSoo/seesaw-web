@@ -1,0 +1,114 @@
+package at.modoo.model;
+
+import at.modoo.model.vo.Role;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+/**
+ * 사용자 인증 주체
+ */
+public class UserPrincipal implements UserDetails, OAuth2User {
+
+    private final User user;
+
+    private final Map<String, Object> attributes;
+
+    public UserPrincipal(User user, Map<String, Object> attributes) {
+        this.user = user;
+        this.attributes = attributes;
+    }
+
+    public String getId() {
+        return user.getId();
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return user.getAuthorities()
+                .stream()
+                .map(Authority::getName)
+                .map(Role::name)
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public String getPassword() {
+        return user.getPassword();
+    }
+
+    @Override
+    public String getUsername() {
+        return user.getUsername();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return user.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return user.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return user.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        boolean accountNonLocked = isAccountNonLocked();
+        boolean accountNonExpired = isAccountNonExpired();
+        boolean credentialsNonExpired = isCredentialsNonExpired();
+        return accountNonLocked && accountNonExpired && credentialsNonExpired;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof User that) {
+            return getUsername().equals(that.getUsername());
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getUsername().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return this.getClass().getName() + " [" +
+                "Username=" + getUsername() + ", " +
+                "Password=[PROTECTED], " +
+                "Enabled=" + isEnabled() + ", " +
+                "AccountNonExpired=" + isAccountNonExpired() + ", " +
+                "CredentialsNonExpired=" + isCredentialsNonExpired() + ", " +
+                "AccountNonLocked=" + isAccountNonLocked() + ", " +
+                "Granted Authorities=" + getAuthorities() + "]";
+    }
+
+    @Override
+    public String getName() {
+        return "";
+    }
+
+    @Override
+    public <A> A getAttribute(String name) {
+        return OAuth2User.super.getAttribute(name);
+    }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+}
