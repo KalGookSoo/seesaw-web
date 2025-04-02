@@ -1,5 +1,6 @@
 package at.modoo.model;
 
+import at.modoo.core.hierarchy.Hierarchical;
 import at.modoo.model.vo.ArticleType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -30,7 +31,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Comment("게시글")
 @DynamicInsert
 @DynamicUpdate
-public class Article extends BaseEntity {
+public class Article extends AbstractHierarchical<Article> implements Hierarchical<Article, String> {
 
     @Comment("공개여부")
     private boolean isPublic;
@@ -102,5 +103,12 @@ public class Article extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "vote_id")
     )
     private Set<Vote> votes = new LinkedHashSet<>();
+
+    @Override
+    public void addChild(Article child) {
+        children.add(child);
+        child.setParentId(getId());
+        child.setParent(this);
+    }
 
 }

@@ -22,7 +22,7 @@ import java.util.Objects;
 @Getter
 @Setter(AccessLevel.PROTECTED)
 @ToString
-public class BaseEntity implements Serializable {
+abstract public class BaseEntity implements Serializable {
 
     @Id
     @UuidGenerator

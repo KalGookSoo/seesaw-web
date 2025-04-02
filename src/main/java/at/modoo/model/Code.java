@@ -33,7 +33,7 @@ import static lombok.AccessLevel.PROTECTED;
 @DynamicInsert
 @DynamicUpdate
 @Comment("코드")
-public class Code extends BaseEntity implements Hierarchical<Code, String> {
+public class Code extends AbstractHierarchical<Code> implements Hierarchical<Code, String> {
 
     @Comment("이름")
     private String name;
@@ -44,27 +44,11 @@ public class Code extends BaseEntity implements Hierarchical<Code, String> {
     @Comment("순서")
     private Integer sequence;
 
-    @Comment("부모 식별자")
-    @Column(length = 36)
-    private String parentId;
-
-    @Transient
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonBackReference
-    private Code parent;
-
-    @Transient
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonManagedReference
-    private List<Code> children = new ArrayList<>();
-
     @Override
     public void addChild(Code child) {
         children.add(child);
-        child.parentId = getId();
-        child.parent = this;
+        child.setParentId(getId());
+        child.setParent(this);
     }
 
     public static Code create(String name, String description, Integer sequence, String parentId) {
