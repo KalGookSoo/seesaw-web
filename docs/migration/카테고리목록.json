@@ -1,0 +1,46 @@
+{
+  "retCode": 0,
+  "retMsg": "",
+  "boardList": [
+    {
+      "siteId": 4156905,
+      "cid": "5cazkz7h",
+      "appId": 76,
+      "name": "2025'책꽂이",
+      "newCount": 0,
+      "type": 0
+    },
+    {
+      "siteId": 4156905,
+      "cid": "96zqk2qn",
+      "appId": 76,
+      "name": "2024'책꽂이",
+      "newCount": 0,
+      "type": 0
+    },
+    {
+      "siteId": 4156905,
+      "cid": "7zd8tqob",
+      "appId": 76,
+      "name": "자유게시판",
+      "newCount": 0,
+      "type": 0
+    },
+    {
+      "siteId": 4156905,
+      "cid": "4h2he818",
+      "appId": 76,
+      "name": "공지사항",
+      "newCount": 0,
+      "type": 0
+    },
+    {
+      "siteId": 4156905,
+      "cid": "8hpmrjty",
+      "appId": 76,
+      "name": "모임후기",
+      "newCount": 0,
+      "type": 0
+    }
+  ]
+}
