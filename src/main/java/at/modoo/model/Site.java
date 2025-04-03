@@ -33,8 +33,8 @@ public class Site extends AbstractHierarchical<Site> implements Hierarchical<Sit
     @Comment("이름")
     private String name;
 
-    @Comment("URL")
-    private String url;
+    @Comment("도메인이름")
+    private String domainName;
 
     @Comment("설명")
     private String description;

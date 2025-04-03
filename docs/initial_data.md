@@ -117,7 +117,7 @@ INSERT INTO public.tb_code (id, created_by, created_date, created_ip, last_modif
 ```
 
 ```postgresql
-insert into tb_site (id, created_by, created_date, created_ip, last_modified_by, last_modified_date, last_modified_ip, version, address, zipcode, contact_number, description, distribution_code, image_exposed, name, parent_id, search_engine_exposed, tags, url, profile_image_id) values ('e75dd9a0-7a23-40d2-b4d5-1463c0544e24', 'admin', now(), '127.0.0.1', null, null, null, 0, null, null, null, '대전독서모임 홈페이지', '95017abd-2b98-4466-9511-c399352f3742', true, '대전포스트잇 ♣대전독서모임', null, true, '#대전포스트잇 #대전독서모임 #대전독서 #독서모임 #대전모임연합', 'daejeonstickybook.modoo.at', null);
+insert into tb_site (id, created_by, created_date, created_ip, last_modified_by, last_modified_date, last_modified_ip, version, address, zipcode, contact_number, description, distribution_code, image_exposed, name, parent_id, search_engine_exposed, tags, domain_name, profile_image_id) values ('e75dd9a0-7a23-40d2-b4d5-1463c0544e24', 'admin', now(), '127.0.0.1', null, null, null, 0, null, null, null, '대전독서모임 홈페이지', '95017abd-2b98-4466-9511-c399352f3742', true, '대전포스트잇 ♣대전독서모임', null, true, '#대전포스트잇 #대전독서모임 #대전독서 #독서모임 #대전모임연합', 'daejeonstickybook.modoo.at', null);
 ```
 
 ```postgresql
