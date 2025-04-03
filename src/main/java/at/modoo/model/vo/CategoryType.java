@@ -9,6 +9,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum CategoryType {
+    NONE("타입없음"),
     STATIC_CONTENT("정적컨텐츠"),
     BOARD("게시판"),
     QNA("문의/신청"),

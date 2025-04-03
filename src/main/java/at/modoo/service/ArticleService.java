@@ -1,0 +1,18 @@
+package at.modoo.service;
+
+import at.modoo.command.CreateArticleCommand;
+import at.modoo.command.UpdateArticleCommand;
+import at.modoo.model.Article;
+import at.modoo.search.ArticleSearch;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import java.io.IOException;
+
+public interface ArticleService {
+    Page<Article> findAll(Pageable pageable, ArticleSearch search);
+    Article find(String id);
+    Article create(CreateArticleCommand command) throws IOException;
+    Article update(String id, UpdateArticleCommand command) throws IOException;
+    void delete(String id);
+}

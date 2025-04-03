@@ -17,8 +17,9 @@
             <!--/* root categories */-->
             <div class="px-2"><a class="btn" th:href="@{/}">홈</a></div>
             <div class="px-2" th:each="category : ${NESTED_CATEGORIES}">
+                <!--/*@thymesVar id="category" type="at.modoo.model.Category"*/-->
                 <a class="btn" th:if="${#lists.isEmpty(category.children)}" th:href="@{/}" th:text="${category.name}"></a>
-                <a class="btn" th:if="${!#lists.isEmpty(category.children)}" th:href="@{/articles(categoryId=${category.id})}" th:text="${category.name}"></a>
+                <a class="btn" th:if="${!#lists.isEmpty(category.children)}" th:href="@{/articles(categoryType=${category.children.get(0).type}, categoryId=${category.children.get(0).id})}" th:text="${category.name}"></a>
                 <span class="badge notification-badge mx-1" th:if="false">3</span>
             </div>
         </nav>

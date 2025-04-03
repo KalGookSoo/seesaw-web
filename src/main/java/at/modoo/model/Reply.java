@@ -29,7 +29,6 @@ public class Reply extends AbstractHierarchical<Reply> implements Hierarchical<R
     private boolean isPublic;
 
     @Comment("본문")
-    @Lob
     @Column(columnDefinition = "TEXT")
     private String content;
 

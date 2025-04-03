@@ -1,5 +1,7 @@
 package at.modoo.model;
 
+import at.modoo.command.CreateArticleCommand;
+import at.modoo.command.UpdateArticleCommand;
 import at.modoo.core.hierarchy.Hierarchical;
 import at.modoo.model.vo.ArticleType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -9,6 +11,8 @@ import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -42,7 +46,6 @@ public class Article extends AbstractHierarchical<Article> implements Hierarchic
     @Comment("제목")
     private String title;
 
-    @Lob
     @Comment("본문")
     @Column(columnDefinition = "TEXT")
     private String content;
@@ -108,4 +111,20 @@ public class Article extends AbstractHierarchical<Article> implements Hierarchic
         child.setParent(this);
     }
 
+    public static Article create(CreateArticleCommand command) {
+        Article article = new Article();
+        article.title = command.getTitle();
+        article.content = Jsoup.clean(command.getContent(), Safelist.relaxed());
+        return article;
+    }
+
+    public void addAttachment(Attachment attachment) {
+        attachments.add(attachment);
+        attachment.getArticles().add(this);
+    }
+
+    public void update(UpdateArticleCommand command) {
+        this.title = command.getTitle();
+        this.content = Jsoup.clean(command.getContent(), Safelist.relaxed());
+    }
 }

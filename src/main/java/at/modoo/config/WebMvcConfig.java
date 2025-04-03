@@ -1,8 +1,8 @@
 package at.modoo.config;
 
 import at.modoo.interceptor.NavigationInterceptor;
-import at.modoo.repository.CategoryRepository;
 import at.modoo.repository.SiteRepository;
+import at.modoo.service.CategoryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -15,7 +15,6 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
@@ -36,7 +35,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     private final SiteRepository siteRepository;
 
-    private final CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
@@ -60,7 +59,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Bean
     public NavigationInterceptor navigationInterceptor() {
-        return new NavigationInterceptor(domainName, siteRepository, categoryRepository);
+        return new NavigationInterceptor(domainName, siteRepository, categoryService);
     }
 
     @Override

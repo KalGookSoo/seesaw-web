@@ -1,9 +1,8 @@
 package at.modoo.repository;
 
-import at.modoo.core.page.PageVO;
 import org.springframework.data.domain.Page;
-import org.springframework.lang.NonNull;
+import org.springframework.data.domain.Pageable;
 
-public interface SearchRepository<T, Q extends PageVO> {
-    Page<T> search(@NonNull Q q);
+public interface SearchRepository<T, Q> {
+    Page<T> search(Pageable pageable, Q q);
 }

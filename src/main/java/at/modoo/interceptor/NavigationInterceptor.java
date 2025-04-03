@@ -3,8 +3,8 @@ package at.modoo.interceptor;
 import at.modoo.core.hierarchy.HierarchicalFactory;
 import at.modoo.model.Category;
 import at.modoo.model.Site;
-import at.modoo.repository.CategoryRepository;
 import at.modoo.repository.SiteRepository;
+import at.modoo.service.CategoryService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class NavigationInterceptor implements HandlerInterceptor {
 
     private final SiteRepository siteRepository;
 
-    private final CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
 
     @Override
     public boolean preHandle(
@@ -35,11 +35,11 @@ public class NavigationInterceptor implements HandlerInterceptor {
             return false;
         }
         request.setAttribute(ContextEnvironment.SITE_CONTEXT, site.get());
-        List<Category> categories = categoryRepository.findAll()
+        List<Category> categories = categoryService.findAll()
                 .stream()
                 .filter(Category::isPublic)
                 .toList();
-        request.setAttribute("NESTED_CATEGORIES", HierarchicalFactory.build(categories));
+        request.setAttribute(ContextEnvironment.NESTED_CATEGORIES, HierarchicalFactory.build(categories));
         return true;
     }
 

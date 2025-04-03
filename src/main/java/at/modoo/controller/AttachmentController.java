@@ -1,0 +1,93 @@
+package at.modoo.controller;
+
+import at.modoo.core.file.FileIOService;
+import at.modoo.model.Article;
+import at.modoo.model.Attachment;
+import at.modoo.service.ArticleService;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.util.StreamUtils;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+@RequiredArgsConstructor
+@Controller
+@RequestMapping("/attachments")
+public class AttachmentController {
+
+    private final ArticleService articleService;
+
+    @GetMapping("/{id}/download")
+    public void getAttachments(
+            @PathVariable("id") String id,
+            @RequestParam String articleId,
+            @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
+            HttpServletResponse response
+    ) throws IOException {
+        Article article = articleService.find(articleId);
+        Attachment attachment = article.getAttachments()
+                .stream()
+                .filter(e -> id.equals(e.getId()))
+                .findFirst()
+                .orElseThrow(NoSuchElementException::new);
+        String fileName = URLEncoder.encode(attachment.getOriginalName(), StandardCharsets.UTF_8);
+        ByteArrayInputStream inputStream = FileIOService.read(attachment.getAbsolutePath());
+
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, getContentDisposition(userAgent, fileName));
+        OutputStream outputStream = response.getOutputStream();
+        FileCopyUtils.copy(inputStream, outputStream);
+    }
+
+    @GetMapping("/download-zip")
+    public void getAttachments(
+            @RequestParam String articleId,
+            @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
+            HttpServletResponse response
+    ) throws IOException {
+        Article article = articleService.find(articleId);
+        Set<Attachment> attachments = article.getAttachments();
+        if (attachments.isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        String fileName = URLEncoder.encode(article.getTitle(), StandardCharsets.UTF_8);
+
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("application/zip");
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, getContentDisposition(userAgent, fileName) + ".zip");
+
+        try (ZipOutputStream outputStream = new ZipOutputStream(response.getOutputStream())) {
+            for (Attachment attachment : attachments) {
+                ZipEntry entry = new ZipEntry(attachment.getOriginalName());
+                outputStream.putNextEntry(entry);
+                ByteArrayInputStream inputStream = FileIOService.read(attachment.getAbsolutePath());
+                StreamUtils.copy(inputStream, outputStream);
+                outputStream.closeEntry();
+            }
+        }
+    }
+
+    private String getContentDisposition(String userAgent, String fileName) {
+        String disposition = "attachment;filename=";
+        if (userAgent.contains("MSIE")) {
+            int i = userAgent.indexOf('M', 2);
+            String IEV = userAgent.substring(i + 5, i + 8);
+            disposition = IEV.equalsIgnoreCase("5.5") ? "filename=" : disposition;
+        }
+        return disposition + fileName;
+    }
+}

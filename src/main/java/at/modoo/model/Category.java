@@ -1,5 +1,7 @@
 package at.modoo.model;
 
+import at.modoo.command.CreateCategoryCommand;
+import at.modoo.command.UpdateCategoryCommand;
 import at.modoo.core.hierarchy.Hierarchical;
 import at.modoo.model.vo.CategoryType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -73,4 +75,11 @@ public class Category extends AbstractHierarchical<Category> implements Hierarch
         child.setParent(this);
     }
 
+    public static Category create(CreateCategoryCommand command) {
+        throw new UnsupportedOperationException();
+    }
+
+    public void update(UpdateCategoryCommand command) {
+        throw new UnsupportedOperationException();
+    }
 }
