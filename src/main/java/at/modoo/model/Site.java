@@ -25,9 +25,9 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Table(name = "tb_site")
+@Comment("사이트")
 @DynamicInsert
 @DynamicUpdate
-@Comment("사이트")
 public class Site extends AbstractHierarchical<Site> implements Hierarchical<Site, String> {
 
     @Comment("이름")

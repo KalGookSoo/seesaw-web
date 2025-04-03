@@ -13,9 +13,6 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import static lombok.AccessLevel.PROTECTED;
 
-/**
- * 알림
- */
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @EqualsAndHashCode(callSuper = true)

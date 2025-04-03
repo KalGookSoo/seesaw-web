@@ -21,7 +21,7 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Table(name = "tb_reply")
-@Comment("답글")
+@Comment("댓글")
 @DynamicInsert
 public class Reply extends AbstractHierarchical<Reply> implements Hierarchical<Reply, String> {
 

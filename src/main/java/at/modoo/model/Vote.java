@@ -12,9 +12,6 @@ import java.util.Set;
 
 import static lombok.AccessLevel.PROTECTED;
 
-/**
- * 투표
- */
 @Getter
 @Setter(AccessLevel.PROTECTED)
 @NoArgsConstructor(access = PROTECTED)
@@ -23,6 +20,7 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Table(name = "tb_vote")
+@Comment("투표")
 @DynamicInsert
 @DynamicUpdate
 public class Vote extends BaseEntity {

@@ -13,9 +13,6 @@ import java.util.Set;
 
 import static lombok.AccessLevel.PROTECTED;
 
-/**
- * 권한
- */
 @Getter
 @Setter(AccessLevel.PROTECTED)
 @NoArgsConstructor(access = PROTECTED)

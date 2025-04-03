@@ -9,9 +9,6 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import static lombok.AccessLevel.PROTECTED;
 
-/**
- * 뷰
- */
 @Getter
 @Setter(AccessLevel.PROTECTED)
 @NoArgsConstructor(access = PROTECTED)
@@ -20,6 +17,7 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Table(name = "tb_view")
+@Comment("뷰")
 @DynamicInsert
 @DynamicUpdate
 public class View extends BaseEntity {

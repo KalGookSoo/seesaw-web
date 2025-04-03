@@ -18,9 +18,6 @@ import java.util.List;
 
 import static lombok.AccessLevel.PROTECTED;
 
-/**
- * 카테고리
- */
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @EqualsAndHashCode(callSuper = true)

@@ -20,9 +20,6 @@ import java.util.Set;
 
 import static lombok.AccessLevel.PROTECTED;
 
-/**
- * 계정
- */
 @Getter
 @Setter(AccessLevel.PROTECTED)
 @NoArgsConstructor(access = PROTECTED)
