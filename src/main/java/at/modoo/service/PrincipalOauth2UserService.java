@@ -28,10 +28,8 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
             throw new OAuth2AuthenticationException("계정 인증 실패");
         }
         OAuth2UserDetail oAuth2UserDetail = new NaverUserDetail(oAuth2User.getAttributes());
-        String provider = oAuth2UserDetail.getProvider();
-        String providerId = oAuth2UserDetail.getProviderId();
-        String username = provider + "_" + providerId;
         String email = oAuth2UserDetail.getEmail();
+        String username = email.split("@")[0];
         return userRepository.findByUsername(username)
                 .map(user -> new UserPrincipal(user, oAuth2User.getAttributes()))
                 .orElseGet(() -> {
