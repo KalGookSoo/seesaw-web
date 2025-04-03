@@ -1,16 +1,14 @@
 package at.modoo.model;
 
+import at.modoo.core.hierarchy.Hierarchical;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import at.modoo.core.hierarchy.Hierarchical;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicInsert;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 import static lombok.AccessLevel.PROTECTED;
@@ -25,30 +23,15 @@ import static lombok.AccessLevel.PROTECTED;
 @Table(name = "tb_reply")
 @Comment("답글")
 @DynamicInsert
-public class Reply extends BaseEntity implements Hierarchical<Reply, String> {
+public class Reply extends AbstractHierarchical<Reply> implements Hierarchical<Reply, String> {
 
     @Comment("공개여부")
     private boolean isPublic;
 
     @Comment("본문")
     @Lob
+    @Column(columnDefinition = "TEXT")
     private String content;
-
-    @Comment("부모 식별자")
-    @Column(length = 36)
-    private String parentId;
-
-    @Transient
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonBackReference
-    private Reply parent;
-
-    @Transient
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonManagedReference
-    private List<Reply> children = new ArrayList<>();
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
@@ -83,8 +66,8 @@ public class Reply extends BaseEntity implements Hierarchical<Reply, String> {
     @Override
     public void addChild(Reply child) {
         children.add(child);
-        child.parentId = getId();
-        child.parent = this;
+        child.setParentId(getId());
+        child.setParent(this);
     }
 
 }
