@@ -11,6 +11,6 @@ import java.util.Optional;
  * 계정 저장소
  */
 public interface UserRepository extends JpaRepository<User, String> {
-    @EntityGraph(attributePaths = {"authorities"})
+    @EntityGraph(attributePaths = {"roles"})
     Optional<User> findByUsername(@NonNull String username);
 }

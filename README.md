@@ -22,7 +22,7 @@ erDiagram
         BIGINT size "크기"
     }
 
-    tb_authority {
+    tb_role {
         VARCHAR(36) id PK "식별자"
         VARCHAR(255) created_by "생성자"
         TIMESTAMP(6) created_date "생성일시"
@@ -65,9 +65,9 @@ erDiagram
         VARCHAR(255) uri "URI"
     }
 
-    tb_menu_authority {
+    tb_menu_role {
         VARCHAR(36) menu_id FK "메뉴 식별자"
-        VARCHAR(36) authority_id FK "권한 식별자"
+        VARCHAR(36) role_id FK "역할 식별자"
     }
 
     tb_remember_me_token {
@@ -196,9 +196,9 @@ erDiagram
         VARCHAR(255) username "유저 이름"
     }
 
-    tb_user_authority {
+    tb_user_role {
         VARCHAR(36) user_id FK "유저 식별자"
-        VARCHAR(36) authority_id FK "권한 식별자"
+        VARCHAR(36) role_id FK "역할 식별자"
     }
 
     tb_view {
@@ -246,8 +246,8 @@ erDiagram
     tb_category ||--o| tb_site : "site_id"
     tb_code ||--o| tb_code : "parent_id"
     tb_menu ||--o| tb_menu : "parent_id"
-    tb_menu_authority ||--o| tb_menu : "menu_id"
-    tb_menu_authority ||--o| tb_authority : "authority_id"
+    tb_menu_role ||--o| tb_menu : "menu_id"
+    tb_menu_role ||--o| tb_role : "role_id"
     tb_notification ||--o| tb_category : "category_id"
     tb_reply ||--o| tb_reply : "parent_id"
     tb_reply ||--o| tb_article : "article_id"
@@ -257,8 +257,8 @@ erDiagram
     tb_reply_vote ||--o| tb_vote : "vote_id"
     tb_site ||--o| tb_site : "parent_id"
     tb_site ||--o| tb_attachment : "profile_image_id"
-    tb_user_authority ||--o| tb_user : "user_id"
-    tb_user_authority ||--o| tb_authority : "authority_id"
+    tb_user_role ||--o| tb_user : "user_id"
+    tb_user_role ||--o| tb_role : "role_id"
     tb_view ||--o| tb_article : "article_id"
 
 

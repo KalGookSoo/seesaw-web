@@ -61,7 +61,7 @@ COMMENT ON COLUMN tb_attachment.size IS '크기';
 ALTER TABLE tb_attachment
     OWNER TO modoo_admin;
 
-CREATE TABLE tb_authority
+CREATE TABLE tb_role
 (
     id VARCHAR(36) NOT NULL
         PRIMARY KEY,
@@ -74,33 +74,33 @@ CREATE TABLE tb_authority
     version INTEGER NOT NULL,
     alias VARCHAR(255),
     name VARCHAR(255)
-        CONSTRAINT tb_authority_name_check
+        CONSTRAINT tb_role_name_check
             CHECK ((name)::TEXT = ANY ((ARRAY ['ROLE_ADMIN'::CHARACTER VARYING, 'ROLE_MANAGER'::CHARACTER VARYING, 'ROLE_USER'::CHARACTER VARYING])::TEXT[]))
 );
 
-COMMENT ON TABLE tb_authority IS '권한';
+COMMENT ON TABLE tb_role IS '역할';
 
-COMMENT ON COLUMN tb_authority.id IS '식별자';
+COMMENT ON COLUMN tb_role.id IS '식별자';
 
-COMMENT ON COLUMN tb_authority.created_by IS '생성자';
+COMMENT ON COLUMN tb_role.created_by IS '생성자';
 
-COMMENT ON COLUMN tb_authority.created_date IS '생성일시';
+COMMENT ON COLUMN tb_role.created_date IS '생성일시';
 
-COMMENT ON COLUMN tb_authority.created_ip IS '생성 IP';
+COMMENT ON COLUMN tb_role.created_ip IS '생성 IP';
 
-COMMENT ON COLUMN tb_authority.last_modified_by IS '수정자';
+COMMENT ON COLUMN tb_role.last_modified_by IS '수정자';
 
-COMMENT ON COLUMN tb_authority.last_modified_date IS '수정일시';
+COMMENT ON COLUMN tb_role.last_modified_date IS '수정일시';
 
-COMMENT ON COLUMN tb_authority.last_modified_ip IS '수정 IP';
+COMMENT ON COLUMN tb_role.last_modified_ip IS '수정 IP';
 
-COMMENT ON COLUMN tb_authority.version IS '버전';
+COMMENT ON COLUMN tb_role.version IS '버전';
 
-COMMENT ON COLUMN tb_authority.alias IS '별칭';
+COMMENT ON COLUMN tb_role.alias IS '별칭';
 
-COMMENT ON COLUMN tb_authority.name IS '이름';
+COMMENT ON COLUMN tb_role.name IS '이름';
 
-ALTER TABLE tb_authority
+ALTER TABLE tb_role
     OWNER TO modoo_admin;
 
 CREATE TABLE tb_code
@@ -199,18 +199,18 @@ COMMENT ON COLUMN tb_menu.uri IS 'URI';
 ALTER TABLE tb_menu
     OWNER TO modoo_admin;
 
-CREATE TABLE tb_menu_authority
+CREATE TABLE tb_menu_role
 (
     menu_id VARCHAR(36) NOT NULL
         CONSTRAINT fk4nbotupucr3ymefuw3ls9ft5v
             REFERENCES tb_menu,
-    authority_id VARCHAR(36) NOT NULL
+    role_id VARCHAR(36) NOT NULL
         CONSTRAINT fk9ksiagbksl3tyjq12sxa5c5tm
-            REFERENCES tb_authority,
-    PRIMARY KEY (menu_id, authority_id)
+            REFERENCES tb_role,
+    PRIMARY KEY (menu_id, role_id)
 );
 
-ALTER TABLE tb_menu_authority
+ALTER TABLE tb_menu_role
     OWNER TO modoo_admin;
 
 CREATE TABLE tb_remember_me_token
@@ -614,18 +614,18 @@ COMMENT ON COLUMN tb_user.username IS '계정명';
 ALTER TABLE tb_user
     OWNER TO modoo_admin;
 
-CREATE TABLE tb_user_authority
+CREATE TABLE tb_user_role
 (
     user_id VARCHAR(36) NOT NULL
         CONSTRAINT fkc01a0eof42wgqi1osr6i13g20
             REFERENCES tb_user,
-    authority_id VARCHAR(36) NOT NULL
+    role_id VARCHAR(36) NOT NULL
         CONSTRAINT fkpti0ht0f3s33ddpeoqqyey0am
-            REFERENCES tb_authority,
-    PRIMARY KEY (user_id, authority_id)
+            REFERENCES tb_role,
+    PRIMARY KEY (user_id, role_id)
 );
 
-ALTER TABLE tb_user_authority
+ALTER TABLE tb_user_role
     OWNER TO modoo_admin;
 
 CREATE TABLE tb_view

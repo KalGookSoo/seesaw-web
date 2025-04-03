@@ -1,12 +1,11 @@
 package at.modoo.service;
 
-import at.modoo.model.Authority;
 import at.modoo.model.vo.Email;
 import at.modoo.model.User;
 import at.modoo.model.UserPrincipal;
-import at.modoo.model.vo.Role;
 import at.modoo.oauth2.provider.NaverUserDetail;
 import at.modoo.oauth2.provider.OAuth2UserDetail;
+import at.modoo.repository.RoleRepository;
 import at.modoo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -14,6 +13,7 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -21,6 +21,9 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
 
+    private final RoleRepository roleRepository;
+
+    @Transactional
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
@@ -34,8 +37,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                 .map(user -> new UserPrincipal(user, oAuth2User.getAttributes()))
                 .orElseGet(() -> {
                     User user = User.create(username, new Email(email.split("@")[0], email.split("@")[1]));
-                    Authority authority = Authority.create(Role.ROLE_USER, user);
-                    user.addAuthority(authority);
+                    roleRepository.findByName("ROLE_USER").ifPresent(user::addRole);
                     return new UserPrincipal(userRepository.save(user), oAuth2User.getAttributes());
                 });
 

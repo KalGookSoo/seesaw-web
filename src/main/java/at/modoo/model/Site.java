@@ -2,7 +2,6 @@ package at.modoo.model;
 
 import at.modoo.core.hierarchy.Hierarchical;
 import at.modoo.model.vo.Address;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;

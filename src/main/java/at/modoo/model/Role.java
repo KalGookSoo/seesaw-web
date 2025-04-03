@@ -1,8 +1,9 @@
 package at.modoo.model;
 
-import at.modoo.model.vo.Role;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicInsert;
@@ -20,15 +21,14 @@ import static lombok.AccessLevel.PROTECTED;
 @ToString(callSuper = true)
 
 @Entity
-@Table(name = "tb_authority")
-@Comment("권한")
+@Table(name = "tb_role")
+@Comment("역할")
 @DynamicInsert
 @DynamicUpdate
-public class Authority extends BaseEntity {
+public class Role extends BaseEntity {
 
-    @Enumerated(EnumType.STRING)
     @Comment("이름")
-    private Role name;
+    private String name;
 
     @Comment("별칭")
     private String alias;
@@ -36,22 +36,13 @@ public class Authority extends BaseEntity {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonBackReference
-    @ManyToMany(mappedBy = "authorities")
+    @ManyToMany(mappedBy = "roles")
     private Set<User> users = new LinkedHashSet<>();
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonBackReference
-    @ManyToMany(mappedBy = "authorities")
+    @ManyToMany(mappedBy = "roles")
     private Set<Menu> menus = new LinkedHashSet<>();
-
-    private Authority(Role role, User user) {
-        this.name = role;
-        this.users.add(user);
-    }
-
-    public static Authority create(Role role, User user) {
-        return new Authority(role, user);
-    }
 
 }

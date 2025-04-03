@@ -60,11 +60,11 @@ public class User extends BaseEntity {
     @JsonManagedReference
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
-            name = "tb_user_authority",
+            name = "tb_user_role",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "authority_id")
+            inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<Authority> authorities = new LinkedHashSet<>();
+    private Set<Role> roles = new LinkedHashSet<>();
 
     @CreatedDate
     @Comment("생성 일시")
@@ -145,9 +145,9 @@ public class User extends BaseEntity {
         return credentialsExpiredDate == null || credentialsExpiredDate.isAfter(LocalDateTime.now());
     }
 
-    public void addAuthority(Authority authority) {
-        authorities.add(authority);
-        authority.getUsers().add(this);
+    public void addRole(Role role) {
+        roles.add(role);
+        role.getUsers().add(this);
     }
 
     public Email getEmail() {

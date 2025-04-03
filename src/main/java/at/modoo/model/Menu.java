@@ -42,11 +42,11 @@ public class Menu extends AbstractHierarchical<Menu> implements Hierarchical<Men
     @JsonManagedReference
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
-            name = "tb_menu_authority",
+            name = "tb_menu_role",
             joinColumns = @JoinColumn(name = "menu_id"),
-            inverseJoinColumns = @JoinColumn(name = "authority_id")
+            inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<Authority> authorities = new LinkedHashSet<>();
+    private Set<Role> roles = new LinkedHashSet<>();
 
     @Override
     public void addChild(Menu child) {
