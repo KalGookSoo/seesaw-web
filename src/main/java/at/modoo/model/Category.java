@@ -53,7 +53,7 @@ public class Category extends AbstractHierarchical<Category> implements Hierarch
     @ToString.Exclude
     @JsonBackReference
     @Comment("사이트 식별자")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "site_id", referencedColumnName = "id")
     private Site site;
 
