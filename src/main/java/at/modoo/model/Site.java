@@ -28,7 +28,7 @@ import static lombok.AccessLevel.PROTECTED;
 @DynamicInsert
 @DynamicUpdate
 @Comment("사이트")
-public class Site extends BaseEntity implements Hierarchical<Site, String> {
+public class Site extends AbstractHierarchical<Site> implements Hierarchical<Site, String> {
 
     @Comment("이름")
     private String name;
@@ -76,27 +76,11 @@ public class Site extends BaseEntity implements Hierarchical<Site, String> {
     @Comment("프로필이미지 식별자")
     private Attachment profileImage;
 
-    @Comment("부모 식별자")
-    @Column(length = 36)
-    private String parentId;
-
-    @Transient
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonBackReference
-    private Site parent;
-
-    @Transient
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonManagedReference
-    private List<Site> children = new ArrayList<>();
-
     @Override
     public void addChild(Site child) {
         children.add(child);
-        child.parentId = getId();
-        child.parent = this;
+        child.setParentId(getId());
+        child.setParent(this);
     }
 
     public Address getAddress() {

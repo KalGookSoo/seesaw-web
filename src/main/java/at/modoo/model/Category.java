@@ -31,7 +31,7 @@ import static lombok.AccessLevel.PROTECTED;
 @DynamicInsert
 @DynamicUpdate
 @Comment("카테고리")
-public class Category extends BaseEntity implements Hierarchical<Category, String> {
+public class Category extends AbstractHierarchical<Category> implements Hierarchical<Category, String> {
 
     @Comment("이름")
     private String name;
@@ -69,27 +69,11 @@ public class Category extends BaseEntity implements Hierarchical<Category, Strin
     @JsonManagedReference
     private List<Notification> notifications = new ArrayList<>();
 
-    @Comment("부모 식별자")
-    @Column(length = 36)
-    private String parentId;
-
-    @Transient
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonBackReference
-    private Category parent;
-
-    @Transient
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonManagedReference
-    private List<Category> children = new ArrayList<>();
-
     @Override
     public void addChild(Category child) {
         children.add(child);
-        child.parentId = getId();
-        child.parent = this;
+        child.setParentId(getId());
+        child.setParent(this);
     }
 
 }
