@@ -15,4 +15,5 @@ public interface ArticleService {
     Article create(CreateArticleCommand command) throws IOException;
     Article update(String id, UpdateArticleCommand command) throws IOException;
     void delete(String id);
+    boolean isOwner(String id, String username);
 }

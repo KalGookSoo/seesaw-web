@@ -15,25 +15,4 @@ public class DemoController {
         return "demo/" + viewName;
     }
 
-/*
-    @GetMapping("/one")
-    public String demo1() {
-        return "demo/1";
-    }
-*/
-
-/*
-    @GetMapping("/two")
-    public String demo2() {
-        return "demo/2";
-    }
-*/
-
-/*
-    @GetMapping("/three")
-    public String demo3() {
-        return "demo/3";
-    }
-*/
-
 }

@@ -5,9 +5,11 @@ import at.modoo.model.Category;
 import at.modoo.search.ArticleSearch;
 import at.modoo.service.ArticleService;
 import at.modoo.service.CategoryService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,20 +37,35 @@ public class ArticleController {
 
     @GetMapping(params = "categoryType=BOARD")
     public String getArticles(
-            @PageableDefault Pageable pageable,
-            @ModelAttribute ArticleSearch search,
+            @PageableDefault(size = 8, sort = "article.createdDate", direction = Sort.Direction.DESC) Pageable pageable,
+            @ModelAttribute("search") ArticleSearch search,
+            @RequestParam(required = false, defaultValue = "LIST") String viewType,
             Model model
     ) {
-        // Query
         Category category = categoryService.find(search.getCategoryId());
         Page<Article> page = articleService.findAll(pageable, search);
 
-        // Model
-        model.addAttribute("category", category);
+        model.addAttribute("currentCategory", category);
         model.addAttribute("page", page);
 
-        // View
-        return "articles/board";
+        return "articles/" + ViewTypeResolver.valueOf(viewType).getViewName();
+    }
+
+    @GetMapping("/{id}")
+    public String getArticle(
+            @PathVariable("id") String id,
+            @PageableDefault(size = 1, page = 0) Pageable pageable,
+            Model model
+    ) {
+        return null;
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    enum ViewTypeResolver {
+        LIST("board"),
+        CARD("card");
+        private final String viewName;
     }
 
 }

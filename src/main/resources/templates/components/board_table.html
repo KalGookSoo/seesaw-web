@@ -15,33 +15,20 @@
         <thead>
         <tr>
             <th class="py-3 text-center" scope="col"><input type="checkbox"></th>
-            <th class="py-3 text-center" scope="col">번호</th>
-            <th class="py-3 text-center" scope="col">글제목</th>
-            <th class="py-3 text-center" scope="col">글쓴이</th>
-            <th class="py-3 text-center" scope="col">작성일</th>
+            <th class="py-3 text-center" scope="col" th:text="#{label.no}"></th>
+            <th class="py-3 text-center" scope="col" th:text="#{entity.article.title}"></th>
+            <th class="py-3 text-center" scope="col" th:text="#{entity.article.createdBy}"></th>
+            <th class="py-3 text-center" scope="col" th:text="#{entity.article.createdDate}"></th>
         </tr>
         </thead>
         <tbody>
-        <tr role="button">
+        <!--/*@thymesVar id="page" type="org.springframework.data.domain.Page<at.modoo.model.Article>"*/-->
+        <tr role="button" th:each="article : ${page.content}" th:data-id="${article.id}">
             <td class="py-3 text-center"><input type="checkbox"></td>
-            <td class="py-3 text-center">64</td>
-            <td class="py-3 text-start">&lt;확신&gt;</td>
-            <td class="py-3 text-center">dgh0****</td>
-            <td class="py-3 text-center">2024.12.27</td>
-        </tr>
-        <tr role="button">
-            <td class="py-3 text-center"><input type="checkbox"></td>
-            <td class="py-3 text-center">63</td>
-            <td class="py-3 text-start">마지막 마음이 들리는 공중전화</td>
-            <td class="py-3 text-center">sias****</td>
-            <td class="py-3 text-center">2024.12.26</td>
-        </tr>
-        <tr role="button">
-            <td class="py-3 text-center"><input type="checkbox"></td>
-            <td class="py-3 text-center">62</td>
-            <td class="py-3 text-start">모순..</td>
-            <td class="py-3 text-center">sias****</td>
-            <td class="py-3 text-center">2024.12.17</td>
+            <td class="py-3 text-center" th:text="${page.totalElements - page.pageable.offset - articleStat.index}"></td>
+            <td class="py-3 text-start" th:text="${article.title}"></td>
+            <td class="py-3 text-center" th:text="${article.maskedAuthor}"></td>
+            <td class="py-3 text-center" th:text="${#temporals.format(article.createdDate, 'yyyy.MM.dd')}"></td>
         </tr>
         </tbody>
     </table>

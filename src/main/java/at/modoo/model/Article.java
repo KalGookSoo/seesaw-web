@@ -127,4 +127,10 @@ public class Article extends AbstractHierarchical<Article> implements Hierarchic
         this.title = command.getTitle();
         this.content = Jsoup.clean(command.getContent(), Safelist.relaxed());
     }
+
+    public String getMaskedAuthor() {
+        String createdBy = getCreatedBy();
+        int visibleChars = Math.min(createdBy.length(), 4);
+        return createdBy.substring(0, visibleChars) + "****";
+    }
 }

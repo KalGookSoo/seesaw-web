@@ -81,6 +81,12 @@ public class DefaultArticleService implements ArticleService {
         articleRepository.delete(article);
     }
 
+    @Override
+    public boolean isOwner(String id, String username) {
+        Article article = find(id);
+        return article.getCreatedBy().equals(username);
+    }
+
     private static void writeFile(String pathname, byte[] bytes) {
         try {
             FileIOService.write(pathname, bytes);

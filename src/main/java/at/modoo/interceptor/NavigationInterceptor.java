@@ -12,7 +12,10 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class NavigationInterceptor implements HandlerInterceptor {
@@ -39,7 +42,11 @@ public class NavigationInterceptor implements HandlerInterceptor {
                 .stream()
                 .filter(Category::isPublic)
                 .toList();
-        request.setAttribute(ContextEnvironment.NESTED_CATEGORIES, HierarchicalFactory.build(categories));
+
+        List<Category> nestedCategories = HierarchicalFactory.build(categories);
+        Map<String, Category> allCategories = categories.stream().collect(Collectors.toMap(Category::getId, Function.identity()));
+        request.setAttribute(ContextEnvironment.NESTED_CATEGORIES, nestedCategories);
+        request.setAttribute(ContextEnvironment.ALL_CATEGORIES, allCategories);
         return true;
     }
 

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}"
+      th:lang="${#locale.language}"
+>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>홈 | 대전포스트잇 ♣대전독서모임</title>
+  <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
+  <script th:inline="javascript"></script>
+</head>
+
+<body layout:fragment="content">
+<section th:replace="~{components/sub_category_banner :: subCategoryBanner(category=${currentCategory})}"></section>
+<section th:replace="~{components/board_title :: title(title=${currentCategory.name})}"></section>
+<section th:replace="~{components/board_table :: table(page=${page})}"></section>
+<section th:replace="~{components/pagination :: pagination(page=${page})}"></section>
+<section th:replace="~{components/board_table_search :: search(page=${page})}"></section>
+</body>
+</html>

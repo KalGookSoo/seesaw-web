@@ -6,6 +6,7 @@ import at.modoo.message.CmsMessageSource;
 import at.modoo.service.ArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -26,6 +27,7 @@ public class ArticleApiController {
         return ResponseEntity.ok(message);
     }
 
+    @PreAuthorize("@defaultArticleService.isOwner(#id, authentication.name)")
     @PostMapping("/{id}")
     public ResponseEntity<String> update(@PathVariable("id") String id, UpdateArticleCommand command) throws IOException {
         articleService.update(id, command);
@@ -33,6 +35,7 @@ public class ArticleApiController {
         return ResponseEntity.ok(message);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or @defaultArticleService.isOwner(#id, authentication.name)")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable String id) {
         articleService.delete(id);

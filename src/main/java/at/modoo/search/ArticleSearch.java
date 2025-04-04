@@ -7,7 +7,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.Optional;
 
 @Data
-public class ArticleSearch {
+public class ArticleSearch implements UriComponentsProvider {
 
     private String categoryId;
 
@@ -17,12 +17,12 @@ public class ArticleSearch {
 
     private String content;
 
+    @Override
     public UriComponentsBuilder getUriComponentsBuilder() {
-        return UriComponentsBuilder
-                .newInstance()
+        return UriComponentsProvider.super.getUriComponentsBuilder()
                 .queryParamIfPresent("categoryId", Optional.ofNullable(categoryId))
+                .queryParamIfPresent("categoryType", Optional.ofNullable(categoryType))
                 .queryParamIfPresent("title", Optional.ofNullable(title))
                 .queryParamIfPresent("content", Optional.ofNullable(content));
     }
-
 }
