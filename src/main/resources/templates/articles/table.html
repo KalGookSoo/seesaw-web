@@ -72,7 +72,7 @@
         <tbody th:if="${page.isEmpty()}">
         <tr>
             <td colspan="5" class="text-center">
-                <div class="text-center d-flex justify-content-center align-items-center" th:text="#{label.result.empty}"></div>
+                <div class="text-center d-flex justify-content-center align-items-center my-2" th:text="#{label.result.empty}"></div>
             </td>
         </tr>
         </tbody>
@@ -80,7 +80,7 @@
 </section>
 <section class="container-sm board-pagination-section d-flex justify-content-between align-items-center my-4">
     <div>
-        <button class="btn btn-outline-secondary" type="button">선택삭제</button>
+        <button class="btn btn-outline-secondary" type="button" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">선택삭제</button>
     </div>
     <div>
         <nav class="pagination">

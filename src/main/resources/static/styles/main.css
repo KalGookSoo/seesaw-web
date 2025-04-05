@@ -11,6 +11,9 @@ html {
 html body {
   color: inherit;
 }
+html body .main-color {
+  color: var(--main-color);
+}
 html body a.none {
   all: unset;
   cursor: pointer;

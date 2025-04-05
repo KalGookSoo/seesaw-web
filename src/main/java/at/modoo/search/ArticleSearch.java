@@ -2,6 +2,8 @@ package at.modoo.search;
 
 import at.modoo.model.vo.CategoryType;
 import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Optional;
@@ -12,6 +14,8 @@ public class ArticleSearch implements UriComponentsProvider {
     private String categoryId;
 
     private CategoryType categoryType;
+
+    private ViewType viewType = ViewType.TABLE;
 
     private String keyField;
 
@@ -24,5 +28,13 @@ public class ArticleSearch implements UriComponentsProvider {
                 .queryParamIfPresent("categoryType", Optional.ofNullable(categoryType))
                 .queryParamIfPresent("keyField", Optional.ofNullable(keyField))
                 .queryParamIfPresent("keyWord", Optional.ofNullable(keyWord));
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    public enum ViewType {
+        TABLE("목록"),
+        CARD("카드");
+        private final String description;
     }
 }

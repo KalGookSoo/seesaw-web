@@ -4,9 +4,9 @@
 <section th:fragment="title" class="container-sm title-section">
     <!--/*@thymesVar id="title" type="java.lang.String"*/-->
     <div class="d-flex justify-content-between">
-        <h4 class="title d-inline-block pb-2">[[${title}]]</h4>
+        <h4 class="title d-inline-block pb-2" th:text="${title}"></h4>
         <div class="d-flex">
-            <div><button type="button" class="btn">목록보기</button></div>
+            <div><button type="button" class="btn" th:classappend="${search}">목록보기</button></div>
             <div><button type="button" class="btn">카드보기</button></div>
         </div>
     </div>

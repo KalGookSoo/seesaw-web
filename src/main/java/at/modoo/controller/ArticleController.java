@@ -5,7 +5,6 @@ import at.modoo.model.Category;
 import at.modoo.search.ArticleSearch;
 import at.modoo.service.ArticleService;
 import at.modoo.service.CategoryService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +24,9 @@ public class ArticleController {
     private final ArticleService articleService;
 
     @GetMapping(params = "categoryType=STATIC_CONTENT")
-    public String getArticles(Model model) {
+    public String getArticles(
+            Model model
+    ) {
         // Query
 
 
@@ -36,10 +37,9 @@ public class ArticleController {
     }
 
     @GetMapping(params = "categoryType=BOARD")
-    public String getArticles(
+    public String getArticlesInListView(
             @PageableDefault(size = 8, sort = "article.createdDate", direction = Sort.Direction.DESC) Pageable pageable,
             @ModelAttribute("search") ArticleSearch search,
-            @RequestParam(required = false, defaultValue = "LIST") String viewType,
             Model model
     ) {
         Category category = categoryService.find(search.getCategoryId());
@@ -48,7 +48,22 @@ public class ArticleController {
         model.addAttribute("currentCategory", category);
         model.addAttribute("page", page);
 
-        return "articles/" + ViewTypeResolver.valueOf(viewType).getViewName();
+        return "articles/table";
+    }
+
+    @GetMapping(params = {"categoryType=BOARD", "viewType=CARD"})
+    public String getArticlesInCardView(
+            @PageableDefault(size = 9, sort = "article.createdDate", direction = Sort.Direction.DESC) Pageable pageable,
+            @ModelAttribute("search") ArticleSearch search,
+            Model model
+    ) {
+        Category category = categoryService.find(search.getCategoryId());
+        Page<Article> page = articleService.findAll(pageable, search);
+
+        model.addAttribute("currentCategory", category);
+        model.addAttribute("page", page);
+
+        return "articles/card";
     }
 
     @GetMapping("/{id}")
@@ -63,14 +78,6 @@ public class ArticleController {
         model.addAttribute("page", page);
 
         return "articles/view";
-    }
-
-    @Getter
-    @RequiredArgsConstructor
-    enum ViewTypeResolver {
-        LIST("board"),
-        CARD("card");
-        private final String viewName;
     }
 
 }
