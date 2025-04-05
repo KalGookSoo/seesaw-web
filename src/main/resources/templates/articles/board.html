@@ -17,8 +17,8 @@
 <body layout:fragment="content">
 <section th:replace="~{components/sub_category_banner :: subCategoryBanner(category=${currentCategory})}"></section>
 <section th:replace="~{components/board_title :: title(title=${currentCategory.name})}"></section>
-<section th:replace="~{components/board_table :: table(page=${page})}"></section>
-<section th:replace="~{components/pagination :: pagination(page=${page})}"></section>
+<section th:replace="~{components/board_table :: table(currentCategory=${currentCategory}, page=${page})}"></section>
+<section th:replace="~{components/pagination :: pagination(search=${search}, page=${page})}"></section>
 <section th:replace="~{components/board_table_search :: search(page=${page})}"></section>
 </body>
 </html>

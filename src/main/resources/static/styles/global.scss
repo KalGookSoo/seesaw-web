@@ -11,9 +11,9 @@ html {
   body {
     color: inherit;
 
-    a {
-      //all: unset;
-      //cursor: pointer;
+    a.none {
+      all: unset;
+      cursor: pointer;
     }
 
     .table {

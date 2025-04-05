@@ -54,10 +54,10 @@ public class ArticleSearchRepository implements SearchRepository<Article, Articl
         if (StringUtils.hasText(search.getCategoryId())) {
             jpql.append(" and article.category.id = :categoryId");
         }
-        if (StringUtils.hasText(search.getTitle())) {
+        if ("title".equals(search.getKeyField()) && StringUtils.hasText(search.getKeyWord())) {
             jpql.append(" and article.title like :title");
         }
-        if (StringUtils.hasText(search.getContent())) {
+        if ("content".equals(search.getKeyField()) && StringUtils.hasText(search.getKeyWord())) {
             jpql.append(" and article.content like :content");
         }
         return jpql.toString();
@@ -67,11 +67,11 @@ public class ArticleSearchRepository implements SearchRepository<Article, Articl
         if (StringUtils.hasText(search.getCategoryId())) {
             query.setParameter("categoryId", search.getCategoryId());
         }
-        if (StringUtils.hasText(search.getTitle())) {
-            query.setParameter("title", "%" + search.getTitle() + "%");
+        if ("title".equals(search.getKeyField()) && StringUtils.hasText(search.getKeyWord())) {
+            query.setParameter("title", "%" + search.getKeyWord() + "%");
         }
-        if (StringUtils.hasText(search.getContent())) {
-            query.setParameter("content", "%" + search.getContent() + "%");
+        if ("content".equals(search.getKeyField()) && StringUtils.hasText(search.getKeyWord())) {
+            query.setParameter("content", "%" + search.getKeyWord() + "%");
         }
     }
 

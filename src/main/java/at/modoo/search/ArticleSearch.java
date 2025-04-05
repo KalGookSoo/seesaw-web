@@ -13,16 +13,16 @@ public class ArticleSearch implements UriComponentsProvider {
 
     private CategoryType categoryType;
 
-    private String title;
+    private String keyField;
 
-    private String content;
+    private String keyWord;
 
     @Override
     public UriComponentsBuilder getUriComponentsBuilder() {
         return UriComponentsProvider.super.getUriComponentsBuilder()
                 .queryParamIfPresent("categoryId", Optional.ofNullable(categoryId))
                 .queryParamIfPresent("categoryType", Optional.ofNullable(categoryType))
-                .queryParamIfPresent("title", Optional.ofNullable(title))
-                .queryParamIfPresent("content", Optional.ofNullable(content));
+                .queryParamIfPresent("keyField", Optional.ofNullable(keyField))
+                .queryParamIfPresent("keyWord", Optional.ofNullable(keyWord));
     }
 }

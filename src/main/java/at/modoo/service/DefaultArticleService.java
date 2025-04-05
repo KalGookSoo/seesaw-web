@@ -45,6 +45,11 @@ public class DefaultArticleService implements ArticleService {
         return articleSearchRepository.search(pageable, search);
     }
 
+    @Override
+    public Page<Article> findAllByCategoryId(String categoryId, Pageable pageable) {
+        return articleRepository.findAllByCategory_Id(categoryId, pageable);
+    }
+
     @Transactional(readOnly = true)
     @Override
     public Article find(String id) {

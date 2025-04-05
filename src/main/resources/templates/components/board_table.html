@@ -23,10 +23,10 @@
         </thead>
         <tbody>
         <!--/*@thymesVar id="page" type="org.springframework.data.domain.Page<at.modoo.model.Article>"*/-->
-        <tr role="button" th:each="article : ${page.content}" th:data-id="${article.id}">
+        <tr role="button" th:each="article : ${page.content}">
             <td class="py-3 text-center"><input type="checkbox"></td>
             <td class="py-3 text-center" th:text="${page.totalElements - page.pageable.offset - articleStat.index}"></td>
-            <td class="py-3 text-start" th:text="${article.title}"></td>
+            <td class="py-3 text-start"><a class="none" th:text="${article.title}" th:href="@{'/articles/' + ${article.id} + '?categoryId=' + ${currentCategory.id} + '&page=' + ${articleStat.index}}"></a></td>
             <td class="py-3 text-center" th:text="${article.maskedAuthor}"></td>
             <td class="py-3 text-center" th:text="${#temporals.format(article.createdDate, 'yyyy.MM.dd')}"></td>
         </tr>

@@ -2,11 +2,15 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <body>
 <section th:fragment="search" class="container-sm board-table-search-section my-4">
-    <form>
+    <!--/*@thymesVar id="page" type="org.springframework.data.domain.Page<at.modoo.model.Article>"*/-->
+    <!--/*@thymesVar id="search" type="at.modoo.search.ArticleSearch"*/-->
+    <form name="searchForm" th:action="@{/articles}" th:method="get" th:object="${search}">
+        <input type="hidden" th:field="*{categoryId}">
+        <input type="hidden" th:field="*{categoryType}">
         <div class="d-flex justify-content-center align-items-center gap-2">
             <div>
                 <label>
-                    <select class="from-control form-select">
+                    <select class="form-control form-select" th:field="*{keyField}">
                         <option value="title" th:text="#{entity.article.title}"></option>
                         <option value="content" th:text="#{entity.article.content}"></option>
                     </select>
@@ -14,11 +18,11 @@
             </div>
             <div>
                 <label>
-                    <input class="form-control" type="search">
+                    <input class="form-control" type="search" th:field="*{keyWord}">
                 </label>
             </div>
             <div>
-                <button class="btn btn-outline-secondary" type="button">검색</button>
+                <button class="btn btn-outline-secondary" type="submit">검색</button>
             </div>
         </div>
     </form>

@@ -11,6 +11,10 @@ html {
 html body {
   color: inherit;
 }
+html body a.none {
+  all: unset;
+  cursor: pointer;
+}
 html body .table th {
   font-weight: normal;
 }

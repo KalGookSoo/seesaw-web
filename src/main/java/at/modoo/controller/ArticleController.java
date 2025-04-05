@@ -54,10 +54,15 @@ public class ArticleController {
     @GetMapping("/{id}")
     public String getArticle(
             @PathVariable("id") String id,
-            @PageableDefault(size = 1, page = 0) Pageable pageable,
+            @RequestParam String categoryId,
+            @PageableDefault(size = 1, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable,
             Model model
     ) {
-        return null;
+        Page<Article> page = articleService.findAllByCategoryId(categoryId, pageable);
+
+        model.addAttribute("page", page);
+
+        return "articles/view";
     }
 
     @Getter
