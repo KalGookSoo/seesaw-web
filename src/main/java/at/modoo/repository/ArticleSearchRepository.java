@@ -22,7 +22,7 @@ public class ArticleSearchRepository implements SearchRepository<Article, Articl
 
     @Override
     public Page<Article> search(Pageable pageable, ArticleSearch search) {
-        String jpql = "select article from Article article left join article.attachments attachments where 1 = 1";
+        String jpql = "select article from Article article where 1 = 1";
         jpql += generateJpql(search);
 
         if (pageable.getSort().isSorted()) {
@@ -38,7 +38,7 @@ public class ArticleSearchRepository implements SearchRepository<Article, Articl
         List<Article> articles = query.getResultList();
 
         // 카운트 쿼리
-        String countJpql = "select count(distinct article) from Article article left join article.attachments attachments where 1 = 1";
+        String countJpql = "select count(distinct article) from Article article where 1 = 1";
         countJpql += generateJpql(search);
 
         TypedQuery<Long> countQuery = em.createQuery(countJpql, Long.class);
@@ -52,7 +52,7 @@ public class ArticleSearchRepository implements SearchRepository<Article, Articl
     private String generateJpql(@Nonnull ArticleSearch search) {
         StringBuilder jpql = new StringBuilder();
         if (StringUtils.hasText(search.getCategoryId())) {
-            jpql.append(" and article.category.id = :categoryId");
+            jpql.append(" and article.categoryId = :categoryId");
         }
         if ("title".equals(search.getKeyField()) && StringUtils.hasText(search.getKeyWord())) {
             jpql.append(" and article.title like :title");

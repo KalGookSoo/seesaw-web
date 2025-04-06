@@ -73,11 +73,26 @@ public class ArticleController {
             @PageableDefault(size = 1, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable,
             Model model
     ) {
-        Page<Article> page = articleService.findAllByCategoryId(categoryId, pageable);
+        Page<Article> page = articleService.view(categoryId, pageable);
 
         model.addAttribute("page", page);
 
         return "articles/view";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String getArticleEdit(
+            @PathVariable("id") String id,
+            @RequestParam String categoryId,
+            Model model
+    ) {
+        Category category = categoryService.find(categoryId);
+        Article article = articleService.find(id);
+
+        model.addAttribute("category", category);
+        model.addAttribute("article", article);
+
+        return "articles/edit";
     }
 
 }

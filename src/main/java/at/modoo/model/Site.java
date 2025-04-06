@@ -61,18 +61,22 @@ public class Site extends AbstractHierarchical<Site> implements Hierarchical<Sit
     @Comment("연락처")
     private String contactNumber;
 
+    @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonManagedReference
-    @OneToMany(mappedBy = "site", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Category> categories = new ArrayList<>();
 
+    @Comment("프로필이미지 식별자")
+    @Column(length = 36)
+    private String profileImageId;
+
+    @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonManagedReference
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "profile_image_id", referencedColumnName = "id")
-    @Comment("프로필이미지 식별자")
+//    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+//    @JoinColumn(name = "profile_image_id", referencedColumnName = "id")
     private Attachment profileImage;
 
     @Override

@@ -37,15 +37,16 @@ public class Menu extends AbstractHierarchical<Menu> implements Hierarchical<Men
     @Comment("순번")
     private Integer sequence;
 
+    @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonManagedReference
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(
-            name = "tb_menu_role",
-            joinColumns = @JoinColumn(name = "menu_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
+//    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+//    @JoinTable(
+//            name = "tb_menu_role",
+//            joinColumns = @JoinColumn(name = "menu_id"),
+//            inverseJoinColumns = @JoinColumn(name = "role_id")
+//    )
     private Set<Role> roles = new LinkedHashSet<>();
 
     @Override

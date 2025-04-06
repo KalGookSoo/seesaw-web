@@ -2,10 +2,7 @@ package at.modoo.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicInsert;
@@ -31,6 +28,10 @@ import static lombok.AccessLevel.PROTECTED;
 @DynamicUpdate
 public class Attachment extends BaseEntity {
 
+    @Comment("참조 식별자")
+    @Column(length = 36)
+    private String referenceId;
+
     @Comment("원본이름")
     private String originalName;
 
@@ -45,30 +46,6 @@ public class Attachment extends BaseEntity {
 
     @Comment("크기")
     private long size;
-
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonManagedReference
-    @ManyToMany(mappedBy = "attachments")
-    private Set<Article> articles = new LinkedHashSet<>();
-
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonBackReference
-    @OneToOne(mappedBy = "profileImage")
-    private Site siteWithProfileImage;
-
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonBackReference
-    @OneToOne(mappedBy = "thumbnail")
-    private Article articleWithThumbnail;
-
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonManagedReference
-    @ManyToMany(mappedBy = "attachments")
-    private Set<Reply> replies = new LinkedHashSet<>();
 
     public static Attachment create(String pathName, MultipartFile multipartFile) {
         Attachment attachment = new Attachment();

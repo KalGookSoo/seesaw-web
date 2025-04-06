@@ -1,9 +1,7 @@
 package at.modoo.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicInsert;
@@ -27,22 +25,35 @@ import static lombok.AccessLevel.PROTECTED;
 @DynamicUpdate
 public class Role extends BaseEntity {
 
+    @Comment("참조 식별자")
+    @Column(length = 36)
+    private String referenceId;
+
     @Comment("이름")
     private String name;
 
     @Comment("별칭")
     private String alias;
 
+    @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonBackReference
-    @ManyToMany(mappedBy = "roles")
+//    @ManyToMany(mappedBy = "roles")
     private Set<User> users = new LinkedHashSet<>();
 
+    @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonBackReference
-    @ManyToMany(mappedBy = "roles")
+//    @ManyToMany(mappedBy = "roles")
     private Set<Menu> menus = new LinkedHashSet<>();
 
+    public static Role create(String referenceId, String name, String alias) {
+        Role role = new Role();
+        role.referenceId = referenceId;
+        role.name = name;
+        role.alias = alias;
+        return role;
+    }
 }

@@ -54,54 +54,66 @@ public class Article extends AbstractHierarchical<Article> implements Hierarchic
     @Comment("타입")
     private ArticleType type;
 
+    @Comment("썸네일 식별자")
+    @Column(length = 36)
+    private String thumbnailId;
+
+    @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonManagedReference
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "thumbnail_id", referencedColumnName = "id")
-    @Comment("썸네일 식별자")
+//    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+//    @JoinColumn(name = "thumbnail_id", referencedColumnName = "id")
     private Attachment thumbnail;
 
+    @Comment("카테고리 식별자")
+    @Column(length = 36)
+    private String categoryId;
+
+    @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonBackReference
-    @Comment("카테고리 식별자")
-    @ManyToOne
-    @JoinColumn(name = "category_id", referencedColumnName = "id")
+//    @ManyToOne
+//    @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
 
+    @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonManagedReference
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(
-            name = "tb_article_attachment",
-            joinColumns = @JoinColumn(name = "article_id"),
-            inverseJoinColumns = @JoinColumn(name = "attachment_id")
-    )
+//    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+//    @JoinTable(
+//            name = "tb_article_attachment",
+//            joinColumns = @JoinColumn(name = "article_id"),
+//            inverseJoinColumns = @JoinColumn(name = "attachment_id")
+//    )
     private Set<Attachment> attachments = new LinkedHashSet<>();
 
+    @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonManagedReference
-    @OneToMany(mappedBy = "article", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+//    @OneToMany(mappedBy = "article", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Reply> replies = new ArrayList<>();
 
+    @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonManagedReference
-    @OneToMany(mappedBy = "article", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+//    @OneToMany(mappedBy = "article", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<View> views = new ArrayList<>();
 
+    @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonManagedReference
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(
-            name = "tb_article_vote",
-            joinColumns = @JoinColumn(name = "article_id"),
-            inverseJoinColumns = @JoinColumn(name = "vote_id")
-    )
+//    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+//    @JoinTable(
+//            name = "tb_article_vote",
+//            joinColumns = @JoinColumn(name = "article_id"),
+//            inverseJoinColumns = @JoinColumn(name = "vote_id")
+//    )
     private Set<Vote> votes = new LinkedHashSet<>();
 
     @Override
@@ -120,7 +132,6 @@ public class Article extends AbstractHierarchical<Article> implements Hierarchic
 
     public void addAttachment(Attachment attachment) {
         attachments.add(attachment);
-        attachment.getArticles().add(this);
     }
 
     public void update(UpdateArticleCommand command) {
@@ -132,5 +143,31 @@ public class Article extends AbstractHierarchical<Article> implements Hierarchic
         String createdBy = getCreatedBy();
         int visibleChars = Math.min(createdBy.length(), 4);
         return createdBy.substring(0, visibleChars) + "****";
+    }
+
+    public void addReplies(List<Reply> replies) {
+        replies.stream().filter(this::isReplyForArticle).forEach(this::addReply);
+    }
+
+    public boolean isReplyForArticle(Reply reply) {
+        return getId().equals(reply.getArticleId());
+    }
+
+    public void addReply(Reply reply) {
+        replies.add(reply);
+        reply.setArticle(this);
+    }
+
+    public void addViews(List<View> views) {
+        views.stream().filter(this::isViewForArticle).forEach(this::addView);
+    }
+
+    public boolean isViewForArticle(View view) {
+        return getId().equals(view.getArticleId());
+    }
+
+    public void addView(View view) {
+        views.add(view);
+        view.setArticle(this);
     }
 }

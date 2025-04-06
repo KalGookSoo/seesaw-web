@@ -22,11 +22,16 @@ import static lombok.AccessLevel.PROTECTED;
 @DynamicUpdate
 public class View extends BaseEntity {
 
+    @Comment("게시글 식별자")
+    @Column(length = 36)
+    private String articleId;
+
+    @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonBackReference
-    @ManyToOne
-    @JoinColumn(name = "article_id", referencedColumnName = "id")
+//    @ManyToOne
+//    @JoinColumn(name = "article_id", referencedColumnName = "id")
     private Article article;
 
 }

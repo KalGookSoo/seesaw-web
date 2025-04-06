@@ -1,8 +1,9 @@
 package at.modoo.service;
 
-import at.modoo.model.vo.Email;
+import at.modoo.model.Role;
 import at.modoo.model.User;
 import at.modoo.model.UserPrincipal;
+import at.modoo.model.vo.Email;
 import at.modoo.oauth2.provider.NaverUserDetail;
 import at.modoo.oauth2.provider.OAuth2UserDetail;
 import at.modoo.repository.RoleRepository;
@@ -14,6 +15,8 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -34,11 +37,18 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         String email = oAuth2UserDetail.getEmail();
         String username = email.split("@")[0];
         return userRepository.findByUsername(username)
-                .map(user -> new UserPrincipal(user, oAuth2User.getAttributes()))
+                .map(user -> {
+                    List<Role> roles = roleRepository.findAllByReferenceId(user.getId());
+                    roles.forEach(user::addRole);
+                    return new UserPrincipal(user, oAuth2User.getAttributes());
+                })
                 .orElseGet(() -> {
                     User user = User.create(username, new Email(email.split("@")[0], email.split("@")[1]));
-                    roleRepository.findByName("ROLE_USER").ifPresent(user::addRole);
-                    return new UserPrincipal(userRepository.save(user), oAuth2User.getAttributes());
+                    userRepository.save(user);
+                    Role role = Role.create(user.getId(), "ROLE_USER", "일반사용자");
+                    roleRepository.save(role);
+                    user.addRole(role);
+                    return new UserPrincipal(user, oAuth2User.getAttributes());
                 });
 
     }

@@ -39,107 +39,184 @@
             </div>
         </div>
     </div>
-    <hr>
 </section>
-<section class="container-sm board-table-section">
-    <table class="table table-hover small">
-        <caption class="d-none" th:text="|#{entity.article} #{label.list}|"></caption>
-        <colgroup>
-            <col style="width: 52px" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
-            <col style="width: 52px">
-            <col>
-            <col style="width: 120px">
-            <col style="width: 130px">
-        </colgroup>
-        <thead>
-        <tr>
-            <th class="py-3 text-center" scope="col" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')"><label><input type="checkbox"></label></th>
-            <th class="py-3 text-center" scope="col" th:text="#{label.no}"></th>
-            <th class="py-3 text-center" scope="col" th:text="#{entity.article.title}"></th>
-            <th class="py-3 text-center" scope="col" th:text="#{entity.article.createdBy}"></th>
-            <th class="py-3 text-center" scope="col" th:text="#{entity.article.createdDate}"></th>
-        </tr>
-        </thead>
-        <tbody th:if="${page.hasContent()}">
-        <tr role="button" th:each="article : ${page.content}">
-            <td class="py-3 text-center" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')"><label><input type="checkbox"></label></td>
-            <td class="py-3 text-center" th:text="${page.totalElements - page.pageable.offset - articleStat.index}"></td>
-            <td class="py-3 text-start"><a class="none" th:text="${article.title}" th:href="@{'/articles/' + ${article.id} + '?categoryId=' + ${currentCategory.id} + '&page=' + ${articleStat.index}}"></a></td>
-            <td class="py-3 text-center" th:text="${article.maskedAuthor}"></td>
-            <td class="py-3 text-center" th:text="${#temporals.format(article.createdDate, 'yyyy.MM.dd')}"></td>
-        </tr>
-        </tbody>
-        <tbody th:if="${page.isEmpty()}">
-        <tr>
-            <td colspan="5" class="text-center">
-                <div class="text-center d-flex justify-content-center align-items-center" th:text="#{label.result.empty}"></div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</section>
-<section class="container-sm board-pagination-section d-flex justify-content-between align-items-center my-4">
-    <div>
-        <button class="btn btn-outline-secondary" type="button">선택삭제</button>
-    </div>
-    <div>
-        <nav class="pagination">
-            <div class="page-item">
-                <a aria-label="Previous"
-                   class="page-link"
-                   th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.previousOrFirstPageable().pageNumber).build().toUriString()}}"
-                >
-                    <span aria-hidden="true">&laquo;</span>
-                    <span class="d-none">Previous</span>
-                </a>
-            </div>
-
-            <div class="page-item" th:each="pageNumber : ${#numbers.sequence(0, page.totalPages - (page.totalPages > 1 ? 1 : 0))}">
-                <a class="page-link"
-                   th:classappend="${pageNumber == page.number} ? 'active' : ''"
-                   th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', pageNumber).build().toUriString()}}"
-                   th:text="${pageNumber + 1}">
-                </a>
-            </div>
-            <div class="page-item">
-                <a aria-label="Next"
-                   class="page-link"
-                   th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.nextOrLastPageable().pageNumber).build().toUriString()}}"
-                >
-                    <span aria-hidden="true">&raquo;</span>
-                    <span class="d-none">Next</span>
-                </a>
-            </div>
-        </nav>
-    </div>
-    <div>
-        <button class="btn btn-outline-secondary" type="button">내가 쓴 글</button>
-        <button class="btn btn-primary" type="button">글쓰기</button>
-    </div>
-</section>
-<section class="container-sm board-table-search-section my-4">
+<section class="container-sm board-table-search-section py-2"><!--border bottom 1px-->
     <form name="searchForm" th:action="@{/articles}" th:method="get" th:object="${search}">
         <input type="hidden" th:field="*{categoryId}">
         <input type="hidden" th:field="*{categoryType}">
-        <div class="d-flex justify-content-center align-items-center gap-2">
-            <div>
-                <label>
-                    <select class="form-control form-select" th:field="*{keyField}">
-                        <option value="title" th:text="#{entity.article.title}"></option>
-                        <option value="content" th:text="#{entity.article.content}"></option>
-                    </select>
-                </label>
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex justify-content-center align-items-center gap-2">
+                <div>
+                    <label>
+                        <select class="form-control form-select" th:field="*{keyField}">
+                            <option value="title" th:text="#{entity.article.title}"></option>
+                            <option value="content" th:text="#{entity.article.content}"></option>
+                        </select>
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        <input class="form-control" type="search" th:field="*{keyWord}">
+                    </label>
+                </div>
+                <div>
+                    <button class="btn btn-outline-secondary" type="submit">검색</button>
+                </div>
             </div>
-            <div>
-                <label>
-                    <input class="form-control" type="search" th:field="*{keyWord}">
-                </label>
-            </div>
-            <div>
-                <button class="btn btn-outline-secondary" type="submit">검색</button>
+            <div class="d-flex justify-content-center align-items-center gap-2">
+                <div>
+                    <button class="btn btn-outline-secondary" type="button" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">선택삭제</button>
+                </div>
+                <div>
+                    <button class="btn btn-outline-secondary" type="button">내가 쓴 글</button>
+                    <button class="btn btn-primary" type="button">글쓰기</button>
+                </div>
             </div>
         </div>
     </form>
 </section>
+<section class="container-sm board-card-section">
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="card h-100">
+            <img src="https://modo-phinf.pstatic.net/20250223_193/1740296470122F0mcM_JPEG/mosaU9LMUi.jpeg?type=f353_353" class="card-img-top img-thumbnail" alt="">
+            <div class="card-body">
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+            <div class="card-footer">
+                <div>
+                    <div>sias****</div>
+                    <div>2025.02.02</div>
+                </div>
+                <div>
+                    <div>댓글</div>
+                </div>
+            </div>
+        </div>
+        <div class="card h-100">
+            <img src="https://modo-phinf.pstatic.net/20250223_193/1740296470122F0mcM_JPEG/mosaU9LMUi.jpeg?type=f353_353" class="card-img-top img-thumbnail" alt="">
+            <div class="card-body">
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+            <div class="card-footer">
+                <div>
+                    <div>sias****</div>
+                    <div>2025.02.02</div>
+                </div>
+                <div>
+                    <div>댓글</div>
+                </div>
+            </div>
+        </div>
+        <div class="card h-100">
+            <img src="https://modo-phinf.pstatic.net/20250223_193/1740296470122F0mcM_JPEG/mosaU9LMUi.jpeg?type=f353_353" class="card-img-top img-thumbnail" alt="">
+            <div class="card-body">
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+            <div class="card-footer">
+                <div>
+                    <div>sias****</div>
+                    <div>2025.02.02</div>
+                </div>
+                <div>
+                    <div>댓글</div>
+                </div>
+            </div>
+        </div>
+        <div class="card h-100">
+            <img src="https://modo-phinf.pstatic.net/20250223_193/1740296470122F0mcM_JPEG/mosaU9LMUi.jpeg?type=f353_353" class="card-img-top img-thumbnail" alt="">
+            <div class="card-body">
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+            <div class="card-footer">
+                <div>
+                    <div>sias****</div>
+                    <div>2025.02.02</div>
+                </div>
+                <div>
+                    <div>댓글</div>
+                </div>
+            </div>
+        </div>
+        <div class="card h-100">
+            <img src="https://modo-phinf.pstatic.net/20250223_193/1740296470122F0mcM_JPEG/mosaU9LMUi.jpeg?type=f353_353" class="card-img-top img-thumbnail" alt="">
+            <div class="card-body">
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+            <div class="card-footer">
+                <div>
+                    <div>sias****</div>
+                    <div>2025.02.02</div>
+                </div>
+                <div>
+                    <div>댓글</div>
+                </div>
+            </div>
+        </div>
+        <div class="card h-100">
+            <img src="https://modo-phinf.pstatic.net/20250223_193/1740296470122F0mcM_JPEG/mosaU9LMUi.jpeg?type=f353_353" class="card-img-top img-thumbnail" alt="">
+            <div class="card-body">
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+            <div class="card-footer">
+                <div>
+                    <div>sias****</div>
+                    <div>2025.02.02</div>
+                </div>
+                <div>
+                    <div>댓글</div>
+                </div>
+            </div>
+        </div>
+        <div class="card h-100">
+            <img src="https://modo-phinf.pstatic.net/20250223_193/1740296470122F0mcM_JPEG/mosaU9LMUi.jpeg?type=f353_353" class="card-img-top img-thumbnail" alt="">
+            <div class="card-body">
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+            <div class="card-footer">
+                <div>
+                    <div>sias****</div>
+                    <div>2025.02.02</div>
+                </div>
+                <div>
+                    <div>댓글</div>
+                </div>
+            </div>
+        </div>
+        <div class="card h-100">
+            <img src="https://modo-phinf.pstatic.net/20250223_193/1740296470122F0mcM_JPEG/mosaU9LMUi.jpeg?type=f353_353" class="card-img-top img-thumbnail" alt="">
+            <div class="card-body">
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+            <div class="card-footer">
+                <div>
+                    <div>sias****</div>
+                    <div>2025.02.02</div>
+                </div>
+                <div>
+                    <div>댓글</div>
+                </div>
+            </div>
+        </div>
+        <div class="card h-100">
+            <img src="https://modo-phinf.pstatic.net/20250223_193/1740296470122F0mcM_JPEG/mosaU9LMUi.jpeg?type=f353_353" class="card-img-top img-thumbnail" alt="">
+            <div class="card-body">
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+            <div class="card-footer">
+                <div>
+                    <div>sias****</div>
+                    <div>2025.02.02</div>
+                </div>
+                <div>
+                    <div>댓글</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</section>
+<section class="container-sm board-pagination-section d-flex justify-content-between align-items-center my-4"></section>
+
 </body>
 </html>

@@ -32,34 +32,41 @@ public class Reply extends AbstractHierarchical<Reply> implements Hierarchical<R
     @Column(columnDefinition = "TEXT")
     private String content;
 
+    @Comment("게시글 식별자")
+    @Column(length = 36)
+    private String articleId;
+
+    @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonBackReference
-    @Comment("게시글 식별자")
-    @ManyToOne
-    @JoinColumn(name = "article_id", referencedColumnName = "id")
+//    @Comment("게시글 식별자")
+//    @ManyToOne
+//    @JoinColumn(name = "article_id", referencedColumnName = "id")
     private Article article;
 
+    @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonManagedReference
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(
-            name = "tb_reply_attachment",
-            joinColumns = @JoinColumn(name = "reply_id"),
-            inverseJoinColumns = @JoinColumn(name = "attachment_id")
-    )
+//    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+//    @JoinTable(
+//            name = "tb_reply_attachment",
+//            joinColumns = @JoinColumn(name = "reply_id"),
+//            inverseJoinColumns = @JoinColumn(name = "attachment_id")
+//    )
     private Set<Attachment> attachments = new LinkedHashSet<>();
 
+    @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonManagedReference
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(
-            name = "tb_reply_vote",
-            joinColumns = @JoinColumn(name = "reply_id"),
-            inverseJoinColumns = @JoinColumn(name = "vote_id")
-    )
+//    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+//    @JoinTable(
+//            name = "tb_reply_vote",
+//            joinColumns = @JoinColumn(name = "reply_id"),
+//            inverseJoinColumns = @JoinColumn(name = "vote_id")
+//    )
     private Set<Vote> votes = new LinkedHashSet<>();
 
     @Override

@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ArticleRepository extends JpaRepository<Article, String> {
-    Page<Article> findAllByCategory_Id(String categoryId, Pageable pageable);
+    Page<Article> findAllByCategoryId(String categoryId, Pageable pageable);
 }

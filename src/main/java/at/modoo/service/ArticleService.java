@@ -11,6 +11,7 @@ import java.io.IOException;
 
 public interface ArticleService {
     Page<Article> findAll(Pageable pageable, ArticleSearch search);
+    Page<Article> view(String categoryId, Pageable pageable);
     Page<Article> findAllByCategoryId(String categoryId, Pageable pageable);
     Article find(String id);
     Article create(CreateArticleCommand command) throws IOException;

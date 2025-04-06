@@ -61,10 +61,19 @@
         </tr>
         </thead>
         <tbody th:if="${page.hasContent()}">
-        <tr role="button" th:each="article : ${page.content}">
+
+        <tr th:each="article : ${page.content}">
+            <!--/*@thymesVar id="article" type="at.modoo.model.Article"*/-->
             <td class="py-3 text-center" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')"><label><input type="checkbox"></label></td>
             <td class="py-3 text-center" th:text="${page.totalElements - page.pageable.offset - articleStat.index}"></td>
-            <td class="py-3 text-start"><a class="none" th:text="${article.title}" th:href="@{'/articles/' + ${article.id} + '?categoryId=' + ${currentCategory.id} + '&page=' + ${articleStat.index}}"></a></td>
+            <td class="py-3 text-start">
+                <a class="none" th:href="@{'/articles/' + ${article.id} + '?categoryId=' + ${currentCategory.id} + '&page=' + ${articleStat.index}}">
+                    [[${article.title}]]
+                    <th:block th:if="${!article.replies.isEmpty()}">
+                        <span class="mx-2">🗨</span><span th:text="${article.replies.size()}"></span>
+                    </th:block>
+                </a>
+            </td>
             <td class="py-3 text-center" th:text="${article.maskedAuthor}"></td>
             <td class="py-3 text-center" th:text="${#temporals.format(article.createdDate, 'yyyy.MM.dd')}"></td>
         </tr>
@@ -94,7 +103,7 @@
                 </a>
             </div>
 
-            <div class="page-item" th:each="pageNumber : ${#numbers.sequence(0, page.totalPages - (page.totalPages > 1 ? 1 : 0))}">
+            <div class="page-item" th:each="pageNumber : ${#numbers.sequence(0, page.totalPages - (page.totalPages > 0 ? 1 : 0))}">
                 <a class="page-link"
                    th:classappend="${pageNumber == page.number} ? 'active' : ''"
                    th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', pageNumber).build().toUriString()}}"

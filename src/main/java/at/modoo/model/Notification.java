@@ -29,10 +29,16 @@ public class Notification extends BaseEntity {
     @Comment("유형")
     private NotificationType type;
 
-    @JsonBackReference
     @Comment("카테고리 식별자")
-    @ManyToOne
-    @JoinColumn(name = "category_id", referencedColumnName = "id")
+    @Column(length = 36)
+    private String categoryId;
+
+    @Transient
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @JsonBackReference
+//    @ManyToOne
+//    @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
 
 }

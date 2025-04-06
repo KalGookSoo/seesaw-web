@@ -1,14 +1,12 @@
 package at.modoo.model;
 
-import at.modoo.model.vo.VoteType;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 import static lombok.AccessLevel.PROTECTED;
 
@@ -25,18 +23,11 @@ import static lombok.AccessLevel.PROTECTED;
 @DynamicUpdate
 public class Vote extends BaseEntity {
 
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @ManyToMany(mappedBy = "votes")
-    private Set<Article> articles = new LinkedHashSet<>();
+    @Comment("참조 식별자")
+    @Column(length = 36)
+    private String referenceId;
 
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @ManyToMany(mappedBy = "votes")
-    private Set<Reply> replies = new LinkedHashSet<>();
-
-    @Enumerated(EnumType.STRING)
-    @Comment("타입")
-    private VoteType type;
+    @Comment("긍정여부")
+    private boolean isPositive;
 
 }

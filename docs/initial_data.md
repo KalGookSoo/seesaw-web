@@ -1,9 +1,4 @@
 ```postgresql
--- 역할
-INSERT INTO tb_role (id, created_by, created_date, created_ip, last_modified_by, last_modified_date, last_modified_ip, version, alias, name) VALUES ('24d30990-d9fb-4137-baab-782828c33292', 'admin', now(), '127.0.0.1', null, null, null, 0, '최고관리자', 'ROLE_ADMIN');
-INSERT INTO tb_role (id, created_by, created_date, created_ip, last_modified_by, last_modified_date, last_modified_ip, version, alias, name) VALUES ('5ac4d963-d676-47ea-99fe-470bb63cfca5', 'admin', now(), '127.0.0.1', null, null, null, 0, '관리자', 'ROLE_MANAGER');
-INSERT INTO tb_role (id, created_by, created_date, created_ip, last_modified_by, last_modified_date, last_modified_ip, version, alias, name) VALUES ('68d377b0-6fce-4ee1-ae08-36fdd93ea6a7', 'admin', now(), '127.0.0.1', null, null, null, 0, '일반사용자', 'ROLE_USER');
-
 -- 코드
 INSERT INTO tb_code (id, created_by, created_date, created_ip, last_modified_by, last_modified_date, last_modified_ip, version, description, name, sequence, parent_id) VALUES ('118aa0f4-8d32-4812-b7a4-0ae24ff56927', 'admin', '2025-03-27 16:53:41.215437', '127.0.0.1', null, '2025-03-27 16:53:41.215437', null, 0, '업체 홈페이지', 'SITE_DISTRIBUTION', null, null);
 INSERT INTO tb_code (id, created_by, created_date, created_ip, last_modified_by, last_modified_date, last_modified_ip, version, description, name, sequence, parent_id) VALUES ('99c940b6-f5eb-460e-ad9a-e35b30799c05', 'admin', '2025-03-27 16:53:41.237529', '127.0.0.1', null, '2025-03-27 16:53:41.237529', null, 0, '개인 홈페이지', 'SITE_DISTRIBUTION', null, null);

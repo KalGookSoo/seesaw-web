@@ -48,23 +48,25 @@ public class Category extends AbstractHierarchical<Category> implements Hierarch
     @Comment("순서")
     private Integer sequence;
 
+    @Comment("사이트 식별자")
+    @Column(length = 36)
+    private String siteId;
+
+    @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonBackReference
-    @Comment("사이트 식별자")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "site_id", referencedColumnName = "id")
     private Site site;
 
+    @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonManagedReference
-    @OneToMany(mappedBy = "category", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Article> articles = new ArrayList<>();
 
+    @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @OneToMany(mappedBy = "category")
     @JsonManagedReference
     private List<Notification> notifications = new ArrayList<>();
 
