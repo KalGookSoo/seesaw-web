@@ -1,14 +1,14 @@
 package at.modoo.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 import static lombok.AccessLevel.PROTECTED;
 
@@ -39,15 +39,13 @@ public class Role extends BaseEntity {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonBackReference
-//    @ManyToMany(mappedBy = "roles")
-    private Set<User> users = new LinkedHashSet<>();
+    private User user;
 
     @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonBackReference
-//    @ManyToMany(mappedBy = "roles")
-    private Set<Menu> menus = new LinkedHashSet<>();
+    private Menu menu;
 
     public static Role create(String referenceId, String name, String alias) {
         Role role = new Role();

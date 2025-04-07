@@ -3,13 +3,16 @@ package at.modoo.model;
 import at.modoo.core.hierarchy.Hierarchical;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicInsert;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import static lombok.AccessLevel.PROTECTED;
 
@@ -49,25 +52,13 @@ public class Reply extends AbstractHierarchical<Reply> implements Hierarchical<R
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonManagedReference
-//    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-//    @JoinTable(
-//            name = "tb_reply_attachment",
-//            joinColumns = @JoinColumn(name = "reply_id"),
-//            inverseJoinColumns = @JoinColumn(name = "attachment_id")
-//    )
-    private Set<Attachment> attachments = new LinkedHashSet<>();
+    private List<Attachment> attachments = new ArrayList<>();
 
     @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonManagedReference
-//    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-//    @JoinTable(
-//            name = "tb_reply_vote",
-//            joinColumns = @JoinColumn(name = "reply_id"),
-//            inverseJoinColumns = @JoinColumn(name = "vote_id")
-//    )
-    private Set<Vote> votes = new LinkedHashSet<>();
+    private List<Vote> votes = new ArrayList<>();
 
     @Override
     public void addChild(Reply child) {

@@ -51,18 +51,32 @@
 
   article {
     margin-bottom: 80px;
-    overflow: hidden;
 
     .title {
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .content {
       height: 110px;
-      text-overflow: ellipsis;
+
+      small {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 5;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: normal;
+      }
 
       .thumbnail {
         width: 110px;
+
+        img {
+          width: inherit;
+          height: 110px;
+        }
 
       }
     }

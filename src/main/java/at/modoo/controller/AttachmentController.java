@@ -4,6 +4,7 @@ import at.modoo.core.file.FileIOService;
 import at.modoo.model.Article;
 import at.modoo.model.Attachment;
 import at.modoo.service.ArticleService;
+import at.modoo.service.AttachmentService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -18,8 +19,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -28,23 +29,19 @@ import java.util.zip.ZipOutputStream;
 @RequestMapping("/attachments")
 public class AttachmentController {
 
+    private final AttachmentService attachmentService;
+
     private final ArticleService articleService;
 
     @GetMapping("/{id}/download")
-    public void getAttachments(
+    public void getAttachment(
             @PathVariable("id") String id,
-            @RequestParam String articleId,
             @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
             HttpServletResponse response
     ) throws IOException {
-        Article article = articleService.find(articleId);
-        Attachment attachment = article.getAttachments()
-                .stream()
-                .filter(e -> id.equals(e.getId()))
-                .findFirst()
-                .orElseThrow(NoSuchElementException::new);
+        Attachment attachment = attachmentService.find(id);
         String fileName = URLEncoder.encode(attachment.getOriginalName(), StandardCharsets.UTF_8);
-        ByteArrayInputStream inputStream = FileIOService.read(attachment.getAbsolutePath());
+        ByteArrayInputStream inputStream = FileIOService.read(attachmentService.getAbsolutePath(id));
 
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
@@ -60,7 +57,7 @@ public class AttachmentController {
             HttpServletResponse response
     ) throws IOException {
         Article article = articleService.find(articleId);
-        Set<Attachment> attachments = article.getAttachments();
+        List<Attachment> attachments = article.getAttachments();
         if (attachments.isEmpty()) {
             throw new NoSuchElementException();
         }
@@ -74,7 +71,7 @@ public class AttachmentController {
             for (Attachment attachment : attachments) {
                 ZipEntry entry = new ZipEntry(attachment.getOriginalName());
                 outputStream.putNextEntry(entry);
-                ByteArrayInputStream inputStream = FileIOService.read(attachment.getAbsolutePath());
+                ByteArrayInputStream inputStream = FileIOService.read(attachmentService.getAbsolutePath(attachment.getId()));
                 StreamUtils.copy(inputStream, outputStream);
                 outputStream.closeEntry();
             }

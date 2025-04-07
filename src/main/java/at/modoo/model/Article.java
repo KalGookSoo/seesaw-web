@@ -15,9 +15,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import static lombok.AccessLevel.PROTECTED;
 
@@ -74,47 +72,31 @@ public class Article extends AbstractHierarchical<Article> implements Hierarchic
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonBackReference
-//    @ManyToOne
-//    @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
 
     @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonManagedReference
-//    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-//    @JoinTable(
-//            name = "tb_article_attachment",
-//            joinColumns = @JoinColumn(name = "article_id"),
-//            inverseJoinColumns = @JoinColumn(name = "attachment_id")
-//    )
-    private Set<Attachment> attachments = new LinkedHashSet<>();
+    private List<Attachment> attachments = new ArrayList<>();
 
     @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonManagedReference
-//    @OneToMany(mappedBy = "article", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Reply> replies = new ArrayList<>();
 
     @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonManagedReference
-//    @OneToMany(mappedBy = "article", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<View> views = new ArrayList<>();
 
     @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonManagedReference
-//    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-//    @JoinTable(
-//            name = "tb_article_vote",
-//            joinColumns = @JoinColumn(name = "article_id"),
-//            inverseJoinColumns = @JoinColumn(name = "vote_id")
-//    )
-    private Set<Vote> votes = new LinkedHashSet<>();
+    private List<Vote> votes = new ArrayList<>();
 
     @Override
     public void addChild(Article child) {
@@ -145,7 +127,7 @@ public class Article extends AbstractHierarchical<Article> implements Hierarchic
         return createdBy.substring(0, visibleChars) + "****";
     }
 
-    public void addReplies(List<Reply> replies) {
+    public void joinReplies(List<Reply> replies) {
         replies.stream().filter(this::isReplyForArticle).forEach(this::addReply);
     }
 
@@ -158,7 +140,7 @@ public class Article extends AbstractHierarchical<Article> implements Hierarchic
         reply.setArticle(this);
     }
 
-    public void addViews(List<View> views) {
+    public void joinViews(List<View> views) {
         views.stream().filter(this::isViewForArticle).forEach(this::addView);
     }
 
@@ -170,4 +152,17 @@ public class Article extends AbstractHierarchical<Article> implements Hierarchic
         views.add(view);
         view.setArticle(this);
     }
+
+    public String getPlainContent() {
+        return Jsoup.parse(content).text();
+    }
+
+    public void joinAttachments(List<Attachment> attachments) {
+        attachments.stream().filter(this::isAttachmentForArticle).forEach(this::addAttachment);
+    }
+
+    private boolean isAttachmentForArticle(Attachment attachment) {
+        return getId().equals(attachment.getReferenceId());
+    }
+
 }

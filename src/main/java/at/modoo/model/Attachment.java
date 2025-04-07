@@ -1,16 +1,14 @@
 package at.modoo.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
 import java.util.UUID;
 
 import static lombok.AccessLevel.PROTECTED;
@@ -59,10 +57,6 @@ public class Attachment extends BaseEntity {
 
     private static String generateName(String originName) {
         return String.format("%s_%s", UUID.randomUUID(), originName);
-    }
-
-    public String getAbsolutePath() {
-        return pathName + "/" + name;
     }
 
 }

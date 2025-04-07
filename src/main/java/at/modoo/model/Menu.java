@@ -2,7 +2,9 @@ package at.modoo.model;
 
 import at.modoo.core.hierarchy.Hierarchical;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,8 +13,8 @@ import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import static lombok.AccessLevel.PROTECTED;
 
@@ -41,19 +43,18 @@ public class Menu extends AbstractHierarchical<Menu> implements Hierarchical<Men
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonManagedReference
-//    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-//    @JoinTable(
-//            name = "tb_menu_role",
-//            joinColumns = @JoinColumn(name = "menu_id"),
-//            inverseJoinColumns = @JoinColumn(name = "role_id")
-//    )
-    private Set<Role> roles = new LinkedHashSet<>();
+    private List<Role> roles = new ArrayList<>();
 
     @Override
     public void addChild(Menu child) {
         children.add(child);
         child.setParentId(getId());
         child.setParent(this);
+    }
+
+    public void addRole(Role role) {
+        roles.add(role);
+        role.setMenu(this);
     }
 
 }

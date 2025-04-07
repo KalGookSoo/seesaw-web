@@ -15,8 +15,8 @@ import org.springframework.util.Assert;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import static lombok.AccessLevel.PROTECTED;
 
@@ -59,13 +59,7 @@ public class User extends BaseEntity {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonManagedReference
-//    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-//    @JoinTable(
-//            name = "tb_user_role",
-//            joinColumns = @JoinColumn(name = "user_id"),
-//            inverseJoinColumns = @JoinColumn(name = "role_id")
-//    )
-    private Set<Role> roles = new LinkedHashSet<>();
+    private List<Role> roles = new ArrayList<>();
 
     @CreatedDate
     @Comment("생성 일시")
@@ -148,7 +142,7 @@ public class User extends BaseEntity {
 
     public void addRole(Role role) {
         roles.add(role);
-        role.getUsers().add(this);
+        role.setUser(this);
     }
 
     public Email getEmail() {

@@ -61,12 +61,13 @@ public class DefaultArticleService implements ArticleService {
         List<String> articleIds = page.getContent().stream().map(Article::getId).toList();
 
         List<Reply> replies = replyRepository.findAllByArticleIdIn(articleIds);
-        page.getContent().forEach(article -> article.addReplies(replies));
+        page.getContent().forEach(article -> article.joinReplies(replies));
 
         List<View> views = viewRepository.findAllByArticleIdIn(articleIds);
-        page.getContent().forEach(article -> article.addViews(views));
+        page.getContent().forEach(article -> article.joinViews(views));
 
-        // attachments
+        List<Attachment> attachments = attachmentRepository.findAllByReferenceIdIn(articleIds);
+        page.getContent().forEach(article -> article.joinAttachments(attachments));
         return page;
     }
 
@@ -78,7 +79,19 @@ public class DefaultArticleService implements ArticleService {
 
     @Override
     public Page<Article> findAllByCategoryId(String categoryId, Pageable pageable) {
-        return articleRepository.findAllByCategoryId(categoryId, pageable);
+        Page<Article> page = articleRepository.findAllByCategoryId(categoryId, pageable);
+
+        List<String> articleIds = page.getContent().stream().map(Article::getId).toList();
+
+        List<Reply> replies = replyRepository.findAllByArticleIdIn(articleIds);
+        page.getContent().forEach(article -> article.joinReplies(replies));
+
+        List<View> views = viewRepository.findAllByArticleIdIn(articleIds);
+        page.getContent().forEach(article -> article.joinViews(views));
+
+        List<Attachment> attachments = attachmentRepository.findAllByReferenceIdIn(articleIds);
+        page.getContent().forEach(article -> article.joinAttachments(attachments));
+        return page;
     }
 
     @Transactional(readOnly = true)
@@ -91,9 +104,9 @@ public class DefaultArticleService implements ArticleService {
     public Article create(CreateArticleCommand command) throws IOException {
         Article article = Article.create(command);
         for (MultipartFile multipartFile : command.getMultipartFiles()) {
-            Attachment attachment = Attachment.create(filepath, multipartFile);
+            Attachment attachment = Attachment.create("/", multipartFile);
             article.addAttachment(attachment);
-            writeFile(attachment.getAbsolutePath(), multipartFile.getBytes());
+            writeFile(filepath + attachment.getPathName(), multipartFile.getBytes());
         }
         articleRepository.save(article);
         attachmentRepository.saveAll(article.getAttachments());
@@ -105,9 +118,9 @@ public class DefaultArticleService implements ArticleService {
         Article article = articleRepository.getReferenceById(id);
         article.update(command);
         for (MultipartFile multipartFile : command.getMultipartFiles()) {
-            Attachment attachment = Attachment.create(filepath, multipartFile);
+            Attachment attachment = Attachment.create("/", multipartFile);
             article.addAttachment(attachment);
-            writeFile(attachment.getAbsolutePath(), multipartFile.getBytes());
+            writeFile(filepath + attachment.getPathName(), multipartFile.getBytes());
         }
         articleRepository.save(article);
         attachmentRepository.saveAll(article.getAttachments());
