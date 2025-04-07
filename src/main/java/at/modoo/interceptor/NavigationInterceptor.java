@@ -13,6 +13,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -47,6 +48,11 @@ public class NavigationInterceptor implements HandlerInterceptor {
         Map<String, Category> allCategories = categories.stream().collect(Collectors.toMap(Category::getId, Function.identity()));
         request.setAttribute(ContextEnvironment.NESTED_CATEGORIES, nestedCategories);
         request.setAttribute(ContextEnvironment.ALL_CATEGORIES, allCategories);
+
+        Optional.ofNullable(request.getParameter("categoryId")).map(Objects::toString).ifPresent(categoryId -> {
+            request.setAttribute(ContextEnvironment.CURRENT_CATEGORY, allCategories.get(categoryId));
+        });
+
         return true;
     }
 

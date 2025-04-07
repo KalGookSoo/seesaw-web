@@ -12,9 +12,6 @@
   top: 80px;
   left: 0;
 }
-.sub-category-banner .nav-link.btn.active {
-  color: var(--main-color);
-}
 
 .title-section {
   margin-top: 160px;

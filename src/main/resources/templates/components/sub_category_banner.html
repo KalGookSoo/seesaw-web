@@ -4,10 +4,10 @@
 <section class="sub-category-banner d-flex justify-content-center align-items-center" th:fragment="subCategoryBanner">
     <div class="nav container-sm d-flex justify-content-center align-items-center">
         <!--/*@thymesVar id="ALL_CATEGORIES" type="java.util.Map<java.lang.String, at.modoo.model.Category>"*/-->
-        <!--/*@thymesVar id="currentCategory" type="at.modoo.model.Category"*/-->
-        <div class="nav-item" th:each="category : ${ALL_CATEGORIES.get(currentCategory.parentId).children}">
+        <!--/*@thymesVar id="CURRENT_CATEGORY" type="at.modoo.model.Category"*/-->
+        <div class="nav-item" th:each="category : ${CURRENT_CATEGORY.parent.children}">
             <a class="nav-link btn"
-               th:classappend="${#strings.equals(category.id, currentCategory.id)} ? 'active' : ''"
+               th:classappend="${#strings.equals(category.id, CURRENT_CATEGORY.id)} ? 'main-color' : ''"
                th:href="@{/articles(categoryType=${category.type}, categoryId=${category.id})}"
                th:text="${category.name}">
             </a>

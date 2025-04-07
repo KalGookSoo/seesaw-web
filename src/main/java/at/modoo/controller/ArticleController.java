@@ -25,14 +25,14 @@ public class ArticleController {
 
     @GetMapping(params = "categoryType=STATIC_CONTENT")
     public String getArticles(
+            @RequestParam String categoryId,
+            @PageableDefault(size = 1, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable,
             Model model
     ) {
-        // Query
+        Page<Article> page = articleService.findAllByCategoryId(categoryId, pageable);
 
+        model.addAttribute("page", page);
 
-        // Model
-
-        // View
         return "articles/static_content";
     }
 
@@ -42,10 +42,8 @@ public class ArticleController {
             @ModelAttribute("search") ArticleSearch search,
             Model model
     ) {
-        Category category = categoryService.find(search.getCategoryId());
         Page<Article> page = articleService.findAll(pageable, search);
 
-        model.addAttribute("currentCategory", category);
         model.addAttribute("page", page);
 
         return "articles/table";
@@ -57,10 +55,8 @@ public class ArticleController {
             @ModelAttribute("search") ArticleSearch search,
             Model model
     ) {
-        Category category = categoryService.find(search.getCategoryId());
         Page<Article> page = articleService.findAll(pageable, search);
 
-        model.addAttribute("currentCategory", category);
         model.addAttribute("page", page);
 
         return "articles/card";
