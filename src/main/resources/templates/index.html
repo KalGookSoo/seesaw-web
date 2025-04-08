@@ -11,7 +11,25 @@
 
     <title>홈 | 대전포스트잇 ♣대전독서모임</title>
     <link rel="stylesheet" href="/static/styles/index.css" th:href="@{/styles/index.css}">
-    <script th:inline="javascript"></script>
+
+    <style>
+        #header.scrolled {
+            background-color: rgb(255, 255, 255);
+        }
+        #header:not(.scrolled) {
+            background-color: transparent;
+        }
+    </style>
+
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', e => {
+            const header = e.target.getElementById('header');
+            e.target.addEventListener('scroll', e => {
+                const methodName = window.scrollY > 0 ? 'add' : 'remove';
+                header.classList[methodName]('scrolled');
+            });
+        });
+    </script>
 </head>
 
 <body layout:fragment="content">

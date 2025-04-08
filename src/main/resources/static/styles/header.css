@@ -31,18 +31,12 @@ html body .table th {
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 99;
   width: 100%;
   height: 80px;
-  z-index: 99;
   background-color: #fff;
   border-bottom: 1px solid #ebebeb;
   transition: background-color 0.3s ease;
-}
-#header.scrolled {
-  background-color: rgb(255, 255, 255);
-}
-#header:not(.scrolled) {
-  background-color: transparent;
 }
 #header .wrapper .logo {
   width: 250px;
