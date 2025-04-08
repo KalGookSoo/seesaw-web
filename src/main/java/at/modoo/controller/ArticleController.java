@@ -62,9 +62,8 @@ public class ArticleController {
         return "articles/card";
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/view")
     public String getArticle(
-            @PathVariable("id") String id,
             @RequestParam String categoryId,
             @PageableDefault(size = 1, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable,
             Model model

@@ -15,7 +15,7 @@
     <script th:inline="javascript"></script>
 </head>
 <body layout:fragment="content">
-<section th:if="${CURRENT_CATEGORY.parent.children.size() > 1}" th:replace="~{components/sub_category_banner :: subCategoryBanner}"></section>
+<section th:if="${CURRENT_CATEGORY.parent.children.size() > 1}" th:replace="~{components/local_navigation_bar :: localNavigationBar}"></section>
 <section class="container-sm title-section">
     <div class="d-flex">
         <h4 class="title d-inline-block pb-2" th:text="${CURRENT_CATEGORY.name}"></h4>
