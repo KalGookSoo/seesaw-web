@@ -60,6 +60,9 @@ public class ArticleSearchRepository implements SearchRepository<Article, Articl
         if ("content".equals(search.getKeyField()) && StringUtils.hasText(search.getKeyWord())) {
             jpql.append(" and article.content like :content");
         }
+        if ("createdBy".equals(search.getKeyField()) && StringUtils.hasText(search.getKeyWord())) {
+            jpql.append(" and article.createdBy like :createdBy");
+        }
         return jpql.toString();
     }
 
@@ -72,6 +75,9 @@ public class ArticleSearchRepository implements SearchRepository<Article, Articl
         }
         if ("content".equals(search.getKeyField()) && StringUtils.hasText(search.getKeyWord())) {
             query.setParameter("content", "%" + search.getKeyWord() + "%");
+        }
+        if ("createdBy".equals(search.getKeyField()) && StringUtils.hasText(search.getKeyWord())) {
+            query.setParameter("createdBy", "%" + search.getKeyWord() + "%");
         }
     }
 

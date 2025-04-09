@@ -18,31 +18,48 @@
 <nav th:replace="~{components/local_navigation_bar :: localNavigationBar}"></nav>
 <header class="container-sm title-section">
     <div class="d-flex">
-        <h4 class="title d-inline-block pb-2" th:text="${CURRENT_CATEGORY.name}"></h4>
+        <div class="title h5 pb-1" th:text="${CURRENT_CATEGORY.name}"></div>
     </div>
-    <hr>
 </header>
-<section class="container-sm article-title-section d-flex justify-content-between align-items-center">
-    <div th:text="${page.content.get(0).title}"></div>
+<section class="container-sm article-title-section d-flex justify-content-between align-items-center py-4 mb-4">
+    <div class="h5" th:text="${page.content.get(0).title}"></div>
     <div class="d-flex justify-content-start align-items-center">
         <small class="text-muted" th:text="${page.content.get(0).maskedAuthor}"></small>
         <small class="text-muted mx-2">|</small>
         <small class="text-muted" th:text="${#temporals.format(page.content.get(0).createdDate, 'yyyy.MM.dd')}"></small>
     </div>
 </section>
-<section class="container-sm article-content-section" th:utext="${page.content.get(0).content}"></section>
-<section class="container-sm reply-section">
-
+<section class="container-sm article-content-section mb-5" th:utext="${page.content.get(0).content}"></section>
+<section class="container-sm reply-section mt-5 px-2 py-4" th:if="${!page.content.get(0).replies.isEmpty()}">
+    <div class="d-flex flex-column align-items-center justify-content-center" th:each="reply : ${page.content.get(0).replies}">
+        <div class="d-flex flex-column align-items-center justify-content-center">
+            <div class="d-flex justify-content-between">
+                <div class="d-flex justify-content-start align-items-center">
+                    <div th:text="${reply.maskedAuthor}"></div>
+                    <div th:text="${#temporals.format(reply.createdDate, 'yyyy.MM.dd')}"></div>
+                </div>
+                <div class="d-flex justify-content-end align-items-center" sec:authorize="isAuthenticated()">
+                    <div th:if="${#strings.equals(reply.createdBy, #authentication.principal.username)}">
+                        <button type="button" class="btn">수정</button>
+                    </div>
+                    <div sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
+                        <button type="button" class="btn">삭제</button>
+                    </div>
+                </div>
+            </div>
+            <div th:utext="${reply.content}"></div>
+        </div>
+    </div>
 </section>
 <footer class="container-sm content-footer d-flex justify-content-between align-items-center">
-    <div class="d-flex justify-content-start">
-        <a class="btn" th:href="@{/articles/view(categoryId=${CURRENT_CATEGORY.id}, page=${page.previousOrFirstPageable().pageNumber})}">이전글</a>
-        <a class="btn" th:href="@{/articles(categoryType=${CURRENT_CATEGORY.type}, categoryId=${CURRENT_CATEGORY.id})}">목록보기</a>
-        <a class="btn" th:href="@{/articles/view(categoryId=${CURRENT_CATEGORY.id}, page=${page.nextOrLastPageable().pageNumber})}">다음글</a>
+    <div class="d-flex justify-content-start gap-2">
+        <a class="btn btn-outline-secondary" th:href="@{/articles/view(categoryId=${CURRENT_CATEGORY.id}, page=${page.previousOrFirstPageable().pageNumber})}">이전글</a>
+        <a class="btn btn-outline-secondary" th:href="@{/articles(categoryType=${CURRENT_CATEGORY.type}, categoryId=${CURRENT_CATEGORY.id})}">목록보기</a>
+        <a class="btn btn-outline-secondary" th:href="@{/articles/view(categoryId=${CURRENT_CATEGORY.id}, page=${page.nextOrLastPageable().pageNumber})}">다음글</a>
     </div>
-    <div class="d-flex justify-content-end">
-        <a href="#" class="btn">수정</a>
-        <button type="submit" class="btn">삭제</button>
+    <div class="d-flex justify-content-end gap-2">
+        <a class="btn btn-outline-secondary" th:href="@{/}">수정</a>
+        <button class="btn btn-outline-secondary" type="submit">삭제</button>
     </div>
 </footer>
 </body>

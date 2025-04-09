@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/session")
+@RequestMapping("/api/session")
 public class SessionApiController {
 
     @PreAuthorize("hasRole('ADMIN')")

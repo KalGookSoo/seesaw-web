@@ -67,4 +67,10 @@ public class Reply extends AbstractHierarchical<Reply> implements Hierarchical<R
         child.setParent(this);
     }
 
+    public String getMaskedAuthor() {
+        String createdBy = getCreatedBy();
+        int visibleChars = Math.min(createdBy.length(), 4);
+        return createdBy.substring(0, visibleChars) + "****";
+    }
+
 }

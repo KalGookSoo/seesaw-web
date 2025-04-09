@@ -2,6 +2,7 @@ package at.modoo.service;
 
 import at.modoo.command.CreateArticleCommand;
 import at.modoo.command.UpdateArticleCommand;
+import at.modoo.core.authentication.PrincipalProvider;
 import at.modoo.core.file.FileIOService;
 import at.modoo.model.Article;
 import at.modoo.model.Attachment;
@@ -12,11 +13,15 @@ import at.modoo.search.ArticleSearch;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -37,13 +42,16 @@ public class DefaultArticleService implements ArticleService {
 
     private final AttachmentRepository attachmentRepository;
 
+    private final PrincipalProvider principalProvider;
+
     public DefaultArticleService(
             @Value("${at.modoo.filepath}") String filepath,
             ArticleRepository articleRepository,
             ArticleSearchRepository articleSearchRepository,
             ReplyRepository replyRepository,
             ViewRepository viewRepository,
-            AttachmentRepository attachmentRepository
+            AttachmentRepository attachmentRepository,
+            PrincipalProvider principalProvider
     ) {
         this.filepath = filepath;
         this.articleRepository = articleRepository;
@@ -51,6 +59,7 @@ public class DefaultArticleService implements ArticleService {
         this.replyRepository = replyRepository;
         this.viewRepository = viewRepository;
         this.attachmentRepository = attachmentRepository;
+        this.principalProvider = principalProvider;
     }
 
     @Transactional(readOnly = true)
@@ -74,7 +83,11 @@ public class DefaultArticleService implements ArticleService {
     @Override
     public Page<Article> view(String categoryId, Pageable pageable) {
         // 조회수 증가
-        return articleRepository.findAllByCategoryId(categoryId, pageable);
+        Page<Article> page = findAllByCategoryId(categoryId, pageable);
+        if (page.hasContent()) {
+            increaseView(page.getContent().get(0).getId());
+        }
+        return page;
     }
 
     @Override
@@ -139,11 +152,20 @@ public class DefaultArticleService implements ArticleService {
         return article.getCreatedBy().equals(username);
     }
 
-    private static void writeFile(String pathname, byte[] bytes) {
+    private void writeFile(String pathname, byte[] bytes) {
         try {
             FileIOService.write(pathname, bytes);
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }
     }
+
+    private void increaseView(String articleId) {
+        View view = View.create(articleId);
+        Object principal = principalProvider.getAuthentication().getPrincipal();
+        // 동일인물 중복 조회수 불허
+        List<View> views = viewRepository.findAllByArticleIdIn(Collections.singletonList(articleId));
+
+    }
+
 }

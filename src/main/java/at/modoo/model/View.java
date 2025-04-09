@@ -30,8 +30,11 @@ public class View extends BaseEntity {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonBackReference
-//    @ManyToOne
-//    @JoinColumn(name = "article_id", referencedColumnName = "id")
     private Article article;
 
+    public static View create(String articleId) {
+        View view = new View();
+        view.articleId = articleId;
+        return view;
+    }
 }

@@ -18,9 +18,8 @@
 <section th:if="${CURRENT_CATEGORY.parent.children.size() > 1}" th:replace="~{components/local_navigation_bar :: localNavigationBar}"></section>
 <section class="container-sm title-section">
     <div class="d-flex">
-        <h4 class="title d-inline-block pb-2" th:text="${CURRENT_CATEGORY.name}"></h4>
+        <div class="title h5 pb-1" th:text="${CURRENT_CATEGORY.name}"></div>
     </div>
-    <hr>
 </section>
 <section class="container-sm my-3">
     <th:block th:if="${page.hasContent()}" th:utext="page.content.get(0).content"></th:block>
