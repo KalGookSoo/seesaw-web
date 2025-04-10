@@ -21,6 +21,9 @@ html body a.none {
 html body .table th {
   font-weight: normal;
 }
+html body .border-bottom {
+  border-bottom: 1px solid var(--bs-gray-400);
+}
 
 :root {
   --main-color: #cc4202;
