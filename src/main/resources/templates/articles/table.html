@@ -66,7 +66,7 @@
             <td class="py-3 text-center" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')"><label><input type="checkbox"></label></td>
             <td class="py-3 text-center" th:text="${page.totalElements - page.pageable.offset - articleStat.index}"></td>
             <td class="py-3 text-start">
-                <a class="none" th:href="@{'/articles/view?categoryId=' + ${article.categoryId} + '&page=' + ${articleStat.index}}">
+                <a class="none" th:href="@{/articles/view(categoryId=${article.categoryId}, page=${articleStat.index})}">
                     [[${article.title}]]
                     <th:block th:if="${!article.replies.isEmpty()}">
                         <span class="mx-2">🗨</span><span th:text="${article.replies.size()}"></span>

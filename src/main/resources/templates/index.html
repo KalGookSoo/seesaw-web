@@ -46,14 +46,14 @@
 </section>
 <section class="board-section container-lg">
     <header class="d-flex justify-content-between align-items-center">
-        <h5>모임 활동</h5>
-        <p><a href="#">더보기</a></p>
+        <h5 th:text="${ALL_CATEGORIES.get(firstCategoryId).parent.name}"></h5>
+        <p><a th:href="@{/articles(categoryId=${firstCategoryId}, categoryType=${ALL_CATEGORIES.get(firstCategoryId).type})}">더보기</a></p>
     </header>
     <div class="container">
         <div class="row row-cols-1 row-cols-md-3 g-4">
             <article class="col" th:each="article : ${first.content}">
                 <a class="btn w-100 text-start"
-                   th:href="@{'/articles/' + ${article.id} + '?categoryId=' + ${article.categoryId} + '&page=' + ${articleStat.index}}"
+                   th:href="@{/articles/view(categoryId=${article.categoryId}, page=${articleStat.index})}"
                 >
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <div class="title" th:text="${article.title}"></div>
@@ -77,14 +77,14 @@
 </section>
 <section class="board-section container-lg">
     <header class="d-flex justify-content-between align-items-center">
-        <h5>알림장</h5>
-        <p><a href="#">더보기</a></p>
+        <h5 th:text="${ALL_CATEGORIES.get(secondCategoryId).parent.name}"></h5>
+        <p><a th:href="@{/articles(categoryId=${secondCategoryId}, categoryType=${ALL_CATEGORIES.get(secondCategoryId).type})}">더보기</a></p>
     </header>
     <div class="container">
         <div class="row row-cols-1 row-cols-md-3 g-4">
             <article class="col" th:each="article : ${second.content}">
                 <a class="btn w-100 text-start"
-                   th:href="@{'/articles/' + ${article.id} + '?categoryId=' + ${article.categoryId} + '&page=' + ${articleStat.index}}"
+                   th:href="@{/articles/view(categoryId=${article.categoryId}, page=${articleStat.index})}"
                 >
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <div class="title" th:text="${article.title}"></div>

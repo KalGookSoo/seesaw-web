@@ -85,7 +85,7 @@ public class DefaultArticleService implements ArticleService {
         // 조회수 증가
         Page<Article> page = findAllByCategoryId(categoryId, pageable);
         if (page.hasContent()) {
-            increaseView(page.getContent().get(0).getId());
+//            increaseView(page.getContent().get(0).getId());
         }
         return page;
     }
@@ -164,6 +164,7 @@ public class DefaultArticleService implements ArticleService {
         View view = View.create(articleId);
         Object principal = principalProvider.getAuthentication().getPrincipal();
         // 동일인물 중복 조회수 불허
+        // TODO 영속화될 때 인증주체에서 IP 추출하여 영속화될 수 있도록 AnnotationProcessor랑 EventListener 만들 것
         List<View> views = viewRepository.findAllByArticleIdIn(Collections.singletonList(articleId));
 
     }
