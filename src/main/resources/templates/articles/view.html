@@ -30,28 +30,31 @@
     </div>
 </section>
 <section class="container-sm article-content-section mb-5" th:utext="${page.content.get(0).content}"></section>
-<section class="container-sm reply-section mt-5 px-2 py-4" th:if="${!page.content.get(0).replies.isEmpty()}">
-    <div class="d-flex flex-column align-items-center justify-content-center" th:each="reply : ${page.content.get(0).replies}">
-        <div class="d-flex flex-column align-items-center justify-content-center">
-            <div class="d-flex justify-content-between">
-                <div class="d-flex justify-content-start align-items-center">
-                    <div th:text="${reply.maskedAuthor}"></div>
-                    <div th:text="${#temporals.format(reply.createdDate, 'yyyy.MM.dd')}"></div>
+<section class="container-sm d-flex justify-content-start align-items-center gap-2 my-2" th:if="${!page.content.get(0).replies.isEmpty()}">
+    <div class="small text-muted" th:text="#{entity.reply}"></div>
+    <div class="main-color small" th:text="${page.content.get(0).replies.size()}"></div>
+</section>
+<section class="container-sm reply-section px-4 py-4" th:if="${!page.content.get(0).replies.isEmpty()}">
+    <div class="reply-item py-2" th:each="reply : ${page.content.get(0).replies}">
+        <div class="d-flex justify-content-between my-2">
+            <div class="d-flex justify-content-start align-items-center gap-2">
+                <div class="small text-muted" th:text="${reply.maskedAuthor}"></div>
+                <div class="small text-muted" th:text="${#temporals.format(reply.createdDate, 'yyyy.MM.dd')}"></div>
+            </div>
+            <div class="d-flex justify-content-end align-items-center" sec:authorize="isAuthenticated()">
+                <div th:if="${#strings.equals(reply.createdBy, #authentication.principal.username)}">
+                    <button type="button" class="btn">수정</button>
                 </div>
-                <div class="d-flex justify-content-end align-items-center" sec:authorize="isAuthenticated()">
-                    <div th:if="${#strings.equals(reply.createdBy, #authentication.principal.username)}">
-                        <button type="button" class="btn">수정</button>
-                    </div>
-                    <div sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
-                        <button type="button" class="btn">삭제</button>
-                    </div>
+                <div th:if="${#authentication.principal.hasRole('ROLE_ADMIN') or #authentication.principal.hasRole('ROLE_MANAGER') or #strings.equals(reply.createdBy, #authentication.principal.username)}">
+                    <button type="button" class="btn">삭제</button>
                 </div>
             </div>
-            <div th:utext="${reply.content}"></div>
         </div>
+        <div class="my-2" th:utext="${reply.content}"></div>
+        <hr th:if="${!replyStat.last}">
     </div>
 </section>
-<footer class="container-sm content-footer d-flex justify-content-between align-items-center">
+<footer class="container-sm content-footer d-flex justify-content-between align-items-center my-4">
     <div class="d-flex justify-content-start gap-2">
         <a class="btn btn-outline-secondary" th:href="@{/articles/view(categoryId=${CURRENT_CATEGORY.id}, page=${page.previousOrFirstPageable().pageNumber})}">이전글</a>
         <a class="btn btn-outline-secondary" th:href="@{/articles(categoryType=${CURRENT_CATEGORY.type}, categoryId=${CURRENT_CATEGORY.id})}">목록보기</a>

@@ -43,10 +43,6 @@
       color: var(--main-color);
     }
 
-    a {
-      all: unset;
-      cursor: pointer;
-    }
   }
 
   article {
@@ -61,7 +57,7 @@
     .content {
       height: 110px;
 
-      small {
+      .small {
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 5;

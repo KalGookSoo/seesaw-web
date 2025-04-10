@@ -47,7 +47,7 @@
 <section class="board-section container-lg">
     <header class="d-flex justify-content-between align-items-center">
         <h5 th:text="${ALL_CATEGORIES.get(firstCategoryId).parent.name}"></h5>
-        <p><a th:href="@{/articles(categoryId=${firstCategoryId}, categoryType=${ALL_CATEGORIES.get(firstCategoryId).type})}">더보기</a></p>
+        <p><a class="none" th:href="@{/articles(categoryId=${firstCategoryId}, categoryType=${ALL_CATEGORIES.get(firstCategoryId).type})}">더보기</a></p>
     </header>
     <div class="container">
         <div class="row row-cols-1 row-cols-md-3 g-4">
@@ -60,15 +60,15 @@
                         <div th:if="${!article.replies.isEmpty()}"><span class="mx-2">🗨</span><span class="main-color" th:text="${article.replies.size()}"></span></div>
                     </div>
                     <div class="content d-flex align-items-start justify-content-between mb-2 gap-3">
-                        <div><small class="text-muted" th:text="${article.plainContent}"></small></div>
+                        <div><div class="small text-muted" th:text="${article.plainContent}"></div></div>
                         <div class="thumbnail" th:if="${!article.attachments.isEmpty()}">
                             <img th:src="@{'/api/attachments/' + ${article.attachments.get(0).id}}" th:alt="${article.attachments.get(0).originalName}">
                         </div>
                     </div>
                     <div class="author d-flex justify-content-start align-items-center">
-                        <small class="text-muted" th:text="${article.maskedAuthor}"></small>
-                        <small class="text-muted mx-2">|</small>
-                        <small class="text-muted" th:text="${#temporals.format(article.createdDate, 'yyyy.MM.dd')}"></small>
+                        <div class="small text-muted" th:text="${article.maskedAuthor}"></div>
+                        <div class="small text-muted mx-2">|</div>
+                        <div class="small text-muted" th:text="${#temporals.format(article.createdDate, 'yyyy.MM.dd')}"></div>
                     </div>
                 </a>
             </article>
@@ -78,7 +78,7 @@
 <section class="board-section container-lg">
     <header class="d-flex justify-content-between align-items-center">
         <h5 th:text="${ALL_CATEGORIES.get(secondCategoryId).parent.name}"></h5>
-        <p><a th:href="@{/articles(categoryId=${secondCategoryId}, categoryType=${ALL_CATEGORIES.get(secondCategoryId).type})}">더보기</a></p>
+        <p><a class="none" th:href="@{/articles(categoryId=${secondCategoryId}, categoryType=${ALL_CATEGORIES.get(secondCategoryId).type})}">더보기</a></p>
     </header>
     <div class="container">
         <div class="row row-cols-1 row-cols-md-3 g-4">
@@ -91,15 +91,15 @@
                         <div th:if="${!article.replies.isEmpty()}"><span class="mx-2">🗨</span><span class="main-color" th:text="${article.replies.size()}"></span></div>
                     </div>
                     <div class="content d-flex align-items-start justify-content-between mb-2 gap-3">
-                        <div><small class="text-muted" th:text="${article.plainContent}"></small></div>
+                        <div><div class="small text-muted" th:text="${article.plainContent}"></div></div>
                         <div class="thumbnail" th:if="${!article.attachments.isEmpty()}">
                             <img th:src="@{'/api/attachments/' + ${article.attachments.get(0).id}}" th:alt="${article.attachments.get(0).originalName}">
                         </div>
                     </div>
                     <div class="author d-flex justify-content-start align-items-center">
-                        <small class="text-muted" th:text="${article.maskedAuthor}"></small>
-                        <small class="text-muted mx-2">|</small>
-                        <small class="text-muted" th:text="${#temporals.format(article.createdDate, 'yyyy.MM.dd')}"></small>
+                        <div class="small text-muted" th:text="${article.maskedAuthor}"></div>
+                        <div class="small text-muted mx-2">|</div>
+                        <div class="small text-muted" th:text="${#temporals.format(article.createdDate, 'yyyy.MM.dd')}"></div>
                     </div>
                 </a>
             </article>
