@@ -12,12 +12,12 @@
 
 <header id="header" class="d-flex align-items-center justify-content-center" th:fragment="header">
     <div class="container-sm wrapper d-flex align-items-center justify-content-between">
-        <div class="logo">대전포스트잇 ♣대전독서모임</div>
-        <nav class="gnb d-flex align-items-center justify-content-start">
-            <div class="px-2"><a class="btn" th:classappend="${CURRENT_CATEGORY == null} ? 'main-color' : ''" th:href="@{/}">홈</a></div>
-            <div class="px-2" th:each="category : ${NESTED_CATEGORIES}">
+        <div class="logo"><a class="none" th:href="@{/}">대전포스트잇 ♣대전독서모임</a></div>
+        <nav class="gnb nav d-flex align-items-center justify-content-start">
+            <div class="px-2 nav-item"><a class="btn nav-link" th:classappend="${CURRENT_CATEGORY == null} ? 'main-color' : ''" th:href="@{/}">홈</a></div>
+            <div class="px-2 nav-item" th:each="category : ${NESTED_CATEGORIES}">
                 <!--/*@thymesVar id="category" type="at.modoo.model.Category"*/-->
-                <a class="btn"
+                <a class="btn nav-link"
                    th:if="${!#lists.isEmpty(category.children)}"
                    th:href="@{/articles(categoryType=${category.children.get(0).type}, categoryId=${category.children.get(0).id})}"
                    th:classappend="${CURRENT_CATEGORY != null && #strings.equals(category.id, CURRENT_CATEGORY.parent.id)} ? 'main-color' : ''"
