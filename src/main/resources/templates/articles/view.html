@@ -12,7 +12,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>홈 | 대전포스트잇 ♣대전독서모임</title>
     <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
-    <script th:inline="javascript"></script>
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', e => {
+            e.target.replyInsertForm.addEventListener('submit', e => {
+                e.preventDefault();
+                const form = new FormData(e.target);
+                const httpEntity = {
+                    method: 'POST',
+                    body: form
+                };
+                fetch(e.target.action, httpEntity)
+                    .then(async response => {
+                        const responseBody = await response.text();
+                        if (response.ok) {
+                            alert(responseBody);
+                            location.reload();
+                        } else if (response.status === 400) {
+                            const errors = JSON.parse(responseBody).errors;
+                            [...errors].forEach(error => {
+                                const field = e.target.elements[error.field];
+                                field.setCustomValidity(error.message);
+                                field.reportValidity();
+                            });
+                        } else {
+                            alert(responseBody);
+                        }
+                    });
+            });
+        });
+    </script>
 </head>
 <body layout:fragment="content">
 <nav th:replace="~{components/local_navigation_bar :: localNavigationBar}"></nav>
@@ -52,6 +80,13 @@
         </div>
         <div class="my-2" th:utext="${reply.content}"></div>
     </div>
+    <form enctype="multipart/form-data" name="replyInsertForm" th:action="@{/api/replies}" th:method="post">
+        <input name="articleId" th:value="${page.content.get(0).id}" type="hidden">
+        <div class="input-group my-4">
+            <textarea aria-label="댓글 입력" class="form-control" name="content"></textarea>
+            <button class="input-group-text" type="submit">댓글 입력</button>
+        </div>
+    </form>
 </section>
 <footer class="container-sm content-footer d-flex justify-content-between align-items-center my-4">
     <div class="d-flex justify-content-start gap-2">

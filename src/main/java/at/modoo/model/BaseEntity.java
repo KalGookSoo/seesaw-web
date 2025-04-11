@@ -1,5 +1,8 @@
 package at.modoo.model;
 
+import at.modoo.annotation.CreatedIp;
+import at.modoo.annotation.LastModifiedIp;
+import at.modoo.event.listener.IpAddressAuditingEntityListener;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -18,7 +21,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @MappedSuperclass
-@EntityListeners(AuditingEntityListener.class)
+@EntityListeners({AuditingEntityListener.class, IpAddressAuditingEntityListener.class})
 @Getter
 @Setter(AccessLevel.PROTECTED)
 @ToString
@@ -34,6 +37,7 @@ abstract public class BaseEntity implements Serializable {
     @Comment("생성자")
     private String createdBy;
 
+    @CreatedIp
     @Column(length = 45, updatable = false)
     @Comment("생성 IP")
     private String createdIp;
@@ -47,6 +51,7 @@ abstract public class BaseEntity implements Serializable {
     @Comment("수정자")
     private String lastModifiedBy;
 
+    @LastModifiedIp
     @Column(length = 45, updatable = false)
     @Comment("수정 IP")
     private String lastModifiedIp;

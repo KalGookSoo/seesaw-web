@@ -1,5 +1,7 @@
 package at.modoo.model;
 
+import at.modoo.command.CreateReplyCommand;
+import at.modoo.command.UpdateReplyCommand;
 import at.modoo.core.hierarchy.Hierarchical;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -43,9 +45,6 @@ public class Reply extends AbstractHierarchical<Reply> implements Hierarchical<R
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonBackReference
-//    @Comment("게시글 식별자")
-//    @ManyToOne
-//    @JoinColumn(name = "article_id", referencedColumnName = "id")
     private Article article;
 
     @Transient
@@ -60,6 +59,14 @@ public class Reply extends AbstractHierarchical<Reply> implements Hierarchical<R
     @JsonManagedReference
     private List<Vote> votes = new ArrayList<>();
 
+    public static Reply create(CreateReplyCommand command) {
+        Reply reply = new Reply();
+        reply.articleId = command.getArticleId();
+        reply.content = command.getContent();
+        reply.isPublic = command.isPublic();
+        return reply;
+    }
+
     @Override
     public void addChild(Reply child) {
         children.add(child);
@@ -73,4 +80,8 @@ public class Reply extends AbstractHierarchical<Reply> implements Hierarchical<R
         return createdBy.substring(0, visibleChars) + "****";
     }
 
+    public void update(UpdateReplyCommand command) {
+        this.content = command.getContent();
+        this.isPublic = command.isPublic();
+    }
 }

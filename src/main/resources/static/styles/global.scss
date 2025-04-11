@@ -20,6 +20,11 @@ html {
       cursor: pointer;
     }
 
+    button.none {
+      all: unset;
+      cursor: pointer;
+    }
+
     .table {
       th {
         font-weight: normal;

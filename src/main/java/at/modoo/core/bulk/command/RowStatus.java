@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public enum CommandType {
+public enum RowStatus {
     C("생성"),
     R("읽기"),
     U("수정"),

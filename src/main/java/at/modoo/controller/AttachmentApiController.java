@@ -3,13 +3,11 @@ package at.modoo.controller;
 import at.modoo.core.file.FileIOService;
 import at.modoo.model.Attachment;
 import at.modoo.service.AttachmentService;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

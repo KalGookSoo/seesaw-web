@@ -18,6 +18,10 @@ html body a.none {
   all: unset;
   cursor: pointer;
 }
+html body button.none {
+  all: unset;
+  cursor: pointer;
+}
 html body .table th {
   font-weight: normal;
 }
