@@ -25,12 +25,15 @@
             });
 
             const submitHandlers = {
-                '[name="replyInsertForm"]': e => {
+                '[name="insertReplyForm"]': e => {
                     e.preventDefault();
                     const form = new FormData(e.target);
                     form.append('exposed', 'true');
                     const httpEntity = {
-                        method: 'POST',
+                        method: 'post',
+                        headers: {
+                            [CSRF.headerName]: CSRF.token
+                        },
                         body: form
                     };
                     fetch(e.target.action, httpEntity)
@@ -50,13 +53,60 @@
                                 alert(/*[[#{command.failure.save}]]*/'');
                             }
                         });
+                },
+                '[name="updateReplyForm"]': e => {
+                    e.preventDefault();
+                    const form = new FormData(e.target);
+                    form.append('exposed', 'true');
+                    const httpEntity = {
+                        method: 'post',
+                        headers: {
+                            [CSRF.headerName]: CSRF.token
+                        },
+                        body: form
+                    };
+                    fetch(e.target.action, httpEntity)
+                        .then(async response => {
+                            const responseBody = await response.text();
+                            if (response.ok) {
+                                alert(/*[[#{command.success.update}]]*/'');
+                                location.reload();
+                            } else if (response.status === 400) {
+                                const errors = JSON.parse(responseBody).errors;
+                                [...errors].forEach(error => {
+                                    const field = e.target.elements[error.field];
+                                    field.setCustomValidity(error.message);
+                                    field.reportValidity();
+                                });
+                            } else {
+                                alert(/*[[#{command.failure.update}]]*/'');
+                            }
+                        });
                 }
 
             }
 
             const clickHandlers = {
                 '.reply-item button[name="update"]': e => {
+                    const button = e.target.closest('.reply-item button[name="update"]');
+                    const replyItem = button.closest('.reply-item');
+                    const replyContent = replyItem.querySelector('.reply-content');
+                    const updateUri = /*[[@{/api/replies}]]*/'';
+                    const submitterTextContent = /*[[#{label.save}]]*/'';
+                    const template = `
+                    <form enctype="multipart/form-data" name="updateReplyForm" action="${updateUri}/${button.dataset.id}" method="post">
+                        <input name="articleId" value="${button.dataset.id}" type="hidden">
+                        <div class="input-group my-4">
+                            <textarea aria-label="댓글 입력" class="form-control" name="content">${replyContent.textContent}</textarea>
+                            <button class="input-group-text" type="submit">${submitterTextContent}</button>
+                        </div>
+                    </form>
+                    `;
 
+                    replyContent.classList.add('d-none');
+                    button.classList.add('d-none');
+                    replyItem.querySelector(`[name="cancel"]`).classList.remove('d-none');
+                    replyItem.insertAdjacentHTML('beforeend', template);
                 },
                 '.reply-item button[name="delete"]': e => {
                     const button = e.target.closest('.reply-item button[name="delete"]');
@@ -64,7 +114,7 @@
                         method: 'delete',
                         headers: {
                             'content-type': 'application/json',
-                            'X-XSRF-TOKEN': CSRF.token
+                            [CSRF.headerName]: CSRF.token
                         }
                     };
                     fetch(`/api/replies/${button.dataset.id}`, httpEntity)
@@ -77,6 +127,16 @@
                                 alert(/*[[#{command.failure.delete}]]*/'');
                             }
                         });
+                },
+                '.reply-item button[name="cancel"]': e => {
+                    const button = e.target.closest('.reply-item button[name="cancel"]');
+                    const replyItem = button.closest('.reply-item');
+                    const replyContent = replyItem.querySelector('.reply-content');
+                    replyContent.classList.remove('d-none');
+                    replyItem.querySelector(`[name="update"]`).classList.remove('d-none');
+                    button.classList.add('d-none');
+
+                    replyItem.querySelector(`[name="updateReplyForm"]`).remove();
                 }
             };
         });
@@ -112,15 +172,16 @@
             <div class="d-flex justify-content-end align-items-center" sec:authorize="isAuthenticated()">
                 <div th:if="${#strings.equals(reply.createdBy, #authentication.principal.username)}">
                     <button class="btn" name="update" type="button" th:data-id="${reply.id}">수정</button>
+                    <button class="btn d-none" name="cancel" type="button">취소</button>
                 </div>
                 <div th:if="${#authentication.principal.hasRole('ROLE_ADMIN') or #authentication.principal.hasRole('ROLE_MANAGER') or #strings.equals(reply.createdBy, #authentication.principal.username)}">
                     <button class="btn" name="delete" type="button" th:data-id="${reply.id}">삭제</button>
                 </div>
             </div>
         </div>
-        <div class="my-2" th:utext="${reply.content}"></div>
+        <div class="my-2 reply-content" th:utext="${reply.content}"></div>
     </div>
-    <form enctype="multipart/form-data" name="replyInsertForm" th:action="@{/api/replies}" th:method="post" sec:authorize="isAuthenticated()">
+    <form enctype="multipart/form-data" name="insertReplyForm" th:action="@{/api/replies}" th:method="post" sec:authorize="isAuthenticated()">
         <input name="articleId" th:value="${page.content.get(0).id}" type="hidden">
         <div class="input-group my-4">
             <textarea aria-label="댓글 입력" class="form-control" name="content"></textarea>

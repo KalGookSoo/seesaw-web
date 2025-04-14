@@ -12,6 +12,7 @@ import jakarta.persistence.Transient;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Table(name = "tb_reply")
 @Comment("댓글")
 @DynamicInsert
+@DynamicUpdate
 public class Reply extends AbstractHierarchical<Reply> implements Hierarchical<Reply, String> {
 
     @Comment("공개여부")
