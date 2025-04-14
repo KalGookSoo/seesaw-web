@@ -14,38 +14,47 @@
     <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
     <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', e => {
-            e.target.replyInsertForm.addEventListener('submit', e => {
-                e.preventDefault();
-                const form = new FormData(e.target);
-                const httpEntity = {
-                    method: 'POST',
-                    body: form
-                };
-                fetch(e.target.action, httpEntity)
-                    .then(async response => {
-                        const responseBody = await response.text();
-                        if (response.ok) {
-                            alert(responseBody);
-                            location.reload();
-                        } else if (response.status === 400) {
-                            const errors = JSON.parse(responseBody).errors;
-                            [...errors].forEach(error => {
-                                const field = e.target.elements[error.field];
-                                field.setCustomValidity(error.message);
-                                field.reportValidity();
-                            });
-                        } else {
-                            alert(responseBody);
-                        }
-                    });
+            e.target.addEventListener('submit', e => {
+                const selector = Object.keys(submitHandlers).find(selector => e.target.closest(selector));
+                submitHandlers[selector]?.(e);
             });
 
             e.target.addEventListener('click', e => {
-                const selector = Object.keys(eventHandlers).find(selector => e.target.closest(selector));
-                eventHandlers[selector]?.(e);
+                const selector = Object.keys(clickHandlers).find(selector => e.target.closest(selector));
+                clickHandlers[selector]?.(e);
             });
 
-            const eventHandlers = {
+            const submitHandlers = {
+                '[name="replyInsertForm"]': e => {
+                    e.preventDefault();
+                    const form = new FormData(e.target);
+                    form.append('exposed', 'true');
+                    const httpEntity = {
+                        method: 'POST',
+                        body: form
+                    };
+                    fetch(e.target.action, httpEntity)
+                        .then(async response => {
+                            const responseBody = await response.text();
+                            if (response.ok) {
+                                alert(/*[[#{command.success.save}]]*/'');
+                                location.reload();
+                            } else if (response.status === 400) {
+                                const errors = JSON.parse(responseBody).errors;
+                                [...errors].forEach(error => {
+                                    const field = e.target.elements[error.field];
+                                    field.setCustomValidity(error.message);
+                                    field.reportValidity();
+                                });
+                            } else {
+                                alert(/*[[#{command.failure.save}]]*/'');
+                            }
+                        });
+                }
+
+            }
+
+            const clickHandlers = {
                 '.reply-item button[name="update"]': e => {
 
                 },
@@ -65,7 +74,7 @@
                                 alert(/*[[#{command.success.delete}]]*/'');
                                 location.reload();
                             } else {
-                                alert(responseBody);
+                                alert(/*[[#{command.failure.delete}]]*/'');
                             }
                         });
                 }
