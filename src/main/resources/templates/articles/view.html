@@ -39,6 +39,37 @@
                         }
                     });
             });
+
+            e.target.addEventListener('click', e => {
+                const selector = Object.keys(eventHandlers).find(selector => e.target.closest(selector));
+                eventHandlers[selector]?.(e);
+            });
+
+            const eventHandlers = {
+                '.reply-item button[name="update"]': e => {
+
+                },
+                '.reply-item button[name="delete"]': e => {
+                    const button = e.target.closest('.reply-item button[name="delete"]');
+                    const httpEntity = {
+                        method: 'delete',
+                        headers: {
+                            'content-type': 'application/json',
+                            'X-XSRF-TOKEN': CSRF.token
+                        }
+                    };
+                    fetch(`/api/replies/${button.dataset.id}`, httpEntity)
+                        .then(async response => {
+                            const responseBody = await response.text();
+                            if (response.ok) {
+                                alert(/*[[#{command.success.delete}]]*/'');
+                                location.reload();
+                            } else {
+                                alert(responseBody);
+                            }
+                        });
+                }
+            };
         });
     </script>
 </head>
@@ -71,32 +102,32 @@
             </div>
             <div class="d-flex justify-content-end align-items-center" sec:authorize="isAuthenticated()">
                 <div th:if="${#strings.equals(reply.createdBy, #authentication.principal.username)}">
-                    <button type="button" class="btn">수정</button>
+                    <button class="btn" name="update" type="button" th:data-id="${reply.id}">수정</button>
                 </div>
                 <div th:if="${#authentication.principal.hasRole('ROLE_ADMIN') or #authentication.principal.hasRole('ROLE_MANAGER') or #strings.equals(reply.createdBy, #authentication.principal.username)}">
-                    <button type="button" class="btn">삭제</button>
+                    <button class="btn" name="delete" type="button" th:data-id="${reply.id}">삭제</button>
                 </div>
             </div>
         </div>
         <div class="my-2" th:utext="${reply.content}"></div>
     </div>
-    <form enctype="multipart/form-data" name="replyInsertForm" th:action="@{/api/replies}" th:method="post">
+    <form enctype="multipart/form-data" name="replyInsertForm" th:action="@{/api/replies}" th:method="post" sec:authorize="isAuthenticated()">
         <input name="articleId" th:value="${page.content.get(0).id}" type="hidden">
         <div class="input-group my-4">
             <textarea aria-label="댓글 입력" class="form-control" name="content"></textarea>
-            <button class="input-group-text" type="submit">댓글 입력</button>
+            <button class="input-group-text" type="submit" th:text="|#{entity.reply} #{label.input}|"></button>
         </div>
     </form>
 </section>
 <footer class="container-sm content-footer d-flex justify-content-between align-items-center my-4">
     <div class="d-flex justify-content-start gap-2">
-        <a class="btn btn-outline-secondary" th:href="@{/articles/view(categoryId=${CURRENT_CATEGORY.id}, page=${page.previousOrFirstPageable().pageNumber})}">이전글</a>
-        <a class="btn btn-outline-secondary" th:href="@{/articles(categoryType=${CURRENT_CATEGORY.type}, categoryId=${CURRENT_CATEGORY.id})}">목록보기</a>
-        <a class="btn btn-outline-secondary" th:href="@{/articles/view(categoryId=${CURRENT_CATEGORY.id}, page=${page.nextOrLastPageable().pageNumber})}">다음글</a>
+        <a class="btn btn-outline-secondary" th:href="@{/articles/view(categoryId=${CURRENT_CATEGORY.id}, page=${page.previousOrFirstPageable().pageNumber})}" th:text="#{label.prevous.article}">이전글</a>
+        <a class="btn btn-outline-secondary" th:href="@{/articles(categoryType=${CURRENT_CATEGORY.type}, categoryId=${CURRENT_CATEGORY.id})}" th:text="#{label.list}"></a>
+        <a class="btn btn-outline-secondary" th:href="@{/articles/view(categoryId=${CURRENT_CATEGORY.id}, page=${page.nextOrLastPageable().pageNumber})}" th:text="#{label.next.article}">다음글</a>
     </div>
-    <div class="d-flex justify-content-end gap-2">
-        <a class="btn btn-outline-secondary" th:href="@{/}">수정</a>
-        <button class="btn btn-outline-secondary" type="submit">삭제</button>
+    <div class="d-flex justify-content-end gap-2" sec:authorize="isAuthenticated()">
+        <a class="btn btn-outline-secondary" th:href="@{/}" th:text="#{label.update}"></a>
+        <button class="btn btn-outline-secondary" type="submit" th:text="#{label.delete}"></button>
     </div>
 </footer>
 </body>

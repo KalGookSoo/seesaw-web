@@ -33,7 +33,7 @@ import static lombok.AccessLevel.PROTECTED;
 public class Article extends AbstractHierarchical<Article> implements Hierarchical<Article, String> {
 
     @Comment("공개여부")
-    private boolean isPublic;
+    private boolean exposed;
 
     @Comment("고정여부")
     private boolean isFixed;

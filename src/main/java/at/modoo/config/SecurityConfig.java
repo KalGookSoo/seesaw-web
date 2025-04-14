@@ -14,8 +14,8 @@ import org.springframework.security.config.annotation.web.configurers.CorsConfig
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.config.annotation.web.configurers.oauth2.client.OAuth2LoginConfigurer;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
@@ -30,6 +30,11 @@ import java.util.Collections;
 public class SecurityConfig {
 
     private final PrincipalOauth2UserService principalOauth2UserService;
+
+    @Bean
+    public SavedRequestAwareAuthenticationSuccessHandler authenticationSuccessHandler() {
+        return new SavedRequestAwareAuthenticationSuccessHandler();
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -69,13 +74,8 @@ public class SecurityConfig {
     }
 
     private void handleOauth2Login(OAuth2LoginConfigurer<HttpSecurity> httpSecurityOAuth2LoginConfigurer) {
-        httpSecurityOAuth2LoginConfigurer.userInfoEndpoint(
-                userInfoEndpoint -> userInfoEndpoint.userService(principalOauth2UserService)
-        ).successHandler((request, response, authentication) -> {
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            response.setStatus(200);
-            response.sendRedirect("/");
-        });
+        httpSecurityOAuth2LoginConfigurer.userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint.userService(principalOauth2UserService))
+                .successHandler(authenticationSuccessHandler());
     }
 
     private void configureLogout(LogoutConfigurer<HttpSecurity> config) {

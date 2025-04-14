@@ -41,7 +41,7 @@ public class NavigationInterceptor implements HandlerInterceptor {
         request.setAttribute(ContextEnvironment.SITE_CONTEXT, site.get());
         List<Category> categories = categoryService.findAll()
                 .stream()
-                .filter(Category::isPublic)
+                .filter(Category::isExposed)
                 .toList();
 
         List<Category> nestedCategories = HierarchicalFactory.build(categories);

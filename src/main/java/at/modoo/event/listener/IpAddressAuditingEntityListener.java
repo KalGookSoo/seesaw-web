@@ -9,7 +9,8 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
-import java.lang.reflect.Field;
+import java.lang.annotation.Annotation;
+import java.util.Arrays;
 
 public class IpAddressAuditingEntityListener {
 
@@ -23,16 +24,20 @@ public class IpAddressAuditingEntityListener {
         setIpField(target, LastModifiedIp.class, getCurrentIp());
     }
 
-    private void setIpField(Object target, Class annotationClass, String value) {
-        try {
-            for (Field field : target.getClass().getDeclaredFields()) {
-                if (field.isAnnotationPresent(annotationClass)) {
-                    field.setAccessible(true);
-                    field.set(target, value);
-                }
-            }
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException("IP 할당 예외");
+    private void setIpField(Object target, Class<? extends Annotation> annotationClass, String value) {
+        Class<?> clazz = target.getClass();
+        while (clazz != null) {
+            Arrays.stream(clazz.getDeclaredFields())
+                    .filter(field -> field.isAnnotationPresent(annotationClass))
+                    .peek(field -> field.setAccessible(true))
+                    .forEach(field -> {
+                        try {
+                            field.set(target, value);
+                        } catch (IllegalAccessException e) {
+                            throw new RuntimeException("IP 할당 예외");
+                        }
+                    });
+            clazz = clazz.getSuperclass();
         }
     }
 

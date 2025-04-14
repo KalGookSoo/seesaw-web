@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 public class CreateReplyCommand implements Serializable {
 
-    private boolean isPublic;
+    private boolean exposed;
 
     @NotNull
     @NotBlank

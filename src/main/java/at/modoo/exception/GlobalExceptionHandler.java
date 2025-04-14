@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.web.csrf.InvalidCsrfTokenException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -86,4 +88,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .toList();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("errors", errors));
     }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException e) {
+        logger.warn(e.getMessage());
+        String message = messageSource.getMessage("error.access.denied");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(message);
+    }
+
+    @ExceptionHandler(InvalidCsrfTokenException.class)
+    public ResponseEntity<String> handleInvalidCsrfTokenException(InvalidCsrfTokenException e) {
+        logger.warn(e.getMessage());
+        return handleAccessDeniedException(e);
+    }
+
 }

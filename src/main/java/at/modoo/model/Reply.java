@@ -31,7 +31,7 @@ import static lombok.AccessLevel.PROTECTED;
 public class Reply extends AbstractHierarchical<Reply> implements Hierarchical<Reply, String> {
 
     @Comment("공개여부")
-    private boolean isPublic;
+    private boolean exposed;
 
     @Comment("본문")
     @Column(columnDefinition = "TEXT")
@@ -63,7 +63,7 @@ public class Reply extends AbstractHierarchical<Reply> implements Hierarchical<R
         Reply reply = new Reply();
         reply.articleId = command.getArticleId();
         reply.content = command.getContent();
-        reply.isPublic = command.isPublic();
+        reply.exposed = command.isExposed();
         return reply;
     }
 
@@ -82,6 +82,6 @@ public class Reply extends AbstractHierarchical<Reply> implements Hierarchical<R
 
     public void update(UpdateReplyCommand command) {
         this.content = command.getContent();
-        this.isPublic = command.isPublic();
+        this.exposed = command.isExposed();
     }
 }

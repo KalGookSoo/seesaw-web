@@ -43,7 +43,7 @@ public class Category extends AbstractHierarchical<Category> implements Hierarch
     private CategoryType type;
 
     @Comment("공개여부")
-    private boolean isPublic;
+    private boolean exposed;
 
     @Comment("순서")
     private Integer sequence;
