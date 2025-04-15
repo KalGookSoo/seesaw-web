@@ -107,6 +107,7 @@
                     button.classList.add('d-none');
                     replyItem.querySelector(`[name="cancel"]`).classList.remove('d-none');
                     replyItem.insertAdjacentHTML('beforeend', template);
+                    replyItem.querySelector(`textarea[name="content"]`).focus();
                 },
                 '.reply-item button[name="delete"]': e => {
                     const button = e.target.closest('.reply-item button[name="delete"]');
