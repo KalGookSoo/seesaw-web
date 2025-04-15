@@ -49,7 +49,7 @@ public class SecurityConfig {
     }
 
     private void handleCsrfPolicies(CsrfConfigurer<HttpSecurity> config) {
-        config.ignoringRequestMatchers("/sign-out");
+        config.ignoringRequestMatchers("/sign-out", "/**");
         config.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
     }
 
