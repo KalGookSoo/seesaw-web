@@ -4,24 +4,19 @@ import at.modoo.command.CreateArticleCommand;
 import at.modoo.command.UpdateArticleCommand;
 import at.modoo.core.authentication.PrincipalProvider;
 import at.modoo.core.file.FileIOService;
-import at.modoo.model.Article;
-import at.modoo.model.Attachment;
-import at.modoo.model.Reply;
-import at.modoo.model.View;
+import at.modoo.model.*;
 import at.modoo.repository.*;
 import at.modoo.search.ArticleSearch;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -70,12 +65,15 @@ public class DefaultArticleService implements ArticleService {
         List<String> articleIds = page.getContent().stream().map(Article::getId).toList();
 
         List<Reply> replies = replyRepository.findAllByArticleIdIn(articleIds);
+        replies.sort(Comparator.comparing(BaseEntity::getCreatedDate));
         page.getContent().forEach(article -> article.joinReplies(replies));
 
         List<View> views = viewRepository.findAllByArticleIdIn(articleIds);
+        views.sort(Comparator.comparing(BaseEntity::getCreatedDate));
         page.getContent().forEach(article -> article.joinViews(views));
 
         List<Attachment> attachments = attachmentRepository.findAllByReferenceIdIn(articleIds);
+        attachments.sort(Comparator.comparing(BaseEntity::getCreatedDate));
         page.getContent().forEach(article -> article.joinAttachments(attachments));
         return page;
     }
@@ -97,12 +95,15 @@ public class DefaultArticleService implements ArticleService {
         List<String> articleIds = page.getContent().stream().map(Article::getId).toList();
 
         List<Reply> replies = replyRepository.findAllByArticleIdIn(articleIds);
+        replies.sort(Comparator.comparing(BaseEntity::getCreatedDate));
         page.getContent().forEach(article -> article.joinReplies(replies));
 
         List<View> views = viewRepository.findAllByArticleIdIn(articleIds);
+        views.sort(Comparator.comparing(BaseEntity::getCreatedDate));
         page.getContent().forEach(article -> article.joinViews(views));
 
         List<Attachment> attachments = attachmentRepository.findAllByReferenceIdIn(articleIds);
+        attachments.sort(Comparator.comparing(BaseEntity::getCreatedDate));
         page.getContent().forEach(article -> article.joinAttachments(attachments));
         return page;
     }
@@ -164,7 +165,6 @@ public class DefaultArticleService implements ArticleService {
         View view = View.create(articleId);
         Object principal = principalProvider.getAuthentication().getPrincipal();
         // 동일인물 중복 조회수 불허
-        // TODO 영속화될 때 인증주체에서 IP 추출하여 영속화될 수 있도록 AnnotationProcessor랑 EventListener 만들 것
         List<View> views = viewRepository.findAllByArticleIdIn(Collections.singletonList(articleId));
 
     }

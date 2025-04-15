@@ -97,7 +97,7 @@
                     <form enctype="multipart/form-data" name="updateReplyForm" action="${updateUri}/${button.dataset.id}" method="post">
                         <input name="articleId" value="${button.dataset.id}" type="hidden">
                         <div class="input-group my-4">
-                            <textarea aria-label="댓글 입력" class="form-control" name="content">${replyContent.textContent}</textarea>
+                            <textarea aria-label="댓글 입력" class="form-control" name="content">${replyContent.querySelector('pre').textContent}</textarea>
                             <button class="input-group-text" type="submit">${submitterTextContent}</button>
                         </div>
                     </form>
@@ -158,12 +158,16 @@
     </div>
 </section>
 <section class="container-sm article-content-section mb-5" th:utext="${page.content.get(0).content}"></section>
-<section class="container-sm d-flex justify-content-start align-items-center gap-2 my-2" th:if="${!page.content.get(0).replies.isEmpty()}">
+<section class="container-sm d-flex justify-content-start align-items-center gap-2 my-2">
     <div class="small text-muted" th:text="#{entity.reply}"></div>
     <div class="main-color small" th:text="${page.content.get(0).replies.size()}"></div>
 </section>
-<section class="container-sm reply-section px-4 py-2" th:if="${!page.content.get(0).replies.isEmpty()}">
-    <div class="reply-item py-2" th:each="reply : ${page.content.get(0).replies}" th:classappend="${!replyStat.last ? 'border-bottom' : ''}">
+<section class="container-sm reply-section px-4 py-2">
+    <div class="reply-item py-2"
+         th:classappend="${!replyStat.last ? 'border-bottom' : ''}"
+         th:each="reply : ${page.content.get(0).replies}"
+         th:if="${!page.content.get(0).replies.isEmpty()}"
+    >
         <div class="d-flex justify-content-between my-2">
             <div class="d-flex justify-content-start align-items-center gap-2">
                 <div class="small text-muted" th:text="${reply.maskedAuthor}"></div>
@@ -179,7 +183,9 @@
                 </div>
             </div>
         </div>
-        <div class="my-2 reply-content" th:utext="${reply.content}"></div>
+        <div class="my-2 reply-content">
+            <pre th:utext="${reply.content}"></pre>
+        </div>
     </div>
     <form enctype="multipart/form-data" name="insertReplyForm" th:action="@{/api/replies}" th:method="post" sec:authorize="isAuthenticated()">
         <input name="articleId" th:value="${page.content.get(0).id}" type="hidden">
@@ -188,6 +194,10 @@
             <button class="input-group-text" type="submit" th:text="|#{entity.reply} #{label.input}|"></button>
         </div>
     </form>
+    <div class="input-group my-4" sec:authorize="isAnonymous()">
+        <textarea aria-label="댓글 입력" class="form-control" name="content" readonly></textarea>
+        <a class="input-group-text" th:href="@{/oauth2/authorization/naver}" th:text="#{label.sign.in}"></a>
+    </div>
 </section>
 <footer class="container-sm content-footer d-flex justify-content-between align-items-center my-4">
     <div class="d-flex justify-content-start gap-2">
