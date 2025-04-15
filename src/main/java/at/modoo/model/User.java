@@ -8,8 +8,6 @@ import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.util.Assert;
 
 import java.time.LocalDate;
@@ -60,14 +58,6 @@ public class User extends BaseEntity {
     @ToString.Exclude
     @JsonManagedReference
     private List<Role> roles = new ArrayList<>();
-
-    @CreatedDate
-    @Comment("생성 일시")
-    private LocalDateTime createdDate;
-
-    @LastModifiedDate
-    @Comment("수정 일시")
-    private LocalDateTime lastModifiedDate;
 
     @Comment("만료 일시")
     private LocalDateTime expiredDate;
