@@ -2,14 +2,12 @@ package at.modoo.exception;
 
 import at.modoo.core.validation.ValidationError;
 import at.modoo.message.CmsMessageSource;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.csrf.InvalidCsrfTokenException;
@@ -94,6 +92,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         logger.warn(e.getMessage());
         String message = messageSource.getMessage("error.access.denied");
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(message);
+    }
+
+    @ExceptionHandler(value = AccessDeniedException.class, produces = MediaType.TEXT_HTML_VALUE)
+    public String handleAccessDeniedExceptionHtml(AccessDeniedException e) {
+        logger.warn(e.getMessage());
+        return "error/403";
     }
 
     @ExceptionHandler(InvalidCsrfTokenException.class)
