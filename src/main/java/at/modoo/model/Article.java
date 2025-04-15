@@ -36,7 +36,7 @@ public class Article extends AbstractHierarchical<Article> implements Hierarchic
     private boolean exposed;
 
     @Comment("고정여부")
-    private boolean isFixed;
+    private boolean fixed;
 
     @Comment("고정순서")
     private Integer fixedOrder;

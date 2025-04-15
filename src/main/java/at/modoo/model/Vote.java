@@ -27,7 +27,7 @@ public class Vote extends BaseEntity {
     @Column(length = 36)
     private String referenceId;
 
-    @Comment("긍정여부")
-    private boolean isPositive;
+    @Comment("찬성여부")
+    private boolean approved;
 
 }
