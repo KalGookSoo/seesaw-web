@@ -10,7 +10,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>홈 | 대전포스트잇 ♣대전독서모임</title>
+    <title>[[${CURRENT_CATEGORY.name}]] | [[${SITE_CONTEXT.name}]]</title>
     <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
     <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', e => {
@@ -176,11 +176,11 @@
             </div>
             <div class="d-flex justify-content-end align-items-center" sec:authorize="isAuthenticated()">
                 <div th:if="${#strings.equals(reply.createdBy, #authentication.principal.username)}">
-                    <button class="btn" name="update" type="button" th:data-id="${reply.id}">수정</button>
-                    <button class="btn d-none" name="cancel" type="button">취소</button>
+                    <button class="btn" name="update" type="button" th:data-id="${reply.id}" th:text="#{label.update}"></button>
+                    <button class="btn d-none" name="cancel" type="button" th:text="#{label.cancel}"></button>
                 </div>
                 <div th:if="${#authentication.principal.hasRole('ROLE_ADMIN') or #authentication.principal.hasRole('ROLE_MANAGER') or #strings.equals(reply.createdBy, #authentication.principal.username)}">
-                    <button class="btn" name="delete" type="button" th:data-id="${reply.id}">삭제</button>
+                    <button class="btn" name="delete" type="button" th:data-id="${reply.id}" th:text="#{label.delete}"></button>
                 </div>
             </div>
         </div>
@@ -207,7 +207,10 @@
         <a class="btn btn-outline-secondary" th:href="@{/articles/view(categoryId=${CURRENT_CATEGORY.id}, page=${page.nextOrLastPageable().pageNumber})}" th:text="#{label.next.article}">다음글</a>
     </div>
     <div class="d-flex justify-content-end gap-2" sec:authorize="isAuthenticated()">
-        <a class="btn btn-outline-secondary" th:href="@{/}" th:text="#{label.update}"></a>
+        <a class="btn btn-outline-secondary"
+           th:href="@{'/articles/' + ${page.content.get(0).id} + '/edit?categoryId=' +${page.content.get(0).categoryId}}"
+           th:text="#{label.update}">
+        </a>
         <button class="btn btn-outline-secondary" type="submit" th:text="#{label.delete}"></button>
     </div>
 </footer>

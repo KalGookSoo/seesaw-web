@@ -1,5 +1,6 @@
 package at.modoo.command;
 
+import at.modoo.model.vo.ArticleType;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -19,6 +20,20 @@ public class CreateArticleCommand {
     @NotBlank
     @NotNull
     private String categoryId;
+
+    @Parameter(description = "타입", required = true)
+    @Schema(description = "타입", example = "타입")
+    @NotBlank
+    @NotNull
+    private ArticleType type;
+
+    @Parameter(description = "고정여부", required = true)
+    @Schema(description = "고정여부", example = "고정여부")
+    private boolean fixed;
+
+    @Parameter(description = "고정순서", required = true)
+    @Schema(description = "고정순서", example = "고정순서")
+    private Integer fixedOrder;
 
     @Parameter(description = "제목", required = true)
     @Schema(description = "제목", example = "제목")

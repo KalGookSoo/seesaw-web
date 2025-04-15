@@ -1,10 +1,123 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      layout:decorate="~{layout}"
+      th:lang="${#locale.language}"
+>
 
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>[[${CURRENT_CATEGORY.name}]] | [[${SITE_CONTEXT.name}]]</title>
+    <link rel="stylesheet" th:href="@{/styles/toastui-editor.min.css}">
+    <script th:src="@{/scripts/toastui-editor-all.min.js}"></script>
+    <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', e => {
+
+            const initialValue = /*[[${article.content}]]*/'';
+            const editor = new toastui.Editor({
+                el: document.querySelector('#editor'),
+                height: '500px',
+                initialEditType: 'wysiwyg',
+                hideModeSwitch: true,
+                previewStyle: 'vertical',
+                initialValue: initialValue,
+                usageStatistics: false
+            });
+
+            e.target.addEventListener('submit', e => {
+                const selector = Object.keys(submitHandlers).find(selector => e.target.closest(selector));
+                submitHandlers[selector]?.(e);
+            });
+
+            const submitHandlers = {
+                '[name="updateArticleForm"]': e => {
+                    e.preventDefault();
+                    const form = new FormData(e.target);
+                    form.append('type', 'HTML');
+                    form.set('fixed', e.target.elements.fixed.checked)
+                    const httpEntity = {
+                        method: 'post',
+                        headers: {
+                            [CSRF.headerName]: CSRF.token
+                        },
+                        body: form
+                    };
+                    console.dir(form.entries().forEach(entry => console.log(entry)));
+                    return;
+                    fetch(e.target.action, httpEntity)
+                        .then(async response => {
+                            const responseBody = await response.text();
+                            if (response.ok) {
+                                alert(/*[[#{command.success.update}]]*/'');
+                                location.reload();
+                            } else if (response.status === 400) {
+                                const errors = JSON.parse(responseBody).errors;
+                                [...errors].forEach(error => {
+                                    const field = e.target.elements[error.field];
+                                    field.setCustomValidity(error.message);
+                                    field.reportValidity();
+                                });
+                            } else {
+                                alert(/*[[#{command.failure.update}]]*/'');
+                            }
+                        });
+                }
+
+            }
+        });
+    </script>
+</head>
+<body layout:fragment="content">
+<nav th:replace="~{components/local_navigation_bar :: localNavigationBar}"></nav>
+<header class="container-sm title-section">
+    <div class="d-flex">
+        <div class="title h5 pb-1" th:text="${CURRENT_CATEGORY.name}"></div>
+    </div>
+</header>
+<form name="updateArticleForm" enctype="multipart/form-data" th:action="@{'/api/articles' + ${article.id}}" th:method="post">
+    <input name="categoryId" th:value="${article.categoryId}" type="hidden">
+    <input class="d-none" multiple name="multipartFiles" type="file">
+    <section class="container-sm py-4 mb-4">
+        <div class="container">
+            <div class="row py-2">
+                <div class="col-1">작성자</div>
+                <div class="col-11 d-flex justify-content-between align-items-center">
+                    <div th:text="${article.createdBy}"></div>
+                    <div class="d-flex justify-content-start align-items-center gap-2 text-muted small">
+                        <div>공지글로등록</div>
+                        <input aria-label="고정여부" type="checkbox" id="fixed" th:checked="${article.fixed}">
+                    </div>
+                </div>
+            </div>
+            <div class="row py-2">
+                <div class="col-1">
+                    <label for="title" th:text="#{entity.article.title}"></label>
+                </div>
+                <div class="col-11">
+                    <input type="text" class="form-control" id="title" th:value="${article.title}" required>
+                </div>
+            </div>
+            <div class="row py-2">
+                <div class="col-1">내용</div>
+                <div class="col-11">
+                    <div id="editor"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer class="container-sm content-footer d-flex justify-content-end align-items-center my-4">
+        <div class="d-flex justify-content-end gap-2">
+            <a class="btn btn-outline-secondary"
+               th:href="@{/articles/view(categoryId=${article.categoryId}, page=0)}"
+               th:text="#{label.cancel}">
+            </a>
+            <button class="btn btn-primary" type="submit" th:text="#{label.save}"></button>
+        </div>
+    </footer>
+</form>
 </body>
 </html>
