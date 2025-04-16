@@ -72,8 +72,10 @@ public class DefaultArticleService implements ArticleService {
         views.sort(Comparator.comparing(BaseEntity::getCreatedDate));
         page.getContent().forEach(article -> article.joinViews(views));
 
-        List<Attachment> attachments = attachmentRepository.findAllByReferenceIdIn(articleIds);
-        attachments.sort(Comparator.comparing(BaseEntity::getCreatedDate));
+        List<Attachment> attachments = attachmentRepository.findAllByReferenceIdIn(articleIds)
+                .stream()
+                .sorted(Comparator.comparing(BaseEntity::getCreatedDate))
+                .toList();
         page.getContent().forEach(article -> article.joinAttachments(attachments));
         return page;
     }
@@ -102,8 +104,10 @@ public class DefaultArticleService implements ArticleService {
         views.sort(Comparator.comparing(BaseEntity::getCreatedDate));
         page.getContent().forEach(article -> article.joinViews(views));
 
-        List<Attachment> attachments = attachmentRepository.findAllByReferenceIdIn(articleIds);
-        attachments.sort(Comparator.comparing(BaseEntity::getCreatedDate));
+        List<Attachment> attachments = attachmentRepository.findAllByReferenceIdIn(articleIds)
+                .stream()
+                .sorted(Comparator.comparing(BaseEntity::getCreatedDate))
+                .toList();
         page.getContent().forEach(article -> article.joinAttachments(attachments));
         return page;
     }
@@ -118,7 +122,7 @@ public class DefaultArticleService implements ArticleService {
     public Article create(CreateArticleCommand command) throws IOException {
         Article article = Article.create(command);
         for (MultipartFile multipartFile : command.getMultipartFiles()) {
-            Attachment attachment = Attachment.create("/", multipartFile);
+            Attachment attachment = Attachment.create(Attachment.Type.ATTACHMENT, multipartFile);
             article.addAttachment(attachment);
             writeFile(filepath + attachment.getPathName(), multipartFile.getBytes());
         }
@@ -132,7 +136,7 @@ public class DefaultArticleService implements ArticleService {
         Article article = articleRepository.getReferenceById(id);
         article.update(command);
         for (MultipartFile multipartFile : command.getMultipartFiles()) {
-            Attachment attachment = Attachment.create("/", multipartFile);
+            Attachment attachment = Attachment.create(Attachment.Type.ATTACHMENT, multipartFile);
             article.addAttachment(attachment);
             writeFile(filepath + attachment.getPathName(), multipartFile.getBytes());
         }

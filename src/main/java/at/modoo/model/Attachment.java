@@ -45,11 +45,11 @@ public class Attachment extends BaseEntity {
     @Comment("크기")
     private long size;
 
-    public static Attachment create(String pathName, MultipartFile multipartFile) {
+    public static Attachment create(Type type, MultipartFile multipartFile) {
         Attachment attachment = new Attachment();
         attachment.originalName = multipartFile.getOriginalFilename();
         attachment.name = generateName(attachment.originalName);
-        attachment.pathName = pathName;
+        attachment.pathName = type.getPath();
         attachment.mimeType = multipartFile.getContentType();
         attachment.size = multipartFile.getSize();
         return attachment;
@@ -57,6 +57,22 @@ public class Attachment extends BaseEntity {
 
     private static String generateName(String originName) {
         return String.format("%s_%s", UUID.randomUUID(), originName);
+    }
+
+    public boolean isInlineImage() {
+        return pathName.equals(Type.INLINE_IMAGE.getPath());
+    }
+
+    public boolean isAttachment() {
+        return pathName.equals(Type.ATTACHMENT.getPath());
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public enum Type {
+        INLINE_IMAGE("/images"),
+        ATTACHMENT("/attachments");
+        private final String path;
     }
 
 }

@@ -24,9 +24,18 @@
                 hideModeSwitch: true,
                 previewStyle: 'vertical',
                 initialValue: '',
-                usageStatistics: false
+                usageStatistics: false,
+                hooks: {
+                    addImageBlobHook(blob, callback) {
+                        debugger;
+                        console.log(blob);
+                        console.log(callback);
+                    }
+                }
             });
+            editor.on('change', () => {
 
+            });
             e.target.addEventListener('submit', e => {
                 const selector = Object.keys(submitHandlers).find(selector => e.target.closest(selector));
                 submitHandlers[selector]?.(e);

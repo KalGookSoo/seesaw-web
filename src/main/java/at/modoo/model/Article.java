@@ -173,4 +173,12 @@ public class Article extends AbstractHierarchical<Article> implements Hierarchic
         return getId().equals(attachment.getReferenceId());
     }
 
+    public List<Attachment> getInlineImages() {
+        return attachments.stream().filter(Attachment::isInlineImage).toList();
+    }
+
+    public List<Attachment> getAttachments() {
+        return attachments.stream().filter(Attachment::isAttachment).toList();
+    }
+
 }

@@ -61,8 +61,8 @@
                     </div>
                     <div class="content d-flex align-items-start justify-content-between mb-2 gap-3">
                         <div><div class="small text-muted" th:text="${article.plainContent}"></div></div>
-                        <div class="thumbnail" th:if="${!article.attachments.isEmpty()}">
-                            <img th:src="@{'/api/attachments/' + ${article.attachments.get(0).id}}" th:alt="${article.attachments.get(0).originalName}">
+                        <div class="thumbnail" th:if="${!article.inlineImages.isEmpty()}">
+                            <img th:src="@{'/api/attachments/' + ${article.inlineImages.get(0).id}}" th:alt="${article.inlineImages.get(0).originalName}">
                         </div>
                     </div>
                     <div class="author d-flex justify-content-start align-items-center">
@@ -92,8 +92,8 @@
                     </div>
                     <div class="content d-flex align-items-start justify-content-between mb-2 gap-3">
                         <div><div class="small text-muted" th:text="${article.plainContent}"></div></div>
-                        <div class="thumbnail" th:if="${!article.attachments.isEmpty()}">
-                            <img th:src="@{'/api/attachments/' + ${article.attachments.get(0).id}}" th:alt="${article.attachments.get(0).originalName}">
+                        <div class="thumbnail" th:if="${!article.inlineImages.isEmpty()}">
+                            <img th:src="@{'/api/attachments/' + ${article.inlineImages.get(0).id}}" th:alt="${article.inlineImages.get(0).originalName}">
                         </div>
                     </div>
                     <div class="author d-flex justify-content-start align-items-center">

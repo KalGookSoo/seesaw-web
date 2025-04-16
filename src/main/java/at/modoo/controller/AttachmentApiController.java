@@ -1,14 +1,18 @@
 package at.modoo.controller;
 
+import at.modoo.command.CreateAttachmentCommand;
 import at.modoo.core.file.FileIOService;
 import at.modoo.model.Attachment;
 import at.modoo.service.AttachmentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
@@ -34,6 +38,13 @@ public class AttachmentApiController {
         headers.add(HttpHeaders.CONTENT_TYPE, attachment.getMimeType());
         headers.add(HttpHeaders.CONTENT_DISPOSITION, getContentDisposition(userAgent, fileName));
         return ResponseEntity.status(HttpStatus.OK).headers(headers).body(resource);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping(produces = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Attachment> create(@Valid CreateAttachmentCommand command) {
+        Attachment attachment = attachmentService.create(command);
+        return ResponseEntity.ok(attachment);
     }
 
     private String getContentDisposition(String userAgent, String fileName) {

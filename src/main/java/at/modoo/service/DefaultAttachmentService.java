@@ -1,11 +1,13 @@
 package at.modoo.service;
 
+import at.modoo.command.CreateAttachmentCommand;
 import at.modoo.model.Attachment;
 import at.modoo.repository.AttachmentRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.util.NoSuchElementException;
 
 @Transactional
@@ -32,7 +34,13 @@ public class DefaultAttachmentService implements AttachmentService {
     @Override
     public String getAbsolutePath(String id) {
         Attachment attachment = find(id);
-        return filepath + attachment.getPathName() + attachment.getName();
+        return filepath + attachment.getPathName() + File.separator + attachment.getName();
+    }
+
+    @Override
+    public Attachment create(CreateAttachmentCommand command) {
+        Attachment attachment = Attachment.create(command.getType(), command.getMultipartFile());
+        return attachmentRepository.save(attachment);
     }
 
 }
