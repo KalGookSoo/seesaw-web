@@ -152,8 +152,10 @@
                     replyItem.querySelector(`[name="updateReplyForm"]`).remove();
                 },
                 '.content-footer button[name="delete"]': e => {
+                    if (!confirm('이 게시글을 삭제하시면 댓글과 첨부파일이 같이 삭제됩니다.')) {
+                        return;
+                    }
                     const button = e.target.closest('.content-footer button[name="delete"]');
-                    confirm("이 게시글을 삭제하시면 댓글과 첨부파일이 같이 삭제됩니다.")
                     const httpEntity = {
                         method: 'delete',
                         headers: {
