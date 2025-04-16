@@ -71,7 +71,7 @@ public class AttachmentController {
             for (Attachment attachment : attachments) {
                 ZipEntry entry = new ZipEntry(attachment.getOriginalName());
                 outputStream.putNextEntry(entry);
-                ByteArrayInputStream inputStream = FileIOService.read(attachmentService.getAbsolutePath(attachment.getId()));
+                ByteArrayInputStream inputStream = FileIOService.read(attachmentService.getAbsolutePath(attachment));
                 StreamUtils.copy(inputStream, outputStream);
                 outputStream.closeEntry();
             }

@@ -27,14 +27,31 @@
                 usageStatistics: false,
                 hooks: {
                     addImageBlobHook(blob, callback) {
-                        debugger;
-                        console.log(blob);
-                        console.log(callback);
+                        // referenceId 없이 파일 데이터 베이스에 삽입
+                        const form = new FormData();
+                        form.append('type', 'INLINE_IMAGE');
+                        form.append('multipartFile', blob);
+                        const httpEntity = {
+                            method: 'post',
+                            headers: {
+                                [CSRF.headerName]: CSRF.token
+                            },
+                            body: form
+                        };
+                        fetch(/*[[@{/api/attachments}]]*/'', httpEntity)
+                            .then(async response => {
+                                const responseBody = await response.text();
+                                if (response.ok) {
+                                    debugger;
+                                    const prefix = /*[[@{/api/attachments}]]*/'';
+                                    callback(`${prefix}/${responseBody}`, 'fileOriginName');
+                                } else {
+                                    alert(/*[[#{command.failure.create}]]*/'');
+                                }
+                            });
+
                     }
                 }
-            });
-            editor.on('change', () => {
-
             });
             e.target.addEventListener('submit', e => {
                 const selector = Object.keys(submitHandlers).find(selector => e.target.closest(selector));

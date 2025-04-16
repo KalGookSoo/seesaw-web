@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
@@ -117,16 +118,16 @@ public class DefaultArticleService implements ArticleService {
     public Article find(String id) {
         return articleRepository.findById(id).orElseThrow(NoSuchElementException::new);
     }
-
+// TODO 저장할 때 content에 img src 에서 /api/attachments인것들 추출하여 referenceId 삽입하여 update할 것 여집합은 삭제할 것
     @Override
     public Article create(CreateArticleCommand command) throws IOException {
         Article article = Article.create(command);
-        for (MultipartFile multipartFile : command.getMultipartFiles()) {
-            Attachment attachment = Attachment.create(Attachment.Type.ATTACHMENT, multipartFile);
-            article.addAttachment(attachment);
-            writeFile(filepath + attachment.getPathName(), multipartFile.getBytes());
-        }
         articleRepository.save(article);
+        for (MultipartFile multipartFile : command.getMultipartFiles()) {
+            Attachment attachment = Attachment.create(article.getId(), Attachment.Type.ATTACHMENT, multipartFile);
+            article.addAttachment(attachment);
+            writeFile(filepath + attachment.getPathName() + File.separator + attachment.getName(), multipartFile.getBytes());
+        }
         attachmentRepository.saveAll(article.getAttachments());
         return article;
     }
@@ -135,12 +136,12 @@ public class DefaultArticleService implements ArticleService {
     public Article update(String id, UpdateArticleCommand command) throws IOException {
         Article article = articleRepository.getReferenceById(id);
         article.update(command);
-        for (MultipartFile multipartFile : command.getMultipartFiles()) {
-            Attachment attachment = Attachment.create(Attachment.Type.ATTACHMENT, multipartFile);
-            article.addAttachment(attachment);
-            writeFile(filepath + attachment.getPathName(), multipartFile.getBytes());
-        }
         articleRepository.save(article);
+        for (MultipartFile multipartFile : command.getMultipartFiles()) {
+            Attachment attachment = Attachment.create(article.getId(), Attachment.Type.ATTACHMENT, multipartFile);
+            article.addAttachment(attachment);
+            writeFile(filepath + attachment.getPathName() + File.separator + attachment.getName(), multipartFile.getBytes());
+        }
         attachmentRepository.saveAll(article.getAttachments());
         return article;
     }

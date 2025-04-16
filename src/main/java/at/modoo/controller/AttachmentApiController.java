@@ -42,9 +42,9 @@ public class AttachmentApiController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping(produces = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Attachment> create(@Valid CreateAttachmentCommand command) {
+    public ResponseEntity<String> create(@Valid CreateAttachmentCommand command) throws IOException {
         Attachment attachment = attachmentService.create(command);
-        return ResponseEntity.ok(attachment);
+        return ResponseEntity.ok(attachment.getId());
     }
 
     private String getContentDisposition(String userAgent, String fileName) {

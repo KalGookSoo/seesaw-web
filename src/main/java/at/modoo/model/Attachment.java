@@ -1,5 +1,6 @@
 package at.modoo.model;
 
+import at.modoo.command.CreateAttachmentCommand;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -45,13 +46,30 @@ public class Attachment extends BaseEntity {
     @Comment("크기")
     private long size;
 
-    public static Attachment create(Type type, MultipartFile multipartFile) {
+    /**
+     * 게시글에 첨부된 파일
+     */
+    public static Attachment create(String referenceId, Type type, MultipartFile multipartFile) {
         Attachment attachment = new Attachment();
+        attachment.referenceId = referenceId;
         attachment.originalName = multipartFile.getOriginalFilename();
         attachment.name = generateName(attachment.originalName);
         attachment.pathName = type.getPath();
         attachment.mimeType = multipartFile.getContentType();
         attachment.size = multipartFile.getSize();
+        return attachment;
+    }
+
+    /**
+     * 특정 데이터에 종속되지 않은 파일
+     */
+    public static Attachment create(CreateAttachmentCommand command) {
+        Attachment attachment = new Attachment();
+        attachment.originalName = command.getMultipartFile().getOriginalFilename();
+        attachment.name = generateName(attachment.originalName);
+        attachment.pathName = command.getType().getPath();
+        attachment.mimeType = command.getMultipartFile().getContentType();
+        attachment.size = command.getMultipartFile().getSize();
         return attachment;
     }
 
