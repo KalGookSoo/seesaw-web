@@ -150,6 +150,27 @@
                     button.classList.add('d-none');
 
                     replyItem.querySelector(`[name="updateReplyForm"]`).remove();
+                },
+                '.content-footer button[name="delete"]': e => {
+                    const button = e.target.closest('.content-footer button[name="delete"]');
+                    confirm("이 게시글을 삭제하시면 댓글과 첨부파일이 같이 삭제됩니다.")
+                    const httpEntity = {
+                        method: 'delete',
+                        headers: {
+                            'content-type': 'application/json',
+                            [CSRF.headerName]: CSRF.token
+                        }
+                    };
+                    fetch(`/api/articles/${button.dataset.id}`, httpEntity)
+                        .then(async response => {
+                            const responseBody = await response.text();
+                            if (response.ok) {
+                                alert(/*[[#{command.success.delete}]]*/'');
+                                location.href = /*[[@{/articles(categoryType=${CURRENT_CATEGORY.type}, categoryId=${CURRENT_CATEGORY.id})}]]*/'';
+                            } else {
+                                alert(/*[[#{command.failure.delete}]]*/'');
+                            }
+                        });
                 }
             };
         });
@@ -225,7 +246,13 @@
            th:text="#{label.update}"
         >
         </a>
-        <button class="btn btn-outline-secondary" type="submit" th:text="#{label.delete}"></button>
+        <button class="btn btn-outline-secondary"
+                name="delete"
+                type="button"
+                th:data-id="${page.content.get(0).id}"
+                th:text="#{label.delete}"
+                >
+        </button>
     </div>
 </footer>
 </body>
