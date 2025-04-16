@@ -220,7 +220,7 @@
     </div>
     <div class="d-flex justify-content-end gap-2" sec:authorize="isAuthenticated()">
         <a class="btn btn-outline-secondary"
-           th:href="@{'/articles/' + ${page.content.get(0).id} + '/edit'}"
+           th:href="@{'/articles/' + ${page.content.get(0).id} + '/edit?categoryId=' +${page.content.get(0).categoryId}}"
            th:if="${#strings.equals(#authentication.principal.username, page.content.get(0).createdBy)}"
            th:text="#{label.update}"
         >
