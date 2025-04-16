@@ -127,7 +127,8 @@
         >
             내가 쓴 글
         </a>
-        <button class="btn btn-primary" type="button">글쓰기</button>
+        <a class="btn btn-primary" sec:authorize="isAuthenticated()" th:href="@{/articles/new(categoryId=${search.categoryId})}">글쓰기</a>
+        <a class="btn btn-primary" sec:authorize="isAnonymous()" th:href="@{/oauth2/authorization/naver}">글쓰기</a>
     </div>
 </section>
 <section class="container-sm board-table-search-section my-4">

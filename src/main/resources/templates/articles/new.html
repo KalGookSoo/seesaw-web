@@ -10,21 +10,20 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>[[${ALL_CATEGORIES.get(article.categoryId).name}]] | [[${SITE_CONTEXT.name}]]</title>
+    <title>[[${ALL_CATEGORIES.get(command.categoryId).name}]] | [[${SITE_CONTEXT.name}]]</title>
     <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
     <link rel="stylesheet" th:href="@{/styles/toastui-editor.min.css}">
     <script th:src="@{/scripts/toastui-editor-all.min.js}"></script>
     <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', e => {
 
-            const initialValue = /*[[${article.content}]]*/'';
             const editor = new toastui.Editor({
                 el: document.querySelector('#editor'),
                 height: '500px',
                 initialEditType: 'wysiwyg',
                 hideModeSwitch: true,
                 previewStyle: 'vertical',
-                initialValue: initialValue,
+                initialValue: '',
                 usageStatistics: false
             });
 
@@ -34,7 +33,7 @@
             });
 
             const submitHandlers = {
-                '[name="updateArticleForm"]': e => {
+                '[name="createArticleForm"]': e => {
                     e.preventDefault();
                     const form = new FormData(e.target);
                     form.append('type', 'HTML');
@@ -51,7 +50,7 @@
                         .then(async response => {
                             const responseBody = await response.text();
                             if (response.ok) {
-                                alert(/*[[#{command.success.update}]]*/'');
+                                alert(/*[[#{command.success.create}]]*/'');
                                 location.href = /*[[@{/articles/view(categoryId=${command.categoryId}, page=0)}]]*/'';
                             } else if (response.status === 400) {
                                 const errors = JSON.parse(responseBody).errors;
@@ -61,7 +60,7 @@
                                     field.reportValidity();
                                 });
                             } else {
-                                alert(/*[[#{command.failure.update}]]*/'');
+                                alert(/*[[#{command.failure.create}]]*/'');
                             }
                         });
                 }
@@ -74,21 +73,21 @@
 <nav th:replace="~{components/local_navigation_bar :: localNavigationBar}"></nav>
 <header class="container-sm title-section">
     <div class="d-flex">
-        <div class="title h5 pb-1" th:text="${ALL_CATEGORIES.get(article.categoryId).name}"></div>
+        <div class="title h5 pb-1" th:text="${ALL_CATEGORIES.get(command.categoryId).name}"></div>
     </div>
 </header>
-<form name="updateArticleForm" enctype="multipart/form-data" th:action="@{'/api/articles/' + ${article.id}}" th:method="post">
-    <input name="categoryId" th:value="${article.categoryId}" type="hidden">
+<form name="createArticleForm" enctype="multipart/form-data" th:action="@{/api/articles}" th:method="post">
+    <input name="categoryId" th:value="${command.categoryId}" type="hidden">
     <input class="d-none" multiple name="multipartFiles" type="file">
     <section class="container-sm py-4 mb-4">
         <div class="container">
             <div class="row py-2">
                 <div class="col-1">작성자</div>
                 <div class="col-11 d-flex justify-content-between align-items-center">
-                    <div th:text="${article.createdBy}"></div>
+                    <div th:text="${#authentication.principal.username}"></div>
                     <div class="d-flex justify-content-start align-items-center gap-2 text-muted small">
                         <div>공지글로등록</div>
-                        <input aria-label="고정여부" type="checkbox" id="fixed" th:checked="${article.fixed}">
+                        <input aria-label="고정여부" type="checkbox" id="fixed">
                     </div>
                 </div>
             </div>
@@ -97,7 +96,7 @@
                     <label for="title" th:text="#{entity.article.title}"></label>
                 </div>
                 <div class="col-11">
-                    <input type="text" class="form-control" id="title" name="title" th:value="${article.title}" required>
+                    <input type="text" class="form-control" id="title" name="title" required>
                 </div>
             </div>
             <div class="row py-2">
@@ -111,7 +110,7 @@
     <footer class="container-sm content-footer d-flex justify-content-end align-items-center my-4">
         <div class="d-flex justify-content-end gap-2">
             <a class="btn btn-outline-secondary"
-               th:href="@{/articles/view(categoryId=${article.categoryId}, page=0)}"
+               th:href="@{/articles/view(categoryId=${command.categoryId}, page=0)}"
                th:text="#{label.cancel}">
             </a>
             <button class="btn btn-primary" type="submit" th:text="#{label.save}"></button>

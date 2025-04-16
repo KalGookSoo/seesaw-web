@@ -1,5 +1,6 @@
 package at.modoo.command;
 
+import at.modoo.model.vo.ArticleType;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -10,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 @Schema(description = "게시글 수정 커맨드")
 @Data
@@ -20,6 +22,19 @@ public class UpdateArticleCommand implements Serializable {
     @NotBlank
     @NotNull
     private String categoryId;
+
+    @Parameter(description = "타입", required = true)
+    @Schema(description = "타입", example = "타입")
+    @NotNull
+    private ArticleType type;
+
+    @Parameter(description = "고정여부", required = true)
+    @Schema(description = "고정여부", example = "고정여부")
+    private boolean fixed;
+
+    @Parameter(description = "고정순서", required = true)
+    @Schema(description = "고정순서", example = "고정순서")
+    private Integer fixedOrder;
 
     @Parameter(description = "제목", required = true)
     @Schema(description = "제목", example = "제목")
@@ -36,5 +51,11 @@ public class UpdateArticleCommand implements Serializable {
     @Parameter(description = "첨부파일")
     @Schema(description = "첨부파일", example = "첨부파일")
     private List<MultipartFile> multipartFiles = new ArrayList<>();
+
+    public List<MultipartFile> getMultipartFiles() {
+        return multipartFiles.stream()
+                .filter(Predicate.not(MultipartFile::isEmpty))
+                .toList();
+    }
 
 }

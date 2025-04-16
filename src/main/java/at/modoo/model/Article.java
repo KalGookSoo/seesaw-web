@@ -107,6 +107,10 @@ public class Article extends AbstractHierarchical<Article> implements Hierarchic
 
     public static Article create(CreateArticleCommand command) {
         Article article = new Article();
+        article.categoryId = command.getCategoryId();
+        article.type = command.getType();
+        article.fixed = command.isFixed();
+        article.fixedOrder = command.getFixedOrder();
         article.title = command.getTitle();
         article.content = Jsoup.clean(command.getContent(), Safelist.relaxed());
         return article;
@@ -117,6 +121,10 @@ public class Article extends AbstractHierarchical<Article> implements Hierarchic
     }
 
     public void update(UpdateArticleCommand command) {
+        this.categoryId = command.getCategoryId();
+        this.type = command.getType();
+        this.fixed = command.isFixed();
+        this.fixedOrder = command.getFixedOrder();
         this.title = command.getTitle();
         this.content = Jsoup.clean(command.getContent(), Safelist.relaxed());
     }

@@ -1,7 +1,8 @@
 package at.modoo.controller;
 
+import at.modoo.command.CreateArticleCommand;
+import at.modoo.command.UpdateArticleCommand;
 import at.modoo.model.Article;
-import at.modoo.model.Category;
 import at.modoo.search.ArticleSearch;
 import at.modoo.service.ArticleService;
 import at.modoo.service.CategoryService;
@@ -76,17 +77,21 @@ public class ArticleController {
         return "articles/view";
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/new")
+    public String getArticleNew(@ModelAttribute("command") CreateArticleCommand command) {
+        return "articles/new";
+    }
+
     @PreAuthorize("@defaultArticleService.isOwner(#id, authentication.name)")
     @GetMapping("/{id}/edit")
     public String getArticleEdit(
             @PathVariable("id") String id,
-            @RequestParam String categoryId,
+            @ModelAttribute("command") UpdateArticleCommand command,
             Model model
     ) {
-        Category category = categoryService.find(categoryId);
         Article article = articleService.find(id);
 
-        model.addAttribute("category", category);
         model.addAttribute("article", article);
 
         return "articles/edit";

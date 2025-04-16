@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 @Schema(description = "게시글 생성 커맨드")
 @Data
@@ -23,7 +24,6 @@ public class CreateArticleCommand {
 
     @Parameter(description = "타입", required = true)
     @Schema(description = "타입", example = "타입")
-    @NotBlank
     @NotNull
     private ArticleType type;
 
@@ -51,4 +51,9 @@ public class CreateArticleCommand {
     @Schema(description = "첨부파일", example = "첨부파일")
     private List<MultipartFile> multipartFiles = new ArrayList<>();
 
+    public List<MultipartFile> getMultipartFiles() {
+        return multipartFiles.stream()
+                .filter(Predicate.not(MultipartFile::isEmpty))
+                .toList();
+    }
 }
