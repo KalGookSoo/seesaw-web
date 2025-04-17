@@ -1,7 +1,5 @@
 package at.modoo.service;
 
-import at.modoo.command.CreateAttachmentCommand;
-import at.modoo.core.file.FileIOService;
 import at.modoo.model.Attachment;
 import at.modoo.repository.AttachmentRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.NoSuchElementException;
 
 @Transactional
@@ -42,14 +39,6 @@ public class DefaultAttachmentService implements AttachmentService {
     @Override
     public String getAbsolutePath(Attachment attachment) {
         return filepath + attachment.getPathName() + File.separator + attachment.getName();
-    }
-
-    @Override
-    public Attachment create(CreateAttachmentCommand command) throws IOException {
-        Attachment attachment = Attachment.create(command);
-        attachmentRepository.save(attachment);
-        FileIOService.write(getAbsolutePath(attachment), command.getMultipartFile().getBytes());
-        return attachment;
     }
 
 }

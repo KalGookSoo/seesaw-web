@@ -46,6 +46,7 @@ public class Article extends AbstractHierarchical<Article> implements Hierarchic
 
     @Comment("본문")
     @Column(columnDefinition = "TEXT")
+    @Setter(AccessLevel.PUBLIC)
     private String content;
 
     @Enumerated(EnumType.STRING)

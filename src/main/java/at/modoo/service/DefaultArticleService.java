@@ -4,26 +4,25 @@ import at.modoo.command.CreateArticleCommand;
 import at.modoo.command.UpdateArticleCommand;
 import at.modoo.core.authentication.PrincipalProvider;
 import at.modoo.core.file.FileIOService;
-import at.modoo.core.jsoup.PatternMatcher;
 import at.modoo.model.*;
 import at.modoo.repository.*;
 import at.modoo.search.ArticleSearch;
+import jakarta.servlet.http.HttpServletRequest;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Transactional
 @Service
@@ -122,41 +121,42 @@ public class DefaultArticleService implements ArticleService {
     public Article find(String id) {
         return articleRepository.findById(id).orElseThrow(NoSuchElementException::new);
     }
-// TODO 저장할 때 content에 img src 에서 /api/attachments인것들 추출하여 referenceId 삽입하여 update할 것 여집합은 삭제할 것
+
     @Override
     public Article create(CreateArticleCommand command) throws IOException {
         Article article = Article.create(command);
         articleRepository.save(article);
 
-        // 미리 생성된 첨부파일 바인딩
-        Document document = Jsoup.parse(article.getContent());
-        Elements images = document.select("img[src]");
-        String inlineImagePattern = "/api/attachments/(" + PatternMatcher.UUID + ")$";
-        Pattern pattern = Pattern.compile(inlineImagePattern);
-        List<String> attachmentIds = new ArrayList<>();
-        for (Element image : images) {
-            String src = image.attr("src");
-            Matcher matcher = pattern.matcher(src);
+        Document document = Jsoup.parse(command.getContent());
+        Iterator<Element> iterator = document.select("img[src*=\"blob:\"]").iterator();
 
-            /*
-             * ! find method는 사이드이펙트가 있을 수 있음. 디버그 시 평가하면 결과가 달라짐
-             */
-            if (matcher.find()) {
-                String uuidStr = matcher.group(1);
-                attachmentIds.add(uuidStr);
+        for (MultipartFile multipartFile : command.getInlineImages()) {
+            Attachment attachment = Attachment.create(article.getId(), Attachment.Type.INLINE_IMAGE, multipartFile);
+            writeFile(filepath + attachment.getPathName() + File.separator + attachment.getName(), multipartFile.getBytes());
+            attachmentRepository.save(attachment);
+
+            // request에서 host 주소 추출
+            ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+            HttpServletRequest request = attributes.getRequest();
+            String host = request.getHeader("host");
+            String url = host + "/api/attachments/" + attachment.getId();
+
+            // images의 src를 첨부파일을 생성 후 "/api/attachments/{id}"로 치환한다.
+            if (iterator.hasNext()) {
+                Element element = iterator.next();
+                element.attr("src", url);
             }
         }
-        List<Attachment> inlineImages = attachmentRepository.findAllById(attachmentIds).stream().filter(attachment -> Objects.isNull(attachment.getReferenceId())).toList();
-        inlineImages.forEach(image -> image.lazySetReferenceId(article.getId()));
-        article.joinAttachments(inlineImages);
 
         // 첨부파일
         for (MultipartFile multipartFile : command.getMultipartFiles()) {
             Attachment attachment = Attachment.create(article.getId(), Attachment.Type.ATTACHMENT, multipartFile);
-            article.addAttachment(attachment);
             writeFile(filepath + attachment.getPathName() + File.separator + attachment.getName(), multipartFile.getBytes());
+            attachmentRepository.save(attachment);
         }
-        attachmentRepository.saveAll(article.getAttachments());
+
+        article.setContent(document.body().html());
+        articleRepository.save(article);
         return article;
     }
 
@@ -166,35 +166,14 @@ public class DefaultArticleService implements ArticleService {
         article.update(command);
         articleRepository.save(article);
 
-        // 미리 생성된 첨부파일 바인딩
-        Document document = Jsoup.parse(article.getContent());
-        Elements images = document.select("img[src]");
-        String inlineImagePattern = "/api/attachments/(" + PatternMatcher.UUID + ")$";
-        Pattern pattern = Pattern.compile(inlineImagePattern);
-        List<String> attachmentIds = new ArrayList<>();
-        for (Element image : images) {
-            String src = image.attr("src");
-            Matcher matcher = pattern.matcher(src);
-
-            /*
-             * ! find method는 사이드이펙트가 있을 수 있음. 디버그 시 평가하면 결과가 달라짐
-             */
-            if (matcher.find()) {
-                String uuidStr = matcher.group(1);
-                attachmentIds.add(uuidStr);
-            }
-        }
-        List<Attachment> inlineImages = attachmentRepository.findAllById(attachmentIds).stream().filter(attachment -> Objects.isNull(attachment.getReferenceId())).toList();
-        inlineImages.forEach(image -> image.lazySetReferenceId(article.getId()));
-        article.joinAttachments(inlineImages);
+        // TODO 인라인이미지 생성 후 바인딩
 
         // 첨부파일
         for (MultipartFile multipartFile : command.getMultipartFiles()) {
             Attachment attachment = Attachment.create(article.getId(), Attachment.Type.ATTACHMENT, multipartFile);
-            article.addAttachment(attachment);
             writeFile(filepath + attachment.getPathName() + File.separator + attachment.getName(), multipartFile.getBytes());
+            attachmentRepository.save(attachment);
         }
-        attachmentRepository.saveAll(article.getAttachments());
         return article;
     }
 
@@ -207,6 +186,8 @@ public class DefaultArticleService implements ArticleService {
         viewRepository.deleteAllInBatch(views);
         List<Attachment> attachments = attachmentRepository.findAllByReferenceIdIn(Collections.singletonList(article.getId()));
         attachmentRepository.deleteAllInBatch(attachments);
+        attachments.stream().map(attachment -> filepath + attachment.getPathName() + File.separator + attachment.getName()).forEach(FileIOService::delete);
+
         articleRepository.delete(article);
     }
 
