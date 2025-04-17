@@ -86,16 +86,6 @@ public class DefaultArticleService implements ArticleService {
     }
 
     @Override
-    public Page<Article> view(String categoryId, Pageable pageable) {
-        // 조회수 증가
-        Page<Article> page = findAllByCategoryId(categoryId, pageable);
-        if (page.hasContent()) {
-//            increaseView(page.getContent().get(0).getId());
-        }
-        return page;
-    }
-
-    @Override
     public Page<Article> findAllByCategoryId(String categoryId, Pageable pageable) {
         Page<Article> page = articleRepository.findAllByCategoryId(categoryId, pageable);
 

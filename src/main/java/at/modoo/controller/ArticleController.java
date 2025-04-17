@@ -5,7 +5,6 @@ import at.modoo.command.UpdateArticleCommand;
 import at.modoo.model.Article;
 import at.modoo.search.ArticleSearch;
 import at.modoo.service.ArticleService;
-import at.modoo.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,8 +21,6 @@ import java.util.List;
 @Controller
 @RequestMapping("/articles")
 public class ArticleController {
-
-    private final CategoryService categoryService;
 
     private final ArticleService articleService;
 
@@ -74,11 +71,11 @@ public class ArticleController {
 
     @GetMapping("/view")
     public String getArticle(
-            @RequestParam String categoryId,
+            @ModelAttribute("search") ArticleSearch search,
             @PageableDefault(size = 1, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable,
             Model model
     ) {
-        Page<Article> page = articleService.view(categoryId, pageable);
+        Page<Article> page = articleService.findAll(pageable, search);
 
         model.addAttribute("page", page);
 

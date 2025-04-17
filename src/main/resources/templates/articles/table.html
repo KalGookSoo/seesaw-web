@@ -76,12 +76,12 @@
             <td class="py-3 text-center" th:text="${#temporals.format(article.createdDate, 'yyyy.MM.dd')}"></td>
         </tr>
         <!--/* 비공지 */-->
-        <tr th:each="article : ${page.content}" th:if="${page.hasContent()}" th:classappend="${article.isFixed != null and article.isFixed ? 'd-none' : ''}">
+        <tr th:each="article : ${page.content}" th:if="${page.hasContent() and !article.isFixed}">
             <!--/*@thymesVar id="page" type="org.springframework.data.domain.Page<at.modoo.model.Article>"*/-->
             <td class="py-3 text-center" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')"><label><input type="checkbox"></label></td>
             <td class="py-3 text-center" th:text="${page.totalElements - page.pageable.offset - articleStat.index}"></td>
             <td class="py-3 text-start">
-                <a class="none" th:href="@{/articles/view(categoryId=${article.categoryId}, page=${page.pageable.offset + articleStat.index})}">
+                <a class="none" th:href="@{'/articles/view' + ${search.getUriComponentsBuilder().queryParam('page', page.pageable.offset + articleStat.index).build().toUriString()}}">
                     [[${article.title}]]
                     <th:block th:if="${!article.replies.isEmpty()}">
                         <span class="mx-2">🗨</span><span th:text="${article.replies.size()}"></span>
