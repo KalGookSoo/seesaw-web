@@ -14,6 +14,7 @@ import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -197,6 +198,11 @@ public class DefaultArticleService implements ArticleService {
     public boolean isOwner(String id, String username) {
         Article article = find(id);
         return article.getCreatedBy().equals(username);
+    }
+
+    @Override
+    public List<Article> getFixedArticles(String categoryId, boolean fixed, Sort sort) {
+        return articleRepository.findAllByCategoryIdAndFixed(categoryId, fixed, sort);
     }
 
     private void writeFile(String pathname, byte[] bytes) {

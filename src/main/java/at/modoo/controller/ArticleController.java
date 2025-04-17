@@ -16,6 +16,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/articles")
@@ -44,8 +46,14 @@ public class ArticleController {
             @ModelAttribute("search") ArticleSearch search,
             Model model
     ) {
+        // 공지는 오름차순 후 createdDate로 내림차순
+        Sort sort = Sort.by(Sort.Order.asc("fixedOrder"), Sort.Order.desc("createdDate"));
+        List<Article> fixedArticles = articleService.getFixedArticles(search.getCategoryId(), true, sort);
+
+        // 비공지
         Page<Article> page = articleService.findAll(pageable, search);
 
+        model.addAttribute("fixedArticles", fixedArticles);
         model.addAttribute("page", page);
 
         return "articles/table";

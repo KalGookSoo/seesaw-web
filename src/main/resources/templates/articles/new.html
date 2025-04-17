@@ -114,7 +114,9 @@
                 <div class="col-1">작성자</div>
                 <div class="col-11 d-flex justify-content-between align-items-center">
                     <div th:text="${#authentication.principal.username}"></div>
-                    <div class="d-flex justify-content-start align-items-center gap-2 text-muted small">
+                    <div class="d-flex justify-content-start align-items-center gap-2 text-muted small"
+                         th:classappend="${#authentication.principal.hasRole('ROLE_ADMIN') or #authentication.principal.hasRole('ROLE_MANAGER')} ? '' : 'd-none'"
+                    >
                         <div>공지글로등록</div>
                         <input aria-label="고정여부" type="checkbox" id="fixed">
                     </div>
