@@ -52,8 +52,18 @@ public class UpdateArticleCommand implements Serializable {
     @Schema(description = "첨부파일", example = "첨부파일")
     private List<MultipartFile> multipartFiles = new ArrayList<>();
 
+    @Parameter(description = "이미지")
+    @Schema(description = "이미지", example = "이미지")
+    private List<MultipartFile> inlineImages = new ArrayList<>();
+
     public List<MultipartFile> getMultipartFiles() {
         return multipartFiles.stream()
+                .filter(Predicate.not(MultipartFile::isEmpty))
+                .toList();
+    }
+
+    public List<MultipartFile> getInlineImages() {
+        return inlineImages.stream()
                 .filter(Predicate.not(MultipartFile::isEmpty))
                 .toList();
     }

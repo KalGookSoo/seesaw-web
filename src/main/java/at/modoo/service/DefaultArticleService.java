@@ -136,6 +136,7 @@ public class DefaultArticleService implements ArticleService {
             attachmentRepository.save(attachment);
 
             // request에서 host 주소 추출
+            // TODO 이거 인터페이스 분리하여 외부에서 의존관계 주입받아야 함
             ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
             HttpServletRequest request = attributes.getRequest();
             String host = request.getHeader("host");
