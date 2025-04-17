@@ -93,4 +93,13 @@ public class Attachment extends BaseEntity {
         private final String path;
     }
 
+    /**
+     * 첨부파일 lifecycle 특성상 지연 초기화를 위해 setter를 만듦
+     *
+     * @param referenceId 참조 식별자
+     */
+    public void lazySetReferenceId(String referenceId) {
+        this.referenceId = referenceId;
+    }
+
 }

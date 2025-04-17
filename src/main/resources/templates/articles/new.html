@@ -42,9 +42,8 @@
                             .then(async response => {
                                 const responseBody = await response.text();
                                 if (response.ok) {
-                                    debugger;
                                     const prefix = /*[[@{/api/attachments}]]*/'';
-                                    callback(`${prefix}/${responseBody}`, 'fileOriginName');
+                                    callback(`${location.origin}${prefix}/${responseBody}`, blob.name);
                                 } else {
                                     alert(/*[[#{command.failure.create}]]*/'');
                                 }
