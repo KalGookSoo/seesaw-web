@@ -32,7 +32,7 @@
                     addImageBlobHook(blob, callback) {
                         const url = URL.createObjectURL(blob);
 
-                        // 최종 제출할 데이터를 식별해야 함
+                        // 이미지를 추가할 때마다 blobs 엔트리를 추가하지만 최종 제출할 이미지는 editor의 본문에서 필터링될 것
                         blobs.set(url, blob);
                         callback(url, blob.name);
                     }
