@@ -84,4 +84,17 @@ public class Category extends AbstractHierarchical<Category> implements Hierarch
     public void update(UpdateCategoryCommand command) {
         throw new UnsupportedOperationException();
     }
+
+    public void joinArticles(List<Article> articles) {
+        articles.stream().filter(this::isArticleForCategory).forEach(this::addArticle);
+    }
+
+    private boolean isArticleForCategory(Article article) {
+        return getId().equals(article.getCategoryId());
+    }
+
+    public void addArticle(Article article) {
+        articles.add(article);
+        article.setCategoryId(getId());
+    }
 }

@@ -9,9 +9,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -47,6 +49,14 @@ public class ArticleSearchRepository implements SearchRepository<Article, Articl
         Long count = countQuery.getSingleResult();
 
         return new PageImpl<>(articles, pageable, count);
+    }
+
+    public List<Article> findAllByCategoryId(List<String> categoryIds, LocalDateTime createdDate) {
+        String jpql = "select article from Article article where categoryId in :categoryIds and createdDate >= :createdDate";
+        TypedQuery<Article> query = em.createQuery(jpql, Article.class);
+        query.setParameter("categoryIds", categoryIds);
+        query.setParameter("createdDate", createdDate);
+        return query.getResultList();
     }
 
     private String generateJpql(@Nonnull ArticleSearch search) {

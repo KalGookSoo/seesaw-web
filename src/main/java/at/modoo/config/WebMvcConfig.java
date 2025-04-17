@@ -1,8 +1,9 @@
 package at.modoo.config;
 
 import at.modoo.interceptor.NavigationInterceptor;
+import at.modoo.repository.ArticleSearchRepository;
+import at.modoo.repository.CategoryRepository;
 import at.modoo.repository.SiteRepository;
-import at.modoo.service.CategoryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -35,7 +36,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     private final SiteRepository siteRepository;
 
-    private final CategoryService categoryService;
+    private final CategoryRepository categoryRepository;
+
+    private final ArticleSearchRepository articleSearchRepository;
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
@@ -59,7 +62,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Bean
     public NavigationInterceptor navigationInterceptor() {
-        return new NavigationInterceptor(domainName, siteRepository, categoryService);
+        return new NavigationInterceptor(domainName, siteRepository, categoryRepository, articleSearchRepository);
     }
 
     @Override
@@ -69,7 +72,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/styles/**", "/scripts/**", "/images/**", "/favicon.ico");
         registry.addInterceptor(navigationInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/styles/**", "/scripts/**", "/images/**", "/favicon.ico", "/error");
+                .excludePathPatterns("/styles/**", "/scripts/**", "/images/**", "/favicon.ico", "/error", "/api/**");
     }
 
     @Bean
