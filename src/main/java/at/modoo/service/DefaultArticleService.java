@@ -140,7 +140,8 @@ public class DefaultArticleService implements ArticleService {
             ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
             HttpServletRequest request = attributes.getRequest();
             String host = request.getHeader("host");
-            String url = host + "/api/attachments/" + attachment.getId();
+            String scheme = request.getScheme();
+            String url = scheme + "://" + host + "/api/attachments/" + attachment.getId();
 
             // images의 src를 첨부파일을 생성 후 "/api/attachments/{id}"로 치환한다.
             if (iterator.hasNext()) {
