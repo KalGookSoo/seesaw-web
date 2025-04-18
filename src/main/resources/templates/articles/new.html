@@ -64,8 +64,6 @@
                             const file = new File([blob], blob.name, {type: blob.type});
                             dataTransfer.items.add(file);
                         });
-
-                    // dataTransfer.files는 읽기전용이라 shallow copy해야함
                     [...dataTransfer.files].forEach(file => form.append('inlineImages', file));
 
                     const httpEntity = {

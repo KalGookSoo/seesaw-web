@@ -17,6 +17,9 @@
     <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', e => {
 
+            // 에디터에 첨부하는 이미지가 담길 것. 최종 제출하는 에디터 본문에서 참조됨
+            const blobs = new Map();
+
             const initialValue = /*[[${article.content}]]*/'';
             const editor = new toastui.Editor({
                 el: document.querySelector('#editor'),
@@ -25,7 +28,16 @@
                 hideModeSwitch: true,
                 previewStyle: 'vertical',
                 initialValue: initialValue,
-                usageStatistics: false
+                usageStatistics: false,
+                hooks: {
+                    addImageBlobHook(blob, callback) {
+                        const url = URL.createObjectURL(blob);
+
+                        // 이미지를 추가할 때마다 blobs 엔트리를 추가하지만 최종 제출할 이미지는 editor의 본문에서 필터링될 것
+                        blobs.set(url, blob);
+                        callback(url, blob.name);
+                    }
+                }
             });
 
             e.target.addEventListener('submit', e => {
@@ -40,6 +52,21 @@
                     form.append('type', 'HTML');
                     form.set('fixed', e.target.elements.fixed.checked);
                     form.append('content', editor.getHTML());
+
+                    // 최종 제출할 본문에서 blob 데이터를 찾아 첨부 목록에 추가
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(editor.getHTML(), 'text/html');
+                    const urls = [...doc.querySelectorAll('img[src*="blob:"]')].map(img => img.src);
+
+                    const dataTransfer = new DataTransfer();
+                    urls.filter(url => blobs.has(url))
+                        .forEach(url => {
+                            const blob = blobs.get(url);
+                            const file = new File([blob], blob.name, {type: blob.type});
+                            dataTransfer.items.add(file);
+                        });
+                    [...dataTransfer.files].forEach(file => form.append('inlineImages', file));
+
                     const httpEntity = {
                         method: e.target.method,
                         headers: {
