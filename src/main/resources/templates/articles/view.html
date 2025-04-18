@@ -100,26 +100,24 @@
 
             const clickHandlers = {
                 '.reply-item button[name="update"]': e => {
-                    const button = e.target.closest('.reply-item button[name="update"]');
-                    const replyItem = button.closest('.reply-item');
+                    const updateButton = e.target.closest('.reply-item button[name="update"]');
+                    const replyItem = updateButton.closest('.reply-item');
+                    const cancelButton = replyItem.querySelector(`[name="cancel"]`);
                     const replyContent = replyItem.querySelector('.reply-content');
-                    const updateUri = /*[[@{/api/replies}]]*/'';
-                    const submitterTextContent = /*[[#{label.save}]]*/'';
-                    const template = `
-                    <form enctype="multipart/form-data" name="updateReplyForm" action="${updateUri}/${button.dataset.id}" method="post">
-                        <input name="articleId" value="${button.dataset.id}" type="hidden">
-                        <div class="input-group my-4">
-                            <textarea aria-label="댓글 입력" class="form-control" name="content">${replyContent.querySelector('pre').textContent}</textarea>
-                            <button class="input-group-text" type="submit">${submitterTextContent}</button>
-                        </div>
-                    </form>
-                    `;
+                    const form = replyItem.querySelector(`form[name="updateReplyForm"]`);
 
+                    // 댓글 읽기 폼 숨김
                     replyContent.classList.add('d-none');
-                    button.classList.add('d-none');
-                    replyItem.querySelector(`[name="cancel"]`).classList.remove('d-none');
-                    replyItem.insertAdjacentHTML('beforeend', template);
-                    replyItem.querySelector(`textarea[name="content"]`).focus();
+
+                    // 댓글 수정 버튼 숨김
+                    updateButton.classList.add('d-none');
+
+                    // 수정 취소 버튼 출력
+                    cancelButton.classList.remove('d-none');
+
+                    // 댓글 입력 폼 출력
+                    form.classList.remove('d-none');
+                    form.elements.content.focus();
                 },
                 '.reply-item button[name="delete"]': e => {
                     const button = e.target.closest('.reply-item button[name="delete"]');
@@ -142,14 +140,23 @@
                         });
                 },
                 '.reply-item button[name="cancel"]': e => {
-                    const button = e.target.closest('.reply-item button[name="cancel"]');
-                    const replyItem = button.closest('.reply-item');
+                    const cancelButton = e.target.closest('.reply-item button[name="cancel"]');
+                    const replyItem = cancelButton.closest('.reply-item');
+                    const updateButton = replyItem.querySelector(`[name="update"]`);
                     const replyContent = replyItem.querySelector('.reply-content');
-                    replyContent.classList.remove('d-none');
-                    replyItem.querySelector(`[name="update"]`).classList.remove('d-none');
-                    button.classList.add('d-none');
+                    const form = replyItem.querySelector(`form[name="updateReplyForm"]`);
 
-                    replyItem.querySelector(`[name="updateReplyForm"]`).remove();
+                    // 댓글 읽기 폼 출력
+                    replyContent.classList.remove('d-none');
+
+                    // 댓글 수정 버튼 출력
+                    updateButton.classList.remove('d-none');
+
+                    // 수정 취소 버튼 숨김
+                    cancelButton.classList.add('d-none');
+
+                    // 댓글 입력 폼 숨김
+                    form.classList.add('d-none');
                 },
                 '.content-footer button[name="delete"]': e => {
                     if (!confirm('이 게시글을 삭제하시면 댓글과 첨부파일이 같이 삭제됩니다.')) {
@@ -222,6 +229,12 @@
         <div class="my-2 reply-content">
             <pre th:utext="${reply.content}"></pre>
         </div>
+        <form class="d-none" enctype="multipart/form-data" name="updateReplyForm" th:action="@{|/api/replies/${reply.id}|}" th:method="post">
+            <div class="input-group my-4">
+                <textarea aria-label="댓글 입력" class="form-control" name="content" th:utext="${reply.content}"></textarea>
+                <button class="input-group-text" type="submit" th:text="#{label.save}"></button>
+            </div>
+        </form>
     </div>
     <form enctype="multipart/form-data" name="insertReplyForm" th:action="@{/api/replies}" th:method="post" sec:authorize="isAuthenticated()">
         <input name="articleId" th:value="${page.content.get(0).id}" type="hidden">
