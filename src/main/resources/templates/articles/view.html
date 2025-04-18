@@ -12,18 +12,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>[[${CURRENT_CATEGORY.name}]] | [[${SITE_CONTEXT.name}]]</title>
     <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
+
+    <!-- Editor -->
     <link rel="stylesheet" th:href="@{/styles/toastui-editor.min.css}">
+
+    <!-- Color picker -->
+    <link rel="stylesheet" th:href="@{/styles/tui-color-picker.min.css}"/>
+    <link rel="stylesheet" th:href="@{/styles/toastui-editor-plugin-color-syntax.min.css}"/>
+
+    <!-- Code syntax highlight -->
+    <link rel="stylesheet" th:href="@{/styles/prism.min.css}"/>
+    <link rel="stylesheet" th:href="@{/styles/toastui-editor-plugin-code-syntax-highlight.min.css}"/>
+
+    <!-- Chart -->
+    <link rel="stylesheet" th:href="@{/styles/toastui-chart.min.css}"/>
+
+    <!-- Table merged cell -->
+    <link rel="stylesheet" th:href="@{/styles/toastui-editor-plugin-table-merged-cell.min.css}"/>
+
+    <!-- Editor -->
     <script th:src="@{/scripts/toastui-editor-all.min.js}"></script>
 
-    <script th:src="@{/scripts/toastui-editor-all.min.js}"></script>
+    <!-- Color picker -->
+    <script th:src="@{/scripts/tui-color-picker.min.js}"></script>
+    <script th:src="@{/scripts/toastui-editor-plugin-color-syntax.min.js}"></script>
+
+    <!-- Code syntax highlight -->
+    <script th:src="@{/scripts/toastui-editor-plugin-code-syntax-highlight-all.min.js}"></script>
+
+    <!-- Chart -->
+    <script th:src="@{/scripts/toastui-chart.min.js}"></script>
+    <script th:src="@{/scripts/toastui-editor-plugin-chart.min.js}"></script>
+
+    <!-- Table merged cell -->
+    <script th:src="@{/scripts/toastui-editor-plugin-table-merged-cell.min.js}"></script>
+
+    <!-- UML -->
+    <script th:src="@{/scripts/toastui-editor-plugin-uml.min.js}"></script>
+
     <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', e => {
 
-            const viewer = new toastui.Editor.factory({
+            const {Editor} = toastui;
+            const {chart, codeSyntaxHighlight, colorSyntax, tableMergedCell, uml} = Editor.plugin;
+            const chartOptions = {
+                minWidth: 100,
+                maxWidth: 600,
+                minHeight: 100,
+                maxHeight: 300
+            };
+            const viewer = Editor.factory({
                 el: document.querySelector('.article-content-section'),
                 viewer: true,
                 height: '600px',
-                initialValue: /*[[${page.content.get(0).content}]]*/''
+                initialValue: /*[[${page.content.get(0).content}]]*/'',
+                plugins: [[chart, chartOptions], [codeSyntaxHighlight, { highlighter: Prism }], colorSyntax, tableMergedCell, uml]
             });
 
             e.target.addEventListener('submit', e => {
