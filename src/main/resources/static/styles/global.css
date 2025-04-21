@@ -15,7 +15,16 @@ html body .main-color {
   color: var(--main-color);
 }
 html body a.none {
-  all: unset;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+html body a.none:hover,
+html body a.none:focus,
+html body a.none:active,
+html body a.none:visited {
+  text-decoration: none;
+  color: inherit;
   cursor: pointer;
 }
 html body button.none {

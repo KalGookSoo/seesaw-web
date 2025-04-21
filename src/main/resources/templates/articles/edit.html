@@ -124,7 +124,7 @@
                             const responseBody = await response.text();
                             if (response.ok) {
                                 alert(/*[[#{command.success.update}]]*/'');
-                                location.href = /*[[@{/articles/view(categoryId=${command.categoryId}, page=0)}]]*/'';
+                                location.href = /*[[@{|/articles/view${search.getUriComponentsBuilder().queryParam('page', 0).build().toUriString()}|}]]*/'';
                             } else if (response.status === 400) {
                                 const errors = JSON.parse(responseBody).errors;
                                 [...errors].forEach(error => {
@@ -159,7 +159,7 @@
                 <div class="col-11 d-flex justify-content-between align-items-center">
                     <div th:text="${article.createdBy}"></div>
                     <div class="d-flex justify-content-start align-items-center gap-2 text-muted small">
-                        <div>공지글로등록</div>
+                        <label for="fixed">공지글로등록</label>
                         <input aria-label="고정여부" type="checkbox" id="fixed" th:checked="${article.fixed}">
                     </div>
                 </div>

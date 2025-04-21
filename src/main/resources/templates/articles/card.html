@@ -12,19 +12,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>홈 | 대전포스트잇 ♣대전독서모임</title>
     <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
-    <script th:inline="javascript"></script>
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', e => {
+            e.target.addEventListener('click', e => {
+                const deleteButton = e.target.closest(`.board-table-search-section [name="delete"]`);
+                if (deleteButton) {
+                    const checkboxes = document.querySelectorAll(`.board-card-section [name="selected"]:checked`);
+                    const ids = [...checkboxes].map(checkbox => checkbox.dataset.id);
+                    const httpEntity = {
+                        method: 'delete',
+                        headers: {
+                            'content-type': 'application/json',
+                            [CSRF.headerName]: CSRF.token
+                        },
+                        body: JSON.stringify(ids)
+                    };
+                    fetch(`/api/articles`, httpEntity)
+                        .then(async response => {
+                            const responseBody = await response.text();
+                            if (response.ok) {
+                                alert(/*[[#{command.success.delete}]]*/'');
+                                location.reload();
+                            } else {
+                                alert(/*[[#{command.failure.delete}]]*/'');
+                            }
+                        });
+                }
+            });
+        });
+    </script>
 </head>
 
 <body layout:fragment="content">
 <section th:replace="~{components/local_navigation_bar :: localNavigationBar}"></section>
 <section class="container-sm title-section">
     <div class="d-flex justify-content-between">
-        <h4 class="title d-inline-block pb-2" th:text="${CURRENT_CATEGORY.name}"></h4>
+        <div class="title h5 pb-1" th:text="${CURRENT_CATEGORY.name}"></div>
         <div class="d-flex">
             <div>
                 <a class="btn"
                    th:classappend="${#strings.equals(search.viewType, 'TABLE')} ? 'main-color' : ''"
-                   th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.pageable.pageNumber).build().toUriString()}}"
+                   th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.pageable.pageNumber).replaceQueryParam('viewType', 'TABLE').build().toUriString()}}"
                 >
                     목록보기
                 </a>
@@ -32,7 +60,7 @@
             <div>
                 <a class="btn"
                    th:classappend="${#strings.equals(search.viewType, 'CARD')} ? 'main-color' : ''"
-                   th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.pageable.pageNumber).queryParam('viewType', 'CARD').build().toUriString()}}"
+                   th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.pageable.pageNumber).replaceQueryParam('viewType', 'CARD').build().toUriString()}}"
                 >
                     카드보기
                 </a>
@@ -40,10 +68,11 @@
         </div>
     </div>
 </section>
-<section class="container-sm board-table-search-section py-2"><!--border bottom 1px-->
+<section class="container-sm board-table-search-section py-4 mb-4" style="border-bottom: 1px solid var(--bs-gray-400);">
     <form name="searchForm" th:action="@{/articles}" th:method="get" th:object="${search}">
         <input type="hidden" th:field="*{categoryId}">
         <input type="hidden" th:field="*{categoryType}">
+        <input type="hidden" th:field="*{viewType}">
         <div class="d-flex justify-content-between align-items-center">
             <div class="d-flex justify-content-center align-items-center gap-2">
                 <div>
@@ -64,159 +93,99 @@
                 </div>
             </div>
             <div class="d-flex justify-content-center align-items-center gap-2">
-                <div>
-                    <button class="btn btn-outline-secondary" type="button" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">선택삭제</button>
-                </div>
-                <div>
-                    <button class="btn btn-outline-secondary" type="button">내가 쓴 글</button>
-                    <button class="btn btn-primary" type="button">글쓰기</button>
-                </div>
+                <button class="btn btn-outline-secondary" name="delete" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')" type="button">선택삭제</button>
+                <a class="btn btn-outline-secondary"
+                   sec:authorize="isAuthenticated()"
+                   th:href="@{|/articles${search.getUriComponentsBuilder().replaceQueryParam('page', 0).replaceQueryParam('keyField', 'createdBy').replaceQueryParam('keyWord', #authentication.principal.username).build().toUriString()}|}"
+                >
+                    내가 쓴 글
+                </a>
+                <a class="btn btn-primary" sec:authorize="isAuthenticated()" th:href="@{|/articles/new${search.getUriComponentsBuilder().build().toUriString()}|}">글쓰기</a>
+                <a class="btn btn-primary" sec:authorize="isAnonymous()" th:href="@{/oauth2/authorization/naver}">글쓰기</a>
             </div>
         </div>
     </form>
 </section>
 <section class="container-sm board-card-section">
     <div class="row row-cols-1 row-cols-md-3 g-4">
-        <div class="card h-100">
-            <img src="https://modo-phinf.pstatic.net/20250223_193/1740296470122F0mcM_JPEG/mosaU9LMUi.jpeg?type=f353_353" class="card-img-top img-thumbnail" alt="">
-            <div class="card-body">
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
-            <div class="card-footer">
-                <div>
-                    <div>sias****</div>
-                    <div>2025.02.02</div>
+        <article th:if="${page.hasContent()}"
+                 th:each="article : ${page.content}"
+        >
+            <a class="none card h-100"
+               th:href="@{|/articles/view${search.getUriComponentsBuilder().queryParam('page', page.pageable.offset + articleStat.index).build().toUriString()}|}"
+            >
+                <img class="card-img-top img-thumbnail"
+                     th:alt="${article.inlineImages.get(0).originalName}"
+                     th:if="${!article.inlineImages.isEmpty()}"
+                     th:src="@{|/api/attachments/${article.inlineImages.get(0).id}|}"
+                >
+                <svg class="bd-placeholder-img card-img-top img-thumbnail"
+                     width="100%"
+                     height="180"
+                     xmlns="http://www.w3.org/2000/svg"
+                     role="img"
+                     aria-label="Placeholder: Image cap"
+                     preserveAspectRatio="xMidYMid slice"
+                     focusable="false"
+                     th:if="${article.inlineImages.isEmpty()}"
+                >
+                    <title>Placeholder</title>
+                    <rect width="100%" height="100%" fill="#868e96"></rect>
+                    <text x="40%" y="50%" fill="#dee2e6" dy=".3em">No image</text>
+                </svg>
+                <div class="card-body">
+                    <div class="card-title d-flex justify-content-start align-items-center gap-2">
+                        <div sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
+                            <input aria-label="선택" name="selected" type="checkbox" th:data-id="${article.id}">
+                        </div>
+                        <div th:text="${article.title}"></div>
+                    </div>
+                    <p class="card-text small text-muted" th:text="${article.plainContent}"></p>
                 </div>
-                <div>
-                    <div>댓글</div>
+                <div class="card-footer small text-muted d-flex justify-content-between align-items-center">
+                    <div class="d-flex justify-content-start">
+                        <div th:text="${article.maskedAuthor}"></div>
+                        <span class="mx-2">|</span>
+                        <div th:text="${#temporals.format(article.createdDate, 'yyyy.MM.dd')}"></div>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <div><span class="mx-2">🗨</span><span th:text="${article.replies.size()}"></span></div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="card h-100">
-            <img src="https://modo-phinf.pstatic.net/20250223_193/1740296470122F0mcM_JPEG/mosaU9LMUi.jpeg?type=f353_353" class="card-img-top img-thumbnail" alt="">
-            <div class="card-body">
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
-            <div class="card-footer">
-                <div>
-                    <div>sias****</div>
-                    <div>2025.02.02</div>
-                </div>
-                <div>
-                    <div>댓글</div>
-                </div>
-            </div>
-        </div>
-        <div class="card h-100">
-            <img src="https://modo-phinf.pstatic.net/20250223_193/1740296470122F0mcM_JPEG/mosaU9LMUi.jpeg?type=f353_353" class="card-img-top img-thumbnail" alt="">
-            <div class="card-body">
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
-            <div class="card-footer">
-                <div>
-                    <div>sias****</div>
-                    <div>2025.02.02</div>
-                </div>
-                <div>
-                    <div>댓글</div>
-                </div>
-            </div>
-        </div>
-        <div class="card h-100">
-            <img src="https://modo-phinf.pstatic.net/20250223_193/1740296470122F0mcM_JPEG/mosaU9LMUi.jpeg?type=f353_353" class="card-img-top img-thumbnail" alt="">
-            <div class="card-body">
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
-            <div class="card-footer">
-                <div>
-                    <div>sias****</div>
-                    <div>2025.02.02</div>
-                </div>
-                <div>
-                    <div>댓글</div>
-                </div>
-            </div>
-        </div>
-        <div class="card h-100">
-            <img src="https://modo-phinf.pstatic.net/20250223_193/1740296470122F0mcM_JPEG/mosaU9LMUi.jpeg?type=f353_353" class="card-img-top img-thumbnail" alt="">
-            <div class="card-body">
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
-            <div class="card-footer">
-                <div>
-                    <div>sias****</div>
-                    <div>2025.02.02</div>
-                </div>
-                <div>
-                    <div>댓글</div>
-                </div>
-            </div>
-        </div>
-        <div class="card h-100">
-            <img src="https://modo-phinf.pstatic.net/20250223_193/1740296470122F0mcM_JPEG/mosaU9LMUi.jpeg?type=f353_353" class="card-img-top img-thumbnail" alt="">
-            <div class="card-body">
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
-            <div class="card-footer">
-                <div>
-                    <div>sias****</div>
-                    <div>2025.02.02</div>
-                </div>
-                <div>
-                    <div>댓글</div>
-                </div>
-            </div>
-        </div>
-        <div class="card h-100">
-            <img src="https://modo-phinf.pstatic.net/20250223_193/1740296470122F0mcM_JPEG/mosaU9LMUi.jpeg?type=f353_353" class="card-img-top img-thumbnail" alt="">
-            <div class="card-body">
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
-            <div class="card-footer">
-                <div>
-                    <div>sias****</div>
-                    <div>2025.02.02</div>
-                </div>
-                <div>
-                    <div>댓글</div>
-                </div>
-            </div>
-        </div>
-        <div class="card h-100">
-            <img src="https://modo-phinf.pstatic.net/20250223_193/1740296470122F0mcM_JPEG/mosaU9LMUi.jpeg?type=f353_353" class="card-img-top img-thumbnail" alt="">
-            <div class="card-body">
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
-            <div class="card-footer">
-                <div>
-                    <div>sias****</div>
-                    <div>2025.02.02</div>
-                </div>
-                <div>
-                    <div>댓글</div>
-                </div>
-            </div>
-        </div>
-        <div class="card h-100">
-            <img src="https://modo-phinf.pstatic.net/20250223_193/1740296470122F0mcM_JPEG/mosaU9LMUi.jpeg?type=f353_353" class="card-img-top img-thumbnail" alt="">
-            <div class="card-body">
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
-            <div class="card-footer">
-                <div>
-                    <div>sias****</div>
-                    <div>2025.02.02</div>
-                </div>
-                <div>
-                    <div>댓글</div>
-                </div>
-            </div>
-        </div>
+            </a>
+        </article>
     </div>
-
-
 </section>
-<section class="container-sm board-pagination-section d-flex justify-content-between align-items-center my-4"></section>
+<section class="container-sm board-pagination-section d-flex justify-content-center align-items-center my-4">
+    <div>
+        <nav class="pagination">
+            <div class="page-item">
+                <a aria-label="Previous"
+                   class="page-link"
+                   th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.previousOrFirstPageable().pageNumber).build().toUriString()}}"
+                >
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="d-none">Previous</span>
+                </a>
+            </div>
 
-</body>
+            <div class="page-item" th:each="pageNumber : ${#numbers.sequence(0, page.totalPages - (page.totalPages > 0 ? 1 : 0))}">
+                <a class="page-link"
+                   th:classappend="${pageNumber == page.number} ? 'active' : ''"
+                   th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', pageNumber).build().toUriString()}}"
+                   th:text="${pageNumber + 1}">
+                </a>
+            </div>
+            <div class="page-item">
+                <a aria-label="Next"
+                   class="page-link"
+                   th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.nextOrLastPageable().pageNumber).build().toUriString()}}"
+                >
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="d-none">Next</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+</section>
 </html>

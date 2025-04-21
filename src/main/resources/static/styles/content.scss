@@ -50,3 +50,28 @@
   border-block: 1px solid var(--bs-gray-400);
 
 }
+
+.board-card-section {
+  .card {
+
+    .card-img-top {
+      height: 300px;
+      width: auto;
+      object-fit: cover;
+      border: none;
+    }
+
+    .card-body {
+      height: 150px;
+
+      .card-text {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: normal;
+      }
+    }
+  }
+}

@@ -272,7 +272,13 @@
         <div class="my-2 reply-content">
             <pre th:utext="${reply.content}"></pre>
         </div>
-        <form class="d-none" enctype="multipart/form-data" name="updateReplyForm" th:action="@{|/api/replies/${reply.id}|}" th:method="post">
+        <form class="d-none"
+              enctype="multipart/form-data"
+              name="updateReplyForm"
+              th:action="@{|/api/replies/${reply.id}|}"
+              th:if="${#authentication.isAuthenticated()}"
+              th:method="post"
+        >
             <div class="input-group my-4">
                 <textarea aria-label="댓글 입력" class="form-control" name="content" th:utext="${reply.content}"></textarea>
                 <button class="input-group-text" type="submit" th:text="#{label.save}"></button>
@@ -293,13 +299,13 @@
 </section>
 <footer class="container-sm content-footer d-flex justify-content-between align-items-center my-4">
     <div class="d-flex justify-content-start gap-2">
-        <a class="btn btn-outline-secondary" th:href="@{'/articles/view' + ${search.getUriComponentsBuilder().queryParam('page', page.previousOrFirstPageable().pageNumber).build().toUriString()}}" th:text="#{label.prevous.article}">이전글</a>
-        <a class="btn btn-outline-secondary" th:href="@{/articles(categoryType=${CURRENT_CATEGORY.type}, categoryId=${CURRENT_CATEGORY.id})}" th:text="#{label.list}"></a>
-        <a class="btn btn-outline-secondary" th:href="@{'/articles/view' + ${search.getUriComponentsBuilder().queryParam('page', page.nextOrLastPageable().pageNumber).build().toUriString()}}" th:text="#{label.next.article}">다음글</a>
+        <a class="btn btn-outline-secondary" th:href="@{|/articles/view${search.getUriComponentsBuilder().queryParam('page', page.previousOrFirstPageable().pageNumber).build().toUriString()}|}" th:text="#{label.prevous.article}">이전글</a>
+        <a class="btn btn-outline-secondary" th:href="@{|/articles${search.getUriComponentsBuilder().queryParam('page', 0).build().toUriString()}|}" th:text="#{label.list}"></a>
+        <a class="btn btn-outline-secondary" th:href="@{|/articles/view${search.getUriComponentsBuilder().queryParam('page', page.nextOrLastPageable().pageNumber).build().toUriString()}|}" th:text="#{label.next.article}">다음글</a>
     </div>
     <div class="d-flex justify-content-end gap-2" sec:authorize="isAuthenticated()">
         <a class="btn btn-outline-secondary"
-           th:href="@{'/articles/' + ${page.content.get(0).id} + '/edit?categoryId=' +${page.content.get(0).categoryId}}"
+           th:href="@{|/articles/${page.content.get(0).id}/edit${search.getUriComponentsBuilder().build().toUriString()}|}"
            th:if="${#strings.equals(#authentication.principal.username, page.content.get(0).createdBy)}"
            th:text="#{label.update}"
         >
