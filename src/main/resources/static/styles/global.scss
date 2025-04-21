@@ -16,7 +16,17 @@ html {
     }
 
     a.none {
-      all: unset;
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    a.none:hover,
+    a.none:focus,
+    a.none:active,
+    a.none:visited {
+      text-decoration: none;
+      color: inherit;
       cursor: pointer;
     }
 

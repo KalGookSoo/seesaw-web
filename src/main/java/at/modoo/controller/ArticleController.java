@@ -84,7 +84,9 @@ public class ArticleController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/new")
-    public String getArticleNew(@ModelAttribute("command") CreateArticleCommand command) {
+    public String getArticleNew(
+            @ModelAttribute("search") ArticleSearch search
+    ) {
         return "articles/new";
     }
 

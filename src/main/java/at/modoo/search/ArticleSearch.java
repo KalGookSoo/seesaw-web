@@ -26,6 +26,7 @@ public class ArticleSearch implements UriComponentsProvider {
         return UriComponentsProvider.super.getUriComponentsBuilder()
                 .queryParamIfPresent("categoryId", Optional.ofNullable(categoryId))
                 .queryParamIfPresent("categoryType", Optional.ofNullable(categoryType))
+                .queryParamIfPresent("viewType", Optional.ofNullable(viewType))
                 .queryParamIfPresent("keyField", Optional.ofNullable(keyField))
                 .queryParamIfPresent("keyWord", Optional.ofNullable(keyWord));
     }

@@ -60,15 +60,15 @@
                         <div class="d-flex" th:if="${!article.replies.isEmpty()}"><span class="mx-2">🗨</span><span class="main-color" th:text="${article.replies.size()}"></span></div>
                     </div>
                     <div class="content d-flex align-items-start justify-content-between mb-2 gap-3">
-                        <div><div class="small text-muted" th:text="${article.plainContent}"></div></div>
+                        <div class="small text-muted" th:text="${article.plainContent}"></div>
                         <div class="thumbnail" th:if="${!article.inlineImages.isEmpty()}">
                             <img th:src="@{'/api/attachments/' + ${article.inlineImages.get(0).id}}" th:alt="${article.inlineImages.get(0).originalName}">
                         </div>
                     </div>
-                    <div class="author d-flex justify-content-start align-items-center">
-                        <div class="small text-muted" th:text="${article.maskedAuthor}"></div>
-                        <div class="small text-muted mx-2">|</div>
-                        <div class="small text-muted" th:text="${#temporals.format(article.createdDate, 'yyyy.MM.dd')}"></div>
+                    <div class="author d-flex justify-content-start align-items-center small text-muted">
+                        <div th:text="${article.maskedAuthor}"></div>
+                        <div class="mx-2">|</div>
+                        <div th:text="${#temporals.format(article.createdDate, 'yyyy.MM.dd')}"></div>
                     </div>
                 </a>
             </article>
@@ -91,15 +91,15 @@
                         <div class="d-flex" th:if="${!article.replies.isEmpty()}"><span class="mx-2">🗨</span><span class="main-color" th:text="${article.replies.size()}"></span></div>
                     </div>
                     <div class="content d-flex align-items-start justify-content-between mb-2 gap-3">
-                        <div><div class="small text-muted" th:text="${article.plainContent}"></div></div>
+                        <div class="small text-muted" th:text="${article.plainContent}"></div>
                         <div class="thumbnail" th:if="${!article.inlineImages.isEmpty()}">
                             <img th:src="@{'/api/attachments/' + ${article.inlineImages.get(0).id}}" th:alt="${article.inlineImages.get(0).originalName}">
                         </div>
                     </div>
-                    <div class="author d-flex justify-content-start align-items-center">
-                        <div class="small text-muted" th:text="${article.maskedAuthor}"></div>
-                        <div class="small text-muted mx-2">|</div>
-                        <div class="small text-muted" th:text="${#temporals.format(article.createdDate, 'yyyy.MM.dd')}"></div>
+                    <div class="author d-flex justify-content-start align-items-center small text-muted">
+                        <div th:text="${article.maskedAuthor}"></div>
+                        <div class="mx-2">|</div>
+                        <div th:text="${#temporals.format(article.createdDate, 'yyyy.MM.dd')}"></div>
                     </div>
                 </a>
             </article>

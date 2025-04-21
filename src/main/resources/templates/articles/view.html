@@ -294,7 +294,7 @@
 <footer class="container-sm content-footer d-flex justify-content-between align-items-center my-4">
     <div class="d-flex justify-content-start gap-2">
         <a class="btn btn-outline-secondary" th:href="@{'/articles/view' + ${search.getUriComponentsBuilder().queryParam('page', page.previousOrFirstPageable().pageNumber).build().toUriString()}}" th:text="#{label.prevous.article}">이전글</a>
-        <a class="btn btn-outline-secondary" th:href="@{/articles(categoryType=${CURRENT_CATEGORY.type}, categoryId=${CURRENT_CATEGORY.id})}" th:text="#{label.list}"></a>
+        <a class="btn btn-outline-secondary" th:href="@{|/articles${search.getUriComponentsBuilder().queryParam('page', 0).build().toUriString()}|}" th:text="#{label.list}"></a>
         <a class="btn btn-outline-secondary" th:href="@{'/articles/view' + ${search.getUriComponentsBuilder().queryParam('page', page.nextOrLastPageable().pageNumber).build().toUriString()}}" th:text="#{label.next.article}">다음글</a>
     </div>
     <div class="d-flex justify-content-end gap-2" sec:authorize="isAuthenticated()">
