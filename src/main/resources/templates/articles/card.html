@@ -122,7 +122,36 @@
         </article>
     </div>
 </section>
-<section class="container-sm board-pagination-section d-flex justify-content-between align-items-center my-4"></section>
+<section class="container-sm board-pagination-section d-flex justify-content-center align-items-center my-4">
+    <div>
+        <nav class="pagination">
+            <div class="page-item">
+                <a aria-label="Previous"
+                   class="page-link"
+                   th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.previousOrFirstPageable().pageNumber).build().toUriString()}}"
+                >
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="d-none">Previous</span>
+                </a>
+            </div>
 
-</body>
+            <div class="page-item" th:each="pageNumber : ${#numbers.sequence(0, page.totalPages - (page.totalPages > 0 ? 1 : 0))}">
+                <a class="page-link"
+                   th:classappend="${pageNumber == page.number} ? 'active' : ''"
+                   th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', pageNumber).build().toUriString()}}"
+                   th:text="${pageNumber + 1}">
+                </a>
+            </div>
+            <div class="page-item">
+                <a aria-label="Next"
+                   class="page-link"
+                   th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.nextOrLastPageable().pageNumber).build().toUriString()}}"
+                >
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="d-none">Next</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+</section>
 </html>

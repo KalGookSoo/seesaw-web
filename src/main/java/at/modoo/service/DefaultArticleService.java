@@ -7,7 +7,6 @@ import at.modoo.core.file.FileIOService;
 import at.modoo.model.*;
 import at.modoo.repository.*;
 import at.modoo.search.ArticleSearch;
-import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpServletRequest;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -46,8 +45,6 @@ public class DefaultArticleService implements ArticleService {
 
     private final PrincipalProvider principalProvider;
 
-    private final EntityManager entityManager;
-
     public DefaultArticleService(
             @Value("${at.modoo.filepath}") String filepath,
             ArticleRepository articleRepository,
@@ -55,8 +52,7 @@ public class DefaultArticleService implements ArticleService {
             ReplyRepository replyRepository,
             ViewRepository viewRepository,
             AttachmentRepository attachmentRepository,
-            PrincipalProvider principalProvider,
-            EntityManager entityManager
+            PrincipalProvider principalProvider
     ) {
         this.filepath = filepath;
         this.articleRepository = articleRepository;
@@ -65,13 +61,17 @@ public class DefaultArticleService implements ArticleService {
         this.viewRepository = viewRepository;
         this.attachmentRepository = attachmentRepository;
         this.principalProvider = principalProvider;
-        this.entityManager = entityManager;
     }
 
     @Transactional(readOnly = true)
     @Override
     public Page<Article> findAll(Pageable pageable, ArticleSearch search) {
         Page<Article> page = articleSearchRepository.search(pageable, search);
+
+        // 페이지 요청이 아닐 경우 조인하지 않는다.
+        if (pageable.isUnpaged()) {
+            return page;
+        }
 
         List<String> articleIds = page.getContent().stream().map(Article::getId).toList();
 
@@ -91,10 +91,15 @@ public class DefaultArticleService implements ArticleService {
         return page;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Page<Article> findAllByCategoryId(String categoryId, Pageable pageable) {
         Page<Article> page = articleRepository.findAllByCategoryId(categoryId, pageable);
 
+        // 페이지 요청이 아닐 경우 조인하지 않는다.
+        if (pageable.isUnpaged()) {
+            return page;
+        }
         List<String> articleIds = page.getContent().stream().map(Article::getId).toList();
 
         List<Reply> replies = replyRepository.findAllByArticleIdIn(articleIds);
@@ -214,8 +219,6 @@ public class DefaultArticleService implements ArticleService {
         command.setContent(newContent.body().html());
         article.update(command);
         articleRepository.save(article);
-
-        // TODO 인라인이미지 생성 후 바인딩
 
         // 첨부파일
         for (MultipartFile multipartFile : command.getMultipartFiles()) {
