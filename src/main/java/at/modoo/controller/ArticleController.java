@@ -26,9 +26,10 @@ public class ArticleController {
     @GetMapping(params = "categoryType=STATIC_CONTENT")
     public String getArticles(
             @RequestParam String categoryId,
-            @PageableDefault(size = 1, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable,
             Model model
     ) {
+        Sort sort = Sort.by(Sort.Order.asc("fixedOrder"), Sort.Order.desc("createdDate"));
+        Pageable pageable = Pageable.unpaged(sort);
         Page<Article> page = articleService.findAllByCategoryId(categoryId, pageable);
 
         model.addAttribute("page", page);
