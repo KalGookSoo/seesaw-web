@@ -53,6 +53,10 @@ public class Article extends AbstractHierarchical<Article> implements Hierarchic
     @Comment("타입")
     private ArticleType type;
 
+    /**
+     * @deprecated 해당 필드는 다음과 같이 대체될 것. THUMBNAIL type in {@link at.modoo.model.Attachment.Type}.
+     */
+    @Deprecated
     @Comment("썸네일 식별자")
     @Column(length = 36)
     private String thumbnailId;
@@ -61,8 +65,6 @@ public class Article extends AbstractHierarchical<Article> implements Hierarchic
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonManagedReference
-//    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-//    @JoinColumn(name = "thumbnail_id", referencedColumnName = "id")
     private Attachment thumbnail;
 
     @Comment("카테고리 식별자")
