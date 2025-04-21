@@ -50,7 +50,23 @@
             <div><button type="button">방문자통계</button></div>
             <div><button type="button">월간리포트</button></div>
         </section>
+
         <section class="aside site-map">
+            <div>
+                <!-- 최초 호출 -->
+                <div th:replace="~{::nestedCategories(${NESTED_CATEGORIES})}"></div>
+
+                <!-- 재귀 fragment -->
+                <th:block th:fragment="nestedCategories(categories)">
+                    <div class="px-2 nav-item" th:each="category : ${categories}">
+                        <a th:href="@{'/articles?' + ${category.siteId} }">
+                            [[${category.name}]]
+                        </a>
+                        <div th:if="${!#lists.isEmpty(category.children)}"
+                             th:replace="~{::nestedCategories(${category.children})}"></div>
+                    </div>
+                </th:block>
+            </div>
             <details>
                 <summary>
                     <a href="#" class="home">홈</a>
