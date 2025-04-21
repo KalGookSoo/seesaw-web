@@ -5,6 +5,7 @@ import at.modoo.search.ArticleSearch;
 import at.modoo.service.ArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -66,28 +67,19 @@ public class ArticleController {
         return "articles/card";
     }
 
-    /**
-     * 공지사항 페이지 인덱스 추출
-     */
-    @GetMapping("/{id}")
-    public String getArticle(
-            @PathVariable("id") String id,
-            @ModelAttribute("search") ArticleSearch search
-    ) {
-        // 해당 글의 페이지 번호 추출
-        Sort sort = Sort.by(Sort.Order.desc("createdDate"));
-        Pageable pageable = Pageable.unpaged(sort);
-        Page<Article> page = articleService.findAllByCategoryId(search.getCategoryId(), pageable);
-        int index = page.getContent().stream().map(Article::getId).toList().indexOf(id);
-        return "redirect:/articles/view" + search.getUriComponentsBuilder().queryParam("page", index).build().toUriString();
-    }
-
     @GetMapping("/view")
     public String getArticle(
             @ModelAttribute("search") ArticleSearch search,
             @PageableDefault(size = 1, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable,
             Model model
     ) {
+        // 공지사항은 쿼리스트링에 게시글 식별자를 따로 받는다. 페이지와 상관없이 항상 고정되어 출력되기 때문에 이전글, 다음글 참조를 식별하기 위해 페이지 번호를 조회한다.
+        if (search.getId() != null) {
+            Sort sort = Sort.by(Sort.Order.desc("createdDate"));
+            Page<Article> page = articleService.findAllByCategoryId(search.getCategoryId(), Pageable.unpaged(sort));
+            int pageNumber = page.getContent().stream().map(Article::getId).toList().indexOf(search.getId());
+            pageable = PageRequest.of(pageNumber, pageable.getPageSize(), pageable.getSort());
+        }
         Page<Article> page = articleService.findAll(pageable, search);
 
         model.addAttribute("page", page);

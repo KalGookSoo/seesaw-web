@@ -11,6 +11,8 @@ import java.util.Optional;
 @Data
 public class ArticleSearch implements UriComponentsProvider {
 
+    private String id;
+
     private String categoryId;
 
     private CategoryType categoryType;

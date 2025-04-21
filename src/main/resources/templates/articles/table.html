@@ -67,7 +67,7 @@
             <td class="py-3 text-center" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')"><label><input type="checkbox"></label></td>
             <td class="py-3 text-center">📣</td>
             <td class="py-3 text-start">
-                <a class="none" th:href="@{|/articles/${article.id}${search.getUriComponentsBuilder().build().toUriString()}|}">
+                <a class="none" th:href="@{|/articles/view${search.getUriComponentsBuilder().queryParam('id', article.id).build().toUriString()}|}">
                     [[${article.title}]]
                     <th:block th:if="${!article.replies.isEmpty()}">
                         <span class="mx-2">🗨</span><span th:text="${article.replies.size()}"></span>
