@@ -123,7 +123,7 @@
                             const responseBody = await response.text();
                             if (response.ok) {
                                 alert(/*[[#{command.success.create}]]*/'');
-                                location.href = /*[[@{/articles/view(categoryId=${search.categoryId}, page=0)}]]*/'';
+                                location.href = /*[[@{|/articles/view${search.getUriComponentsBuilder().queryParam('page', 0).build().toUriString()}|}]]*/'';
                             } else if (response.status === 400) {
                                 const errors = JSON.parse(responseBody).errors;
                                 [...errors].forEach(error => {
@@ -160,7 +160,7 @@
                     <div class="d-flex justify-content-start align-items-center gap-2 text-muted small"
                          th:classappend="${#authentication.principal.hasRole('ROLE_ADMIN') or #authentication.principal.hasRole('ROLE_MANAGER')} ? '' : 'd-none'"
                     >
-                        <div>공지글로등록</div>
+                        <label for="fixed">공지글로등록</label>
                         <input aria-label="고정여부" type="checkbox" id="fixed">
                     </div>
                 </div>

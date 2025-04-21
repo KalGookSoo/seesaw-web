@@ -1,7 +1,5 @@
 package at.modoo.controller;
 
-import at.modoo.command.CreateArticleCommand;
-import at.modoo.command.UpdateArticleCommand;
 import at.modoo.model.Article;
 import at.modoo.search.ArticleSearch;
 import at.modoo.service.ArticleService;
@@ -47,7 +45,6 @@ public class ArticleController {
         Sort sort = Sort.by(Sort.Order.asc("fixedOrder"), Sort.Order.desc("createdDate"));
         List<Article> fixedArticles = articleService.getFixedArticles(search.getCategoryId(), true, sort);
 
-        // 비공지
         Page<Article> page = articleService.findAll(pageable, search);
 
         model.addAttribute("fixedArticles", fixedArticles);
@@ -67,6 +64,22 @@ public class ArticleController {
         model.addAttribute("page", page);
 
         return "articles/card";
+    }
+
+    /**
+     * 공지사항 페이지 인덱스 추출
+     */
+    @GetMapping("/{id}")
+    public String getArticle(
+            @PathVariable("id") String id,
+            @ModelAttribute("search") ArticleSearch search
+    ) {
+        // 해당 글의 페이지 번호 추출
+        Sort sort = Sort.by(Sort.Order.desc("createdDate"));
+        Pageable pageable = Pageable.unpaged(sort);
+        Page<Article> page = articleService.findAllByCategoryId(search.getCategoryId(), pageable);
+        int index = page.getContent().stream().map(Article::getId).toList().indexOf(id);
+        return "redirect:/articles/view" + search.getUriComponentsBuilder().queryParam("page", index).build().toUriString();
     }
 
     @GetMapping("/view")
@@ -94,7 +107,7 @@ public class ArticleController {
     @GetMapping("/{id}/edit")
     public String getArticleEdit(
             @PathVariable("id") String id,
-            @ModelAttribute("command") UpdateArticleCommand command,
+            @ModelAttribute("search") ArticleSearch search,
             Model model
     ) {
         Article article = articleService.find(id);
