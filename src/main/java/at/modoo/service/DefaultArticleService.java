@@ -244,6 +244,11 @@ public class DefaultArticleService implements ArticleService {
     }
 
     @Override
+    public void deleteAll(List<String> ids) {
+        ids.forEach(this::delete);
+    }
+
+    @Override
     public boolean isOwner(String id, String username) {
         Article article = find(id);
         return article.getCreatedBy().equals(username);

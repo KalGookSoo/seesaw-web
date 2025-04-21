@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -40,6 +41,14 @@ public class ArticleApiController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable String id) {
         articleService.delete(id);
+        String message = messageSource.getMessage("command.success.delete");
+        return ResponseEntity.ok(message);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @DeleteMapping
+    public ResponseEntity<String> deleteAll(@RequestBody List<String> ids) {
+        articleService.deleteAll(ids);
         String message = messageSource.getMessage("command.success.delete");
         return ResponseEntity.ok(message);
     }

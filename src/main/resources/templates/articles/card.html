@@ -12,7 +12,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>홈 | 대전포스트잇 ♣대전독서모임</title>
     <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
-    <script th:inline="javascript"></script>
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', e => {
+            e.target.addEventListener('click', e => {
+                const deleteButton = e.target.closest(`.board-table-search-section [name="delete"]`);
+                if (deleteButton) {
+                    const checkboxes = document.querySelectorAll(`.board-card-section [name="selected"]:checked`);
+                    const ids = [...checkboxes].map(checkbox => checkbox.dataset.id);
+                    const httpEntity = {
+                        method: 'delete',
+                        headers: {
+                            'content-type': 'application/json',
+                            [CSRF.headerName]: CSRF.token
+                        },
+                        body: JSON.stringify(ids)
+                    };
+                    fetch(`/api/articles`, httpEntity)
+                        .then(async response => {
+                            const responseBody = await response.text();
+                            if (response.ok) {
+                                alert(/*[[#{command.success.delete}]]*/'');
+                                location.reload();
+                            } else {
+                                alert(/*[[#{command.failure.delete}]]*/'');
+                            }
+                        });
+                }
+            });
+        });
+    </script>
 </head>
 
 <body layout:fragment="content">
@@ -65,9 +93,15 @@
                 </div>
             </div>
             <div class="d-flex justify-content-center align-items-center gap-2">
-                <button class="btn btn-outline-secondary" type="button" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">선택삭제</button>
-                <button class="btn btn-outline-secondary" type="button">내가 쓴 글</button>
-                <button class="btn btn-primary" type="button">글쓰기</button>
+                <button class="btn btn-outline-secondary" name="delete" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')" type="button">선택삭제</button>
+                <a class="btn btn-outline-secondary"
+                   sec:authorize="isAuthenticated()"
+                   th:href="@{|/articles${search.getUriComponentsBuilder().replaceQueryParam('page', 0).replaceQueryParam('keyField', 'createdBy').replaceQueryParam('keyWord', #authentication.principal.username).build().toUriString()}|}"
+                >
+                    내가 쓴 글
+                </a>
+                <a class="btn btn-primary" sec:authorize="isAuthenticated()" th:href="@{|/articles/new${search.getUriComponentsBuilder().build().toUriString()}|}">글쓰기</a>
+                <a class="btn btn-primary" sec:authorize="isAnonymous()" th:href="@{/oauth2/authorization/naver}">글쓰기</a>
             </div>
         </div>
     </form>
@@ -102,7 +136,7 @@
                 <div class="card-body">
                     <div class="card-title d-flex justify-content-start align-items-center gap-2">
                         <div sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
-                            <input aria-label="선택" name="selected" type="checkbox">
+                            <input aria-label="선택" name="selected" type="checkbox" th:data-id="${article.id}">
                         </div>
                         <div th:text="${article.title}"></div>
                     </div>
