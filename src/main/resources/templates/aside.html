@@ -11,15 +11,46 @@
 
     <aside id="aside" th:fragment="aside">
         <header class="d-flex align-items-center justify-content-between">
-            <div class="logo">대전포스트잇 ♣대전독서모임</div>
-            <div><button type="button" name="close">✖</button></div>
+            <div class="aside-header-wrapper">
+                <div class="aside-header-content-left">
+
+                </div>
+                <div class="aside-header-content-center">
+                    <div class="aside-thumb">thumb</div>
+                    <div class="logo logo-text">대전포스트잇 ♣대전독서모임</div>
+                    <div class="sub-title">공동~subtitle</div>
+                    <div class="functional-wrap">
+                        <button type="button" name="">톡톡관리</button>
+                    </div>
+                </div>
+                <div class="aside-header-content-right">
+                    <div><button type="button" name="close">✖</button></div>
+                </div>
+            </div>
         </header>
+        <section class="profile d-flex flex-column align-items-center justify-content-center">
+            <div class="aside-functionality-wrapper">
+                <div class="aside-fnc-row">
+                    <div class="button-wrap"><button type="button">홈페이지관리</button></div>
+                    <div class="button-wrap"><button type="button">방문자통계</button></div>
+                    <div class="button-wrap"><button type="button">공동편집권</button></div>
+                    <div class="button-wrap"><button type="button">글알림받기</button></div>
+                </div>
+                <div class="aside-fnc-row">
+                    <div class="button-wrap"><button type="button">로그아웃</button></div>
+                    <div class="button-wrap"><button type="button">공유하기</button></div>
+                    <div class="button-wrap"><button type="button">월간리포트</button></div>
+                    <div class="button-wrap"><button type="button">페이지수정</button></div>
+                </div>
+            </div>
+
+        </section>
         <section class="profile d-flex flex-column align-items-center justify-content-center" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
+            <div><button type="button">홈페이지관리</button></div>
             <div><button type="button">방문자통계</button></div>
             <div><button type="button">월간리포트</button></div>
-            <div><button type="button">홈페이지관리</button></div>
         </section>
-        <section class="site-map">
+        <section class="aside site-map">
             <details>
                 <summary>
                     <a href="#" class="home">홈</a>
