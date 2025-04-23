@@ -36,24 +36,24 @@
 <section class="profile-section d-flex flex-column justify-content-center align-items-center">
     <div class="profile d-flex flex-column justify-content-center align-items-center">
         <p class="image"><img alt="프로필이미지" th:src="@{/images/profile.jpeg}"/></p>
-        <h2>대전포스트잇 ♣대전독서모임</h2>
-        <p>대전독서모임 홈페이지</p>
+        <h2 th:text="${SITE_CONTEXT.name}"></h2>
+        <p th:text="${SITE_CONTEXT.description}"></p>
     </div>
 </section>
 <section class="intro-section d-flex flex-column justify-content-center align-items-center">
-    <h6>대전 독서모임 인원 모집 중</h6>
-    <span>독서 모임을 시작으로 대전시에서 주최하는 다양한 문화 및 지원 행사에 참여하고 싶으신 분들 환영합니다!</span>
+    <h6 th:text="${SITE_CONTEXT.intro}"></h6>
+    <span th:text="${SITE_CONTEXT.content}"></span>
 </section>
-<section class="board-section container-lg">
+<section class="board-section container-lg" th:each="page : ${siteExposedPages}">
     <header class="d-flex justify-content-between align-items-center">
-        <h5 th:text="${ALL_CATEGORIES.get(firstCategoryId).parent.name}"></h5>
-        <p><a class="none" th:href="@{/articles(categoryId=${firstCategoryId}, categoryType=${ALL_CATEGORIES.get(firstCategoryId).type})}">더보기</a></p>
+        <h5 th:text="${ALL_CATEGORIES.get(page.getKey()).parent.name}"></h5>
+        <p><a class="none" th:href="@{/articles(categoryId=${page.getKey()}, categoryType=${ALL_CATEGORIES.get(page.getKey()).type})}">더보기</a></p>
     </header>
     <div class="container">
         <div class="row row-cols-1 row-cols-md-3 g-4">
-            <article class="col" th:each="article : ${first.content}">
+            <article class="col" th:each="article : ${page.getValue().content}">
                 <a class="btn w-100 text-start"
-                   th:href="@{/articles/view(categoryType=${ALL_CATEGORIES.get(firstCategoryId).type}, categoryId=${article.categoryId}, page=${articleStat.index})}"
+                   th:href="@{/articles/view(categoryType=${ALL_CATEGORIES.get(page.getKey()).type}, categoryId=${article.categoryId}, page=${articleStat.index})}"
                 >
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <div class="title" th:text="${article.title}"></div>
@@ -75,37 +75,5 @@
         </div>
     </div>
 </section>
-<section class="board-section container-lg">
-    <header class="d-flex justify-content-between align-items-center">
-        <h5 th:text="${ALL_CATEGORIES.get(secondCategoryId).parent.name}"></h5>
-        <p><a class="none" th:href="@{/articles(categoryId=${secondCategoryId}, categoryType=${ALL_CATEGORIES.get(secondCategoryId).type})}">더보기</a></p>
-    </header>
-    <div class="container">
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            <article class="col" th:each="article : ${second.content}">
-                <a class="btn w-100 text-start"
-                   th:href="@{/articles/view(categoryType=${ALL_CATEGORIES.get(secondCategoryId).type}, categoryId=${article.categoryId}, page=${articleStat.index})}"
-                >
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <div class="title" th:text="${article.title}"></div>
-                        <div class="d-flex" th:if="${!article.replies.isEmpty()}"><span class="mx-2">🗨</span><span class="main-color" th:text="${article.replies.size()}"></span></div>
-                    </div>
-                    <div class="content d-flex align-items-start justify-content-between mb-2 gap-3">
-                        <div class="small text-muted" th:text="${article.plainContent}"></div>
-                        <div class="thumbnail" th:if="${!article.inlineImages.isEmpty()}">
-                            <img th:src="@{'/api/attachments/' + ${article.inlineImages.get(0).id}}" th:alt="${article.inlineImages.get(0).originalName}">
-                        </div>
-                    </div>
-                    <div class="author d-flex justify-content-start align-items-center small text-muted">
-                        <div th:text="${article.maskedAuthor}"></div>
-                        <div class="mx-2">|</div>
-                        <div th:text="${#temporals.format(article.createdDate, 'yyyy.MM.dd')}"></div>
-                    </div>
-                </a>
-            </article>
-        </div>
-    </div>
-</section>
-
 </body>
 </html>

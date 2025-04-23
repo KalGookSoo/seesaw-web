@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * 메인 컨트롤러
@@ -40,7 +42,7 @@ public class IndexController {
             Model model
     ) {
 
-        // exposed인 카테고리를 뽑아서 top3를 홈페이지에 노출한다.
+        // 하위 카테고리 중 사이트 노출 카테고리 목록을 추출
         @SuppressWarnings("unchecked")
         Map<String, Category> allCategories = ((Map<String, Category>) request.getAttribute(ContextEnvironment.ALL_CATEGORIES));
         List<String> siteExposedCategoryIds = allCategories.values()
@@ -51,22 +53,10 @@ public class IndexController {
                 .map(Category::getId)
                 .toList();
 
-        List<Page<Article>> siteExposedPages = siteExposedCategoryIds.stream()
-                .map(id -> articleService.findAllByCategoryId(id, pageable))
-                .toList();
+        // 사이트 노출 게시글은 최근 3 개의 게시글로 규정
+        Map<String, Page<Article>> siteExposedPages = siteExposedCategoryIds.stream()
+                .collect(Collectors.toMap(Function.identity(), id -> articleService.findAllByCategoryId(id, pageable)));
         model.addAttribute("siteExposedPages", siteExposedPages);
-
-        // 모임활동 > 2025책꽂이, 알림장 > 공지사항 top 3 게시
-        String firstCategoryId = "0236be97-9c8f-4ada-a120-039f540fabee";
-        Page<Article> first = articleService.findAllByCategoryId(firstCategoryId, pageable);
-        String secondCategoryId = "70cdb7f0-17f9-45e7-a872-914a968c09b6";
-        Page<Article> second = articleService.findAllByCategoryId(secondCategoryId, pageable);
-
-
-        model.addAttribute("first", first);
-        model.addAttribute("firstCategoryId", firstCategoryId);
-        model.addAttribute("second", second);
-        model.addAttribute("secondCategoryId", secondCategoryId);
 
         return "index";
     }
