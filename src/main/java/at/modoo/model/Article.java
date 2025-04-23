@@ -32,7 +32,7 @@ import static lombok.AccessLevel.PROTECTED;
 @DynamicUpdate
 public class Article extends AbstractHierarchical<Article> implements Hierarchical<Article, String> {
 
-    @Comment("공개여부")
+    @Comment("노출여부")
     private boolean exposed;
 
     @Comment("고정여부")
@@ -52,20 +52,6 @@ public class Article extends AbstractHierarchical<Article> implements Hierarchic
     @Enumerated(EnumType.STRING)
     @Comment("타입")
     private ArticleType type;
-
-    /**
-     * @deprecated 해당 필드는 다음과 같이 대체될 것. THUMBNAIL type in {@link at.modoo.model.Attachment.Type}.
-     */
-    @Deprecated
-    @Comment("썸네일 식별자")
-    @Column(length = 36)
-    private String thumbnailId;
-
-    @Transient
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonManagedReference
-    private Attachment thumbnail;
 
     @Comment("카테고리 식별자")
     @Column(length = 36)

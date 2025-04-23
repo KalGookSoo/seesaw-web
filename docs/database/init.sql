@@ -1,12 +1,4 @@
-
-<!-- TOC -->
-    * [데이터베이스 계정 생성(postgres)](#데이터베이스-계정-생성postgres)
-    * [테이블 생성](#테이블-생성)
-    * [제약조건](#제약조건)
-<!-- TOC -->
-
-### 데이터베이스 계정 생성(postgres)
-```postgresql
+-- 데이터베이스 계정 생성(postgres)
 CREATE USER modoo_admin WITH PASSWORD '1234';
 
 CREATE DATABASE stickybook;
@@ -14,10 +6,8 @@ CREATE DATABASE stickybook;
 ALTER DATABASE stickybook OWNER TO modoo_admin;
 
 GRANT ALL PRIVILEGES ON DATABASE stickybook TO modoo_admin;
-```
 
-### 테이블 생성
-```postgresql
+-- 테이블 생성
 CREATE TABLE tb_attachment
 (
     id VARCHAR(36) NOT NULL
@@ -238,12 +228,13 @@ CREATE TABLE tb_site
     address VARCHAR(255),
     zipcode VARCHAR(255),
     contact_number VARCHAR(255),
+    content TEXT,
     description VARCHAR(255),
     distribution_code VARCHAR(255),
     domain_name VARCHAR(255),
     image_exposed BOOLEAN NOT NULL,
+    intro VARCHAR(255),
     name VARCHAR(255),
-    profile_image_id VARCHAR(36),
     search_engine_exposed BOOLEAN NOT NULL,
     tags VARCHAR(255)
 );
@@ -272,6 +263,8 @@ COMMENT ON COLUMN tb_site.address IS '주소';
 
 COMMENT ON COLUMN tb_site.contact_number IS '연락처';
 
+COMMENT ON COLUMN tb_site.content IS '본문';
+
 COMMENT ON COLUMN tb_site.description IS '설명';
 
 COMMENT ON COLUMN tb_site.distribution_code IS '분류코드';
@@ -280,9 +273,9 @@ COMMENT ON COLUMN tb_site.domain_name IS '도메인이름';
 
 COMMENT ON COLUMN tb_site.image_exposed IS '이미지 노출여부';
 
-COMMENT ON COLUMN tb_site.name IS '이름';
+COMMENT ON COLUMN tb_site.intro IS '소개글';
 
-COMMENT ON COLUMN tb_site.profile_image_id IS '프로필이미지 식별자';
+COMMENT ON COLUMN tb_site.name IS '이름';
 
 COMMENT ON COLUMN tb_site.search_engine_exposed IS '검색엔진 노출여부';
 
@@ -309,6 +302,8 @@ CREATE TABLE tb_category
     exposed BOOLEAN NOT NULL,
     name VARCHAR(255),
     sequence INTEGER,
+    site_exposed BOOLEAN NOT NULL,
+    site_exposed_order INTEGER NOT NULL,
     site_id VARCHAR(36)
         CONSTRAINT fk_tb_category_site
             REFERENCES tb_site,
@@ -339,11 +334,15 @@ COMMENT ON COLUMN tb_category.parent_id IS '부모 식별자';
 
 COMMENT ON COLUMN tb_category.description IS '설명';
 
-COMMENT ON COLUMN tb_category.exposed IS '공개여부';
+COMMENT ON COLUMN tb_category.exposed IS '노출여부';
 
 COMMENT ON COLUMN tb_category.name IS '이름';
 
 COMMENT ON COLUMN tb_category.sequence IS '순서';
+
+COMMENT ON COLUMN tb_category.site_exposed IS '사이트 노출여부';
+
+COMMENT ON COLUMN tb_category.site_exposed_order IS '사이트 노출순서';
 
 COMMENT ON COLUMN tb_category.site_id IS '사이트 식별자';
 
@@ -371,9 +370,8 @@ CREATE TABLE tb_article
             REFERENCES tb_category,
     content TEXT,
     exposed BOOLEAN NOT NULL,
-    fixed_order INTEGER,
     fixed BOOLEAN NOT NULL,
-    thumbnail_id VARCHAR(36),
+    fixed_order INTEGER,
     title VARCHAR(255),
     type VARCHAR(255)
         CONSTRAINT tb_article_type_check
@@ -404,13 +402,11 @@ COMMENT ON COLUMN tb_article.category_id IS '카테고리 식별자';
 
 COMMENT ON COLUMN tb_article.content IS '본문';
 
-COMMENT ON COLUMN tb_article.exposed IS '공개여부';
-
-COMMENT ON COLUMN tb_article.fixed_order IS '고정순서';
+COMMENT ON COLUMN tb_article.exposed IS '노출여부';
 
 COMMENT ON COLUMN tb_article.fixed IS '고정여부';
 
-COMMENT ON COLUMN tb_article.thumbnail_id IS '썸네일 식별자';
+COMMENT ON COLUMN tb_article.fixed_order IS '고정순서';
 
 COMMENT ON COLUMN tb_article.title IS '제목';
 
@@ -508,7 +504,7 @@ COMMENT ON COLUMN tb_reply.article_id IS '게시글 식별자';
 
 COMMENT ON COLUMN tb_reply.content IS '본문';
 
-COMMENT ON COLUMN tb_reply.exposed IS '공개여부';
+COMMENT ON COLUMN tb_reply.exposed IS '노출여부';
 
 ALTER TABLE tb_reply
     OWNER TO modoo_admin;
@@ -624,7 +620,7 @@ CREATE TABLE tb_vote
     last_modified_date TIMESTAMP(6),
     last_modified_ip VARCHAR(45),
     version INTEGER NOT NULL,
-    is_positive BOOLEAN NOT NULL,
+    approved BOOLEAN NOT NULL,
     reference_id VARCHAR(36)
 );
 
@@ -646,17 +642,17 @@ COMMENT ON COLUMN tb_vote.last_modified_ip IS '수정 IP';
 
 COMMENT ON COLUMN tb_vote.version IS '버전';
 
-COMMENT ON COLUMN tb_vote.is_positive IS '긍정여부';
+COMMENT ON COLUMN tb_vote.approved IS '찬성여부';
 
 COMMENT ON COLUMN tb_vote.reference_id IS '참조 식별자';
 
 ALTER TABLE tb_vote
     OWNER TO modoo_admin;
 
-```
 
-### 제약조건(보관용)
-```postgresql
+
+
+-- 제약조건(보관용)
 ALTER TABLE tb_category ADD CONSTRAINT fk_tb_category_site FOREIGN KEY (site_id) REFERENCES tb_site (id);
 ALTER TABLE tb_article ADD CONSTRAINT fk_tb_article_category FOREIGN KEY (category_id) REFERENCES tb_category (id);
 ALTER TABLE tb_notification ADD CONSTRAINT fk_tb_notification_category FOREIGN KEY (category_id) REFERENCES tb_category (id);
@@ -668,4 +664,3 @@ ALTER TABLE tb_article ADD CONSTRAINT fk_tb_article_parent FOREIGN KEY (parent_i
 ALTER TABLE tb_reply ADD CONSTRAINT fk_tb_reply_parent FOREIGN KEY (parent_id) REFERENCES tb_reply (id);
 ALTER TABLE tb_menu ADD CONSTRAINT fk_tb_menu_parent FOREIGN KEY (parent_id) REFERENCES tb_menu (id);
 ALTER TABLE tb_code ADD CONSTRAINT fk_tb_code_parent FOREIGN KEY (parent_id) REFERENCES tb_code (id);
-```

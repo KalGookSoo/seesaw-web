@@ -61,25 +61,18 @@ public class Site extends AbstractHierarchical<Site> implements Hierarchical<Sit
     @Comment("연락처")
     private String contactNumber;
 
+    @Comment("소개글")
+    private String intro;
+
+    @Comment("본문")
+    @Column(columnDefinition = "TEXT")
+    private String content;
+
     @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonManagedReference
     private List<Category> categories = new ArrayList<>();
-
-    /**
-     * @deprecated 해당 필드는 다음과 같이 대체될 것. THUMBNAIL type in {@link at.modoo.model.Attachment.Type}.
-     */
-    @Deprecated
-    @Comment("프로필이미지 식별자")
-    @Column(length = 36)
-    private String profileImageId;
-
-    @Transient
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonManagedReference
-    private Attachment profileImage;
 
     @Override
     public void addChild(Site child) {

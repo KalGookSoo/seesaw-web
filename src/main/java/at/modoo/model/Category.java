@@ -42,7 +42,13 @@ public class Category extends AbstractHierarchical<Category> implements Hierarch
     @Comment("타입")
     private CategoryType type;
 
-    @Comment("공개여부")
+    @Comment("사이트 노출여부")
+    private boolean siteExposed;
+    
+    @Comment("사이트 노출순서")
+    private int siteExposedOrder;
+
+    @Comment("노출여부")
     private boolean exposed;
 
     @Comment("순서")

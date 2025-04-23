@@ -32,7 +32,7 @@ import static lombok.AccessLevel.PROTECTED;
 @DynamicUpdate
 public class Reply extends AbstractHierarchical<Reply> implements Hierarchical<Reply, String> {
 
-    @Comment("공개여부")
+    @Comment("노출여부")
     private boolean exposed;
 
     @Comment("본문")
