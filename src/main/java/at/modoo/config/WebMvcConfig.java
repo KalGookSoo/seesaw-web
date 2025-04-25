@@ -1,9 +1,7 @@
 package at.modoo.config;
 
 import at.modoo.interceptor.NavigationInterceptor;
-import at.modoo.repository.ArticleSearchRepository;
-import at.modoo.repository.CategoryRepository;
-import at.modoo.repository.SiteRepository;
+import at.modoo.service.SiteService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -34,11 +32,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Value("${site.domain.name}")
     private String domainName;
 
-    private final SiteRepository siteRepository;
-
-    private final CategoryRepository categoryRepository;
-
-    private final ArticleSearchRepository articleSearchRepository;
+    private final SiteService siteService;
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
@@ -62,7 +56,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Bean
     public NavigationInterceptor navigationInterceptor() {
-        return new NavigationInterceptor(domainName, siteRepository, categoryRepository, articleSearchRepository);
+        return new NavigationInterceptor(domainName, siteService);
     }
 
     @Override

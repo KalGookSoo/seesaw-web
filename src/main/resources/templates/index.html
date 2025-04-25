@@ -33,9 +33,9 @@
 </head>
 
 <body layout:fragment="content">
-<section class="profile-section d-flex flex-column justify-content-center align-items-center">
+<section class="profile-section d-flex flex-column justify-content-center align-items-center" th:style="|background-image: url('/api/attachments/${SITE_CONTEXT.backgroundImage.id}')|">
     <div class="profile d-flex flex-column justify-content-center align-items-center">
-        <p class="image"><img alt="프로필이미지" th:src="@{/images/profile.jpeg}"/></p>
+        <p class="image"><img alt="프로필이미지" th:src="@{|/api/attachments/${SITE_CONTEXT.profileImage.id}|}"/></p>
         <h2 th:text="${SITE_CONTEXT.name}"></h2>
         <p th:text="${SITE_CONTEXT.description}"></p>
     </div>
@@ -62,7 +62,7 @@
                     <div class="content d-flex align-items-start justify-content-between mb-2 gap-3">
                         <div class="small text-muted" th:text="${article.plainContent}"></div>
                         <div class="thumbnail" th:if="${!article.inlineImages.isEmpty()}">
-                            <img th:src="@{'/api/attachments/' + ${article.inlineImages.get(0).id}}" th:alt="${article.inlineImages.get(0).originalName}">
+                            <img th:src="@{|/api/attachments/${article.inlineImages.get(0).id}|}" th:alt="${article.inlineImages.get(0).originalName}">
                         </div>
                     </div>
                     <div class="author d-flex justify-content-start align-items-center small text-muted">

@@ -81,8 +81,43 @@ public class Site extends AbstractHierarchical<Site> implements Hierarchical<Sit
         child.setParent(this);
     }
 
+    @Transient
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @JsonManagedReference
+    private List<Attachment> attachments = new ArrayList<>();
+
     public Address getAddress() {
         return address == null ? Address.empty() : address;
+    }
+
+    public Attachment getImage(Attachment.Type type) {
+        return attachments.stream()
+                .filter(attachment -> type.getPath().equals(attachment.getPathName()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public Attachment getProfileImage() {
+        return attachments.stream()
+                .filter(attachment -> Attachment.Type.PROFILE.getPath().equals(attachment.getPathName()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public Attachment getBackgroundImage() {
+        return attachments.stream()
+                .filter(attachment -> Attachment.Type.BACKGROUND_IMAGE.getPath().equals(attachment.getPathName()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public void addAttachment(Attachment attachment) {
+        attachments.add(attachment);
+    }
+
+    public void addCategory(Category category) {
+        categories.add(category);
     }
 
 }

@@ -74,9 +74,10 @@ public class Attachment extends BaseEntity {
     @Getter
     @AllArgsConstructor
     public enum Type {
+        PROFILE("/profiles"),
+        BACKGROUND_IMAGE("/backgroundImages"),
         INLINE_IMAGE("/images"),
-        ATTACHMENT("/attachments"),
-        THUMBNAIL("/thumbnails");
+        ATTACHMENT("/attachments");
         private final String path;
     }
 
