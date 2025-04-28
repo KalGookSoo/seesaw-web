@@ -4,15 +4,22 @@ import com.hazelcast.config.Config;
 import com.hazelcast.config.JoinConfig;
 import com.hazelcast.config.NetworkConfig;
 import com.hazelcast.config.TcpIpConfig;
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.spring.cache.HazelcastCacheManager;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import java.util.*;
 
+@EnableCaching
 @Configuration
-@Profile("prod")
+@Profile({"local", "prod"})
 public class HazelcastConfig {
 
     private final String profiles;
@@ -92,5 +99,16 @@ public class HazelcastConfig {
 
         return config;
     }
+
+    @Bean
+    public HazelcastInstance hazelcastInstance(@Qualifier("hazelcast") Config config) {
+        return Hazelcast.newHazelcastInstance(config);
+    }
+
+    @Bean
+    public CacheManager cacheManager(@Qualifier("hazelcastInstance") HazelcastInstance hazelcastInstance) {
+        return new HazelcastCacheManager(hazelcastInstance);
+    }
+
 
 }
