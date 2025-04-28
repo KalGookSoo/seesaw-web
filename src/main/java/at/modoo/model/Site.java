@@ -91,13 +91,6 @@ public class Site extends AbstractHierarchical<Site> implements Hierarchical<Sit
         return address == null ? Address.empty() : address;
     }
 
-    public Attachment getImage(Attachment.Type type) {
-        return attachments.stream()
-                .filter(attachment -> type.getPath().equals(attachment.getPathName()))
-                .findFirst()
-                .orElse(null);
-    }
-
     public Attachment getProfileImage() {
         return attachments.stream()
                 .filter(attachment -> Attachment.Type.PROFILE.getPath().equals(attachment.getPathName()))
