@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -55,7 +56,11 @@ public class IndexController {
 
         // 사이트 노출 게시글은 최근 3 개의 게시글로 규정
         Map<String, Page<Article>> siteExposedPages = siteExposedCategoryIds.stream()
-                .collect(Collectors.toMap(Function.identity(), id -> articleService.findAllByCategoryId(id, pageable)));
+                .collect(Collectors.toMap(Function.identity(),
+                        id -> articleService.findAllByCategoryId(id, pageable),
+                        (oldValue, newValue) -> oldValue,
+                        LinkedHashMap::new
+                ));
         model.addAttribute("siteExposedPages", siteExposedPages);
 
         return "index";
