@@ -1,5 +1,6 @@
 #aside {
   height: 100vh;
+  width: 24rem;
 
   header {
     background-color: var(--main-color);
@@ -73,8 +74,8 @@
   }
 
   .aside-functionality-wrapper {
-    display: flex;
-    flex-direction: column;
+    //display: flex;
+    //flex-direction: column;
     background-color: var(--main-color);
     border-bottom: 1px solid #F6E2D8;
 
@@ -90,11 +91,11 @@
     .aside-fnc-row .button-wrap {
       display: flex;
       padding: 10px;
-      min-width: 100px;
-      min-height: 100px;
+      min-width: 6rem;
+      min-height: 6rem;
       border-right: 1px solid #C23F02;
-      max-width: 100px;
-      max-height: 100px;
+      max-width: 6rem;
+      max-height: 6rem;
       align-content: center;
       align-items: center;
       justify-content: center;

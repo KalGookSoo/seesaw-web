@@ -10,7 +10,7 @@
 </head>
 
     <aside id="aside" th:fragment="aside">
-        <header class="d-flex align-items-center justify-content-between">
+        <header class="d-flex align-items-center justify-content-between pb-4">
             <div class="aside-header-wrapper d-flex flex-grow-1 justify-content-between">
                 <div class="aside-header-content-left">
 
@@ -19,7 +19,7 @@
                     <div class="aside-thumb d-flex justify-content-center align-items-center">
                         <img class="w-100 rounded-circle" th:src="@{|/api/attachments/${SITE_CONTEXT.profileImage.id}|}" th:alt="${SITE_CONTEXT.profileImage.originalName}">
                     </div>
-                    <div class="logo logo-text">대전포스트잇 ♣대전독서모임</div>
+                    <div class="logo-text">대전포스트잇 ♣대전독서모임</div>
                     <div class="sub-title" sec:authorize="isAuthenticated()" th:text="${#authentication.name}"></div>
                     <div class="functional-wrap">
                         <button type="button" name="">톡톡관리</button>
@@ -30,9 +30,9 @@
                 </div>
             </div>
         </header>
-        <section class="profile d-flex flex-column align-items-center justify-content-center" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
-            <div class="aside-functionality-wrapper">
-                <div class="aside-fnc-row">
+        <section class="d-flex flex-column align-items-center justify-content-center" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
+            <div class="aside-functionality-wrapper d-flex flex-column small">
+                <div class="aside-fnc-row d-flex">
                     <div class="button-wrap"><button type="button">홈페이지관리</button></div>
                     <div class="button-wrap"><button type="button">방문자통계</button></div>
                     <div class="button-wrap"><button type="button">공동편집권</button></div>
@@ -45,7 +45,6 @@
                     <div class="button-wrap"><button type="button">페이지수정</button></div>
                 </div>
             </div>
-
         </section>
 
         <section class="aside site-map">
@@ -58,12 +57,15 @@
             <th:block th:fragment="nestedCategories(categories)">
                 <details class="accordion-item" th:each="category : ${categories}">
                     <summary class="accordion-header d-flex justify-content-between align-items-center">
+                        <!--/* 최상위 카테고리가 아닌 경우 앵커로 취급 */-->
                         <a class="none flex-grow-1"
                            th:if="${!category.isRoot()}"
                            th:href="@{/articles(categoryType=${category.type}, categoryId=${category.id})}"
                            th:text="${category.name}"
                         ></a>
-                        <span type="button" class="flex-grow-1" th:if="${category.isRoot()}" th:text="${category.name}"></span>
+
+                        <!--/* 최상위 카테고리인 경우 <span>으로 취급 */-->
+                        <span class="flex-grow-1" th:if="${category.isRoot()}" th:text="${category.name}"></span>
                         <span class="accordion-icon" th:if="${!#lists.isEmpty(category.children)}"></span>
                     </summary>
                     <details th:if="${!#lists.isEmpty(category.children)}"
