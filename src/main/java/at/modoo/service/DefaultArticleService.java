@@ -7,7 +7,6 @@ import at.modoo.core.file.FileIOService;
 import at.modoo.model.*;
 import at.modoo.repository.*;
 import at.modoo.search.ArticleSearch;
-import jakarta.servlet.http.HttpServletRequest;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -18,8 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -139,13 +136,7 @@ public class DefaultArticleService implements ArticleService {
             writeFile(filepath + attachment.getPathName() + File.separator + attachment.getName(), multipartFile.getBytes());
             attachmentRepository.save(attachment);
 
-            // request에서 host 주소 추출
-            // TODO 이거 인터페이스 분리하여 외부에서 의존관계 주입받아야 함
-            ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-            HttpServletRequest request = attributes.getRequest();
-            String host = request.getHeader("host");
-            String scheme = request.getScheme();
-            String url = scheme + "://" + host + "/api/attachments/" + attachment.getId();
+            String url = "/api/attachments/" + attachment.getId();
 
             // images의 src를 첨부파일을 생성 후 "/api/attachments/{id}"로 치환한다.
             if (iterator.hasNext()) {
@@ -177,12 +168,12 @@ public class DefaultArticleService implements ArticleService {
         List<String> deletedAttachmentIds = new ArrayList<>();
         
         Document newContent = Jsoup.parse(command.getContent());
-        Elements newImages = newContent.select("img[src*=\"/api/attachments/\"]");
+        Elements remainingImages = newContent.select("img[src*=\"/api/attachments/\"]");
 
         // src는 "/"로 스플릿하여 마지막 요소를 uuid4 패턴의 문자열이다.
         for (Element existingImage : existingImages) {
             String existingSrc = existingImage.attr("src");
-            boolean isPresentInNewImages = newImages.stream()
+            boolean isPresentInNewImages = remainingImages.stream()
                     .anyMatch(newImage -> newImage.attr("src").equals(existingSrc));
             if (!isPresentInNewImages) {
                 deletedAttachmentIds.add(existingSrc.substring(existingSrc.lastIndexOf("/") + 1));
@@ -201,13 +192,7 @@ public class DefaultArticleService implements ArticleService {
             writeFile(filepath + attachment.getPathName() + File.separator + attachment.getName(), multipartFile.getBytes());
             attachmentRepository.save(attachment);
 
-            // request에서 host 주소 추출
-            // TODO 이거 인터페이스 분리하여 외부에서 의존관계 주입받아야 함
-            ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-            HttpServletRequest request = attributes.getRequest();
-            String host = request.getHeader("host");
-            String scheme = request.getScheme();
-            String url = scheme + "://" + host + "/api/attachments/" + attachment.getId();
+            String url = "/api/attachments/" + attachment.getId();
 
             // images의 src를 첨부파일을 생성 후 "/api/attachments/{id}"로 치환한다.
             if (iterator.hasNext()) {
@@ -215,9 +200,8 @@ public class DefaultArticleService implements ArticleService {
                 element.attr("src", url);
             }
         }
-
-        command.setContent(newContent.body().html());
         article.update(command);
+        article.setContent(newContent.body().html());
         articleRepository.save(article);
 
         // 첨부파일
