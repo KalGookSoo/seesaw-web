@@ -33,28 +33,22 @@ public class HazelcastConfig {
             "127.0.0.1:5704"
     );
 
+/*
     private final List<String> developmentMembers = Arrays.asList(
             "10.100.100.161:5701",
             "10.100.100.161:5702",
             "10.100.100.161:5703",
             "10.100.100.161:5704"
     );
+*/
 
     private final List<String> productionMembers = Arrays.asList(
-            "10.100.100.164:5701",
-            "10.100.100.164:5702",
-            "10.100.100.164:5703",
-            "10.100.100.164:5704",
-
-            "10.100.100.165:5701",
-            "10.100.100.165:5702",
-            "10.100.100.165:5703",
-            "10.100.100.165:5704"
+            "10.0.0.177:5701"
     );
 
     private void map() {
         profilesMapper.put("local", localMembers);
-        profilesMapper.put("dev", developmentMembers);
+//        profilesMapper.put("dev", developmentMembers);
         profilesMapper.put("prod", productionMembers);
     }
 
