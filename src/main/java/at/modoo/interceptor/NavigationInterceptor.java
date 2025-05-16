@@ -20,7 +20,7 @@ public class NavigationInterceptor implements HandlerInterceptor {
     private final String domainName;
 
     private final SiteService siteService;
-
+// TODO 요청 속성이 아닌 세션 속성으로 변경할 것.
     @Override
     public boolean preHandle(
             @NonNull HttpServletRequest request,
@@ -28,7 +28,7 @@ public class NavigationInterceptor implements HandlerInterceptor {
             @NonNull Object handler
     ) throws Exception {
         try {
-            Site site = siteService.getSite(domainName);
+            Site site = siteService.getSiteContext(domainName);
             request.setAttribute(ContextEnvironment.SITE_CONTEXT, site);
 
             // 요소 탐색 편의를 위한 속성 할당

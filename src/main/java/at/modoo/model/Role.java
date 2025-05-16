@@ -29,6 +29,10 @@ public class Role extends BaseEntity {
     @Column(length = 36)
     private String referenceId;
 
+    @Comment("사이트 식별자")
+    @Column(length = 36)
+    private String siteId;
+
     @Comment("이름")
     private String name;
 
@@ -47,9 +51,10 @@ public class Role extends BaseEntity {
     @JsonBackReference
     private Menu menu;
 
-    public static Role create(String referenceId, String name, String alias) {
+    public static Role create(String referenceId, String siteId, String name, String alias) {
         Role role = new Role();
         role.referenceId = referenceId;
+        role.siteId = siteId;
         role.name = name;
         role.alias = alias;
         return role;

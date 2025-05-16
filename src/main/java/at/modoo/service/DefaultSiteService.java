@@ -35,9 +35,12 @@ public class DefaultSiteService implements SiteService {
     @Cacheable(value = "siteCache", key = "#domainName")
     @Override
     public Site getSite(String domainName) {
-        Site site = siteRepository.findByDomainName(domainName)
-                .orElseThrow(NoSuchElementException::new);
+        return siteRepository.findByDomainName(domainName).orElseThrow(NoSuchElementException::new);
+    }
 
+    @Override
+    public Site getSiteContext(String domainName) {
+        Site site = siteRepository.findByDomainName(domainName).orElseThrow(NoSuchElementException::new);
         // 프로필 이미지, 배경 이미지 조인
         // TODO 서비스로 만들어 캐싱할 것
         attachmentRepository.findAllByReferenceIdIn(Collections.singletonList(site.getId()))
