@@ -10,6 +10,7 @@ import at.modoo.search.ArticleSearch;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.safety.Safelist;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -153,7 +154,8 @@ public class DefaultArticleService implements ArticleService {
         }
 
         // 인라인이미지 링크를 첨부파일 API로 치환한 본문으로 재할당한다
-        article.setContent(document.body().html());
+        Safelist safelist = Safelist.relaxed().preserveRelativeLinks(true);
+        article.setContent(Jsoup.clean(document.body().html(), "http://localhost", safelist));
         articleRepository.save(article);
         return article;
     }
@@ -200,8 +202,10 @@ public class DefaultArticleService implements ArticleService {
                 element.attr("src", url);
             }
         }
+
+        Safelist safelist = Safelist.relaxed().preserveRelativeLinks(true);
+        command.setContent(Jsoup.clean(newContent.body().html(), "http://localhost", safelist));
         article.update(command);
-        article.setContent(newContent.body().html());
         articleRepository.save(article);
 
         // 첨부파일

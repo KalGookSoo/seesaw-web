@@ -101,7 +101,7 @@ public class Article extends AbstractHierarchical<Article> implements Hierarchic
         article.fixed = command.isFixed();
         article.fixedOrder = command.getFixedOrder();
         article.title = command.getTitle();
-        article.content = Jsoup.clean(command.getContent(), Safelist.relaxed());
+        article.content = command.getContent();
         return article;
     }
 
@@ -115,7 +115,7 @@ public class Article extends AbstractHierarchical<Article> implements Hierarchic
         this.fixed = command.isFixed();
         this.fixedOrder = command.getFixedOrder();
         this.title = command.getTitle();
-        this.content = Jsoup.clean(command.getContent(), Safelist.relaxed());
+        this.content = command.getContent();
     }
 
     public String getMaskedAuthor() {
