@@ -6,7 +6,8 @@ plugins {
 }
 
 group = 'at'
-version = '0.0.1-SNAPSHOT'
+//version = '0.0.1-SNAPSHOT'
+project.version = project.hasProperty('appVersion') ? project.getProperty('appVersion') : '0.0.1-SNAPSHOT'
 
 java {
 	toolchain {
