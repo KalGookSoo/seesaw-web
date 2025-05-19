@@ -13,7 +13,7 @@
 <header id="header" class="d-flex align-items-center justify-content-center" th:fragment="header">
     <div class="container-sm wrapper d-flex align-items-center justify-content-between">
         <div class="logo"><a class="none" th:href="@{/}">대전포스트잇 ♣대전독서모임</a></div>
-        <nav class="gnb nav d-flex align-items-center justify-content-start">
+        <nav class="gnb nav d-none d-lg-flex align-items-center justify-content-start">
             <div class="px-2 nav-item"><a class="btn nav-link" th:classappend="${CURRENT_CATEGORY == null} ? 'main-color' : ''" th:href="@{/}">홈</a></div>
             <div class="px-2 nav-item" th:each="category : ${NESTED_CATEGORIES}">
                 <!--/*@thymesVar id="category" type="at.modoo.model.Category"*/-->
@@ -27,13 +27,16 @@
                 </a>
             </div>
         </nav>
-        <div class="utility d-flex align-items-center">
+        <div class="utility  d-none d-lg-flex align-items-center">
             <button type="button" class="btn site-map open-aside"><!--/*<span class="icon"></span>*/-->전체보기</button>
             <a class="btn sign-in" sec:authorize="isAnonymous()" th:href="@{/oauth2/authorization/naver}"
                th:text="#{label.sign.in}"></a>
             <form sec:authorize="isAuthenticated()" th:action="@{/sign-out}" th:method="post">
                 <button type="submit" class="btn sign-out" th:text="#{label.sign.out}"></button>
             </form>
+        </div>
+        <div class="d-lg-none">
+            <button type="button" class="btn site-map open-aside navbar-toggler"><i class="bi bi-list"></i></button>
         </div>
     </div>
 </header>
