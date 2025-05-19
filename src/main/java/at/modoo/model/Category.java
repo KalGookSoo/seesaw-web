@@ -73,6 +73,11 @@ public class Category extends AbstractHierarchical<Category> implements Hierarch
     @Transient
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
+    private List<Article> recentArticles = new ArrayList<>();
+
+    @Transient
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @JsonManagedReference
     private List<Notification> notifications = new ArrayList<>();
 
@@ -102,5 +107,9 @@ public class Category extends AbstractHierarchical<Category> implements Hierarch
     public void addArticle(Article article) {
         articles.add(article);
         article.setCategoryId(getId());
+    }
+
+    public void addRecentArticle(Article article) {
+        recentArticles.add(article);
     }
 }
