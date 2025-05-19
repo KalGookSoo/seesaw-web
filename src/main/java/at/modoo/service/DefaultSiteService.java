@@ -73,7 +73,7 @@ public class DefaultSiteService implements SiteService {
                 .filter(Category::isRoot)
                 .forEach(category -> articles.stream()
                         .filter(article -> category.getId().equals(allCategories.get(article.getCategoryId()).getParentId()))
-                        .forEach(category::addArticle));
+                        .forEach(category::addRecentArticle));
 
         return site;
     }
