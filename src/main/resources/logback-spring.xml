@@ -36,10 +36,20 @@
         </encoder>
     </appender>
 
-    <!-- 로깅 레벨에 따른 Appender 설정 -->
-    <root level="INFO">
-        <appender-ref ref="CONSOLE" />
-        <appender-ref ref="FILE" />
-    </root>
+    <!-- prod 프로파일일 때는 console과 file 모두 사용 -->
+    <springProfile name="prod">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE" />
+            <appender-ref ref="FILE" />
+        </root>
+    </springProfile>
+
+    <!-- prod가 아닌 다른 프로파일일 때는 console만 사용 -->
+    <springProfile name="!prod">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE" />
+        </root>
+    </springProfile>
+
 
 </configuration>
