@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <body>
-<nav class="sub-category-banner d-flex justify-content-center align-items-center" th:fragment="localNavigationBar">
+<nav class="sub-category-banner d-flex justify-content-center align-items-center" th:fragment="localNavigationBar" th:if="${CURRENT_CATEGORY.parent.children.size() > 1}">
     <div class="nav container-sm d-flex justify-content-center align-items-center">
         <!--/*@thymesVar id="ALL_CATEGORIES" type="java.util.Map<java.lang.String, at.modoo.model.Category>"*/-->
         <!--/*@thymesVar id="CURRENT_CATEGORY" type="at.modoo.model.Category"*/-->
