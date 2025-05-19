@@ -51,15 +51,14 @@
         alert(/*[[${message}]]*/'');
     </script>
 </head>
-<body id="body">
+<body id="body" class="d-flex flex-column min-vh-100">
+    <dialog id="aside-dialog" role="alertdialog">
+        <th:block th:replace="~{aside :: aside}"></th:block>
+    </dialog>
     <header th:replace="~{header :: header}"></header>
     <main id="main">
         <th:block layout:fragment="content"></th:block>
     </main>
     <footer th:replace="~{footer :: footer}"></footer>
-
-    <dialog id="aside-dialog" role="alertdialog">
-        <th:block th:replace="~{aside :: aside}"></th:block>
-    </dialog>
 </body>
 </html>
