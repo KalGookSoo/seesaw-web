@@ -124,7 +124,7 @@
                             const responseBody = await response.text();
                             if (response.ok) {
                                 alert(/*[[#{command.success.update}]]*/'');
-                                location.href = /*[[@{|/articles/view${search.getUriComponentsBuilder().queryParam('page', 0).build().toUriString()}|}]]*/'';
+                                location.href = /*[[@{|/articles/view${search.getUriComponentsBuilder().queryParam('page', page).build().toUriString()}|}]]*/'';
                             } else if (response.status === 400) {
                                 const errors = JSON.parse(responseBody).errors;
                                 [...errors].forEach(error => {
@@ -183,7 +183,7 @@
     <footer class="container-sm content-footer d-flex justify-content-end align-items-center my-4">
         <div class="d-flex justify-content-end gap-2">
             <a class="btn btn-outline-secondary"
-               th:href="@{/articles/view(categoryId=${article.categoryId}, page=0)}"
+               th:href="@{|/articles/view${search.getUriComponentsBuilder().queryParam('page', page).build().toUriString()}|}"
                th:text="#{label.cancel}">
             </a>
             <button class="btn btn-primary" type="submit" th:text="#{label.save}"></button>

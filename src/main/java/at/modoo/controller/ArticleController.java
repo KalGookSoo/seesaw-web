@@ -101,11 +101,13 @@ public class ArticleController {
     public String getArticleEdit(
             @PathVariable("id") String id,
             @ModelAttribute("search") ArticleSearch search,
+            @RequestParam(defaultValue = "0") int page,
             Model model
     ) {
         Article article = articleService.find(id);
 
         model.addAttribute("article", article);
+        model.addAttribute("page", page);
 
         return "articles/edit";
     }
