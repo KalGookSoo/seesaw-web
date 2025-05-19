@@ -29,3 +29,11 @@ dev, stage 혹은 개인에 맞게 커스텀하려고한다면 application.prope
 --spring.messages.basename=file:///$PROJECT_DIR$/src/main/resources/messages/
 ```
 
+### 빌드 명령어
+
+```shell
+gradlew clean bootJar -PappVersion=1.0.0
+```
+
+### 버저닝
+[소프트웨어 버전 관리 가이드](./docs/versioning.md)
