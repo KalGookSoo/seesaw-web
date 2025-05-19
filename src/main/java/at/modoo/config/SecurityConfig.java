@@ -69,6 +69,7 @@ public class SecurityConfig {
         // TODO /swagger resources 관련 ROLE_ADMIN만 접근할 수 있도록 할 것
         config.requestMatchers(new AntPathRequestMatcher("/managers/**")).hasAnyRole("MANAGER", "ADMIN")
                 .requestMatchers(new AntPathRequestMatcher("/admins/**")).hasRole("ADMIN")
+                .requestMatchers(new AntPathRequestMatcher("/actuator/**")).hasRole("ADMIN")
                 .anyRequest()
                 .permitAll();
     }
