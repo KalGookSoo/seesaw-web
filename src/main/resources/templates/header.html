@@ -27,7 +27,7 @@
                 </a>
             </div>
         </nav>
-        <div class="utility  d-none d-lg-flex align-items-center">
+        <div class="utility d-none d-lg-flex align-items-center">
             <button type="button" class="btn site-map open-aside"><!--/*<span class="icon"></span>*/-->전체보기</button>
             <a class="btn sign-in" sec:authorize="isAnonymous()" th:href="@{/oauth2/authorization/naver}"
                th:text="#{label.sign.in}"></a>
@@ -35,8 +35,16 @@
                 <button type="submit" class="btn sign-out" th:text="#{label.sign.out}"></button>
             </form>
         </div>
-        <div class="d-lg-none">
-            <button type="button" class="btn site-map open-aside navbar-toggler"><i class="bi bi-list"></i></button>
+        <div class="d-lg-none d-flex align-items-center">
+            <button type="button" class="btn site-map open-aside navbar-toggler" th:title="'전체보기'"><i class="bi bi-list"></i></button>
+            <a class="btn" sec:authorize="isAnonymous()" th:href="@{/oauth2/authorization/naver}" th:title="|#{label.sign.in}|">
+                <i class="bi bi-box-arrow-in-right"></i>
+            </a>
+            <form sec:authorize="isAuthenticated()" th:action="@{/sign-out}" th:method="post" class="d-inline">
+                <button type="submit" class="btn" th:title="|#{label.sign.out}|">
+                    <i class="bi bi-box-arrow-right"></i>
+                </button>
+            </form>
         </div>
     </div>
 </header>
