@@ -3,13 +3,19 @@
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
+  width: 100%;
+  padding: 2rem 1rem;
 
   .profile {
-    width: 900px;
-    height: 860px;
+    max-width: 900px;
+    width: 100%;
+    min-height: 50vh;
+    height: auto;
+    padding: 2rem 0;
 
     h2 {
       font-size: 1.2rem;
+      text-align: center;
     }
 
     .image {
@@ -17,67 +23,93 @@
         width: 120px;
         height: 120px;
         object-fit: cover;
-
       }
     }
   }
 }
 
 .intro-section {
-  margin: 80px 0;
+  margin: 2rem 0;
+  padding: 0 1rem;
+  text-align: center;
+  width: 100%;
 
   h6 {
     color: var(--main-color);
+    margin-bottom: 1rem;
   }
 }
 
 .board-section {
+  margin-bottom: 2rem;
+
   header {
     border-bottom: 1px solid #ccc;
     margin-bottom: 20px;
+    padding: 0.5rem 0;
 
     h5 {
       color: var(--main-color);
+      margin-bottom: 0;
     }
-
   }
 
   article {
-    margin-bottom: 80px;
+    margin-bottom: 1.5rem;
 
     .title {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      font-weight: 500;
     }
 
     .content {
-      height: 110px;
+      min-height: 80px;
+      height: auto;
 
       .small {
         display: -webkit-box;
         -webkit-box-orient: vertical;
-        -webkit-line-clamp: 5;
+        -webkit-line-clamp: 4;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: normal;
       }
 
       .thumbnail {
-        width: 110px;
+        width: 100%;
+        max-width: 110px;
 
         img {
-          width: inherit;
-          height: 110px;
+          width: 100%;
+          height: auto;
+          max-height: 110px;
+          object-fit: cover;
         }
-
       }
     }
 
     .author {
-
+      // Styles for author section if needed
     }
+  }
+}
 
+@media (max-width: 767.98px) {
+  .board-section {
+    article {
+      .content {
+        min-height: 60px;
 
+        .small {
+          -webkit-line-clamp: 3;
+        }
+
+        .thumbnail {
+          max-width: 100%;
+        }
+      }
+    }
   }
 }
