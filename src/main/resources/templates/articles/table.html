@@ -57,19 +57,21 @@
         <div class="title h5 pb-1" th:text="${CURRENT_CATEGORY.name}"></div>
         <div class="d-flex">
             <div>
-                <a class="btn"
+                <a class="btn d-flex align-items-center"
                    th:classappend="${#strings.equals(search.viewType, 'TABLE')} ? 'main-color' : ''"
                    th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.pageable.pageNumber).replaceQueryParam('viewType', 'TABLE').build().toUriString()}}"
+                   title="목록보기"
                 >
-                    목록보기
+                    <i class="bi bi-list"></i><span class="d-none d-sm-inline ms-1">목록보기</span>
                 </a>
             </div>
             <div>
-                <a class="btn"
+                <a class="btn d-flex align-items-center"
                    th:classappend="${#strings.equals(search.viewType, 'CARD')} ? 'main-color' : ''"
                    th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.pageable.pageNumber).replaceQueryParam('viewType', 'CARD').build().toUriString()}}"
+                   title="카드보기"
                 >
-                    카드보기
+                    <i class="bi bi-grid"></i><span class="d-none d-sm-inline ms-1">카드보기</span>
                 </a>
             </div>
         </div>
@@ -107,7 +109,7 @@
                 <a class="none" th:href="@{|/articles/view${search.getUriComponentsBuilder().queryParam('id', article.id).build().toUriString()}|}">
                     [[${article.title}]]
                     <th:block th:if="${!article.replies.isEmpty()}">
-                        <span class="mx-2">🗨</span><span th:text="${article.replies.size()}"></span>
+                        <i class="bi bi-chat-dots mx-2"></i><span th:text="${article.replies.size()}"></span>
                     </th:block>
                 </a>
             </td>
@@ -125,7 +127,7 @@
                 <a class="none" th:href="@{|/articles/view${search.getUriComponentsBuilder().queryParam('page', page.pageable.offset + articleStat.index).build().toUriString()}|}">
                     [[${article.title}]]
                     <th:block th:if="${!article.replies.isEmpty()}">
-                        <span class="mx-2">🗨</span><span th:text="${article.replies.size()}"></span>
+                        <i class="bi bi-chat-dots mx-2"></i><span th:text="${article.replies.size()}"></span>
                     </th:block>
                 </a>
             </td>
