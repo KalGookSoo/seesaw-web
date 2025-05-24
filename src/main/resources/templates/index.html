@@ -46,8 +46,8 @@
 </section>
 <section class="board-section container-fluid container-lg px-3" th:each="page : ${siteExposedPages}">
     <header class="d-flex justify-content-between align-items-center">
-        <h5 th:text="${ALL_CATEGORIES.get(page.getKey()).parent.name}"></h5>
-        <p><a class="none" th:href="@{/articles(categoryId=${page.getKey()}, categoryType=${ALL_CATEGORIES.get(page.getKey()).type})}">더보기</a></p>
+        <div class="h5 main-color" th:text="${ALL_CATEGORIES.get(page.getKey()).parent.name}"></div>
+        <p><a class="none d-flex align-items-center" th:href="@{/articles(categoryId=${page.getKey()}, categoryType=${ALL_CATEGORIES.get(page.getKey()).type})}">더보기 <i class="bi bi-arrow-right ms-1"></i></a></p>
     </header>
     <div class="container-fluid px-0">
         <div class="row row-cols-1 row-cols-lg-3 g-4">

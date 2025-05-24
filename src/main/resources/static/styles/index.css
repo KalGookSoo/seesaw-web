@@ -41,10 +41,6 @@
   margin-bottom: 20px;
   padding: 0.5rem 0;
 }
-.board-section header h5 {
-  color: var(--main-color);
-  margin-bottom: 0;
-}
 .board-section article {
   margin-bottom: 1.5rem;
 }
