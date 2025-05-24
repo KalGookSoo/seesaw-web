@@ -50,58 +50,77 @@
         <div class="title h5 pb-1" th:text="${CURRENT_CATEGORY.name}"></div>
         <div class="d-flex">
             <div>
-                <a class="btn"
+                <a class="btn d-flex align-items-center"
                    th:classappend="${#strings.equals(search.viewType, 'TABLE')} ? 'main-color' : ''"
                    th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.pageable.pageNumber).replaceQueryParam('viewType', 'TABLE').build().toUriString()}}"
+                   title="목록보기"
                 >
-                    목록보기
+                    <i class="bi bi-list"></i><span class="d-none d-sm-inline ms-1">목록보기</span>
                 </a>
             </div>
             <div>
-                <a class="btn"
+                <a class="btn d-flex align-items-center"
                    th:classappend="${#strings.equals(search.viewType, 'CARD')} ? 'main-color' : ''"
                    th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.pageable.pageNumber).replaceQueryParam('viewType', 'CARD').build().toUriString()}}"
+                   title="카드보기"
                 >
-                    카드보기
+                    <i class="bi bi-grid"></i><span class="d-none d-sm-inline ms-1">카드보기</span>
                 </a>
             </div>
         </div>
     </div>
 </section>
-<section class="container-sm board-table-search-section py-4 mb-4" style="border-bottom: 1px solid var(--bs-gray-400);">
-    <form name="searchForm" th:action="@{/articles}" th:method="get" th:object="${search}">
+<!--/* Buttons row */-->
+<section class="container-sm my-3">
+    <div class="d-flex justify-content-between">
+        <div>
+            <button class="btn btn-outline-secondary d-flex align-items-center" name="delete" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')" type="button" title="선택삭제">
+                <i class="bi bi-trash"></i><span class="d-none d-sm-inline ms-1">선택삭제</span>
+            </button>
+        </div>
+        <div class="d-flex gap-2">
+            <a class="btn btn-outline-secondary d-flex align-items-center"
+               sec:authorize="isAuthenticated()"
+               th:href="@{|/articles${search.getUriComponentsBuilder().replaceQueryParam('page', 0).replaceQueryParam('keyField', 'createdBy').replaceQueryParam('keyWord', #authentication.principal.username).build().toUriString()}|}"
+               title="내가 쓴 글"
+            >
+                <i class="bi bi-person"></i><span class="d-none d-sm-inline ms-1">내가 쓴 글</span>
+            </a>
+            <a class="btn btn-primary d-flex align-items-center" sec:authorize="isAuthenticated()" 
+               th:href="@{|/articles/new${search.getUriComponentsBuilder().build().toUriString()}|}"
+               title="글쓰기"
+            >
+                <i class="bi bi-pencil-square"></i><span class="d-none d-sm-inline ms-1">글쓰기</span>
+            </a>
+            <a class="btn btn-primary d-flex align-items-center" sec:authorize="isAnonymous()" 
+               th:href="@{/oauth2/authorization/naver}"
+               title="글쓰기"
+            >
+                <i class="bi bi-pencil-square"></i><span class="d-none d-sm-inline ms-1">글쓰기</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!--/* Search form */-->
+<section class="container-sm board-table-search-section my-4">
+    <form name="searchForm" th:action="@{/articles}" th:method="get" th:object="${search}" class="row g-2 justify-content-center">
         <input type="hidden" th:field="*{categoryId}">
         <input type="hidden" th:field="*{categoryType}">
         <input type="hidden" th:field="*{viewType}">
-        <div class="d-flex justify-content-between align-items-center">
-            <div class="d-flex justify-content-center align-items-center gap-2">
-                <div>
-                    <label>
-                        <select class="form-control form-select" th:field="*{keyField}">
-                            <option value="title" th:text="#{entity.article.title}"></option>
-                            <option value="content" th:text="#{entity.article.content}"></option>
-                        </select>
-                    </label>
-                </div>
-                <div>
-                    <label>
-                        <input class="form-control" type="search" th:field="*{keyWord}">
-                    </label>
-                </div>
-                <div>
-                    <button class="btn btn-outline-secondary" type="submit">검색</button>
-                </div>
-            </div>
-            <div class="d-flex justify-content-center align-items-center gap-2">
-                <button class="btn btn-outline-secondary" name="delete" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')" type="button">선택삭제</button>
-                <a class="btn btn-outline-secondary"
-                   sec:authorize="isAuthenticated()"
-                   th:href="@{|/articles${search.getUriComponentsBuilder().replaceQueryParam('page', 0).replaceQueryParam('keyField', 'createdBy').replaceQueryParam('keyWord', #authentication.principal.username).build().toUriString()}|}"
-                >
-                    내가 쓴 글
-                </a>
-                <a class="btn btn-primary" sec:authorize="isAuthenticated()" th:href="@{|/articles/new${search.getUriComponentsBuilder().build().toUriString()}|}">글쓰기</a>
-                <a class="btn btn-primary" sec:authorize="isAnonymous()" th:href="@{/oauth2/authorization/naver}">글쓰기</a>
+        <div class="col-12 col-sm-3 col-md-2">
+            <select class="form-select" th:field="*{keyField}" aria-label="검색 필드 선택">
+                <option value="title" th:text="#{entity.article.title}"></option>
+                <option value="content" th:text="#{entity.article.content}"></option>
+                <option value="createdBy" th:text="#{entity.article.createdBy}"></option>
+            </select>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4">
+            <div class="input-group">
+                <input class="form-control" type="search" th:field="*{keyWord}" placeholder="검색어를 입력하세요" aria-label="검색어">
+                <button class="btn btn-outline-secondary d-flex align-items-center" type="submit" title="검색">
+                    <i class="bi bi-search"></i><span class="d-none d-sm-inline ms-1">검색</span>
+                </button>
             </div>
         </div>
     </form>
@@ -149,43 +168,54 @@
                         <div th:text="${#temporals.format(article.createdDate, 'yyyy.MM.dd')}"></div>
                     </div>
                     <div class="d-flex justify-content-end">
-                        <div><span class="mx-2">🗨</span><span th:text="${article.replies.size()}"></span></div>
+                        <div><i class="bi bi-chat-dots mx-2"></i><span th:text="${article.replies.size()}"></span></div>
                     </div>
                 </div>
             </a>
         </article>
     </div>
 </section>
-<section class="container-sm board-pagination-section d-flex justify-content-center align-items-center my-4">
-    <div>
-        <nav class="pagination">
-            <div class="page-item">
-                <a aria-label="Previous"
-                   class="page-link"
-                   th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.previousOrFirstPageable().pageNumber).build().toUriString()}}"
-                >
-                    <span aria-hidden="true">&laquo;</span>
-                    <span class="d-none">Previous</span>
-                </a>
-            </div>
+<!--/* Pagination row */-->
+<section class="container-sm my-3">
+    <div class="d-flex justify-content-center">
+        <nav aria-label="Page navigation" class="pagination">
+            <ul class="pagination mb-0">
+                <li class="page-item" th:classappend="${page.first} ? 'disabled' : ''">
+                    <a aria-label="Previous"
+                       class="page-link"
+                       th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.previousOrFirstPageable().pageNumber).build().toUriString()}}"
+                       title="이전 페이지"
+                    >
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                </li>
 
-            <div class="page-item" th:each="pageNumber : ${#numbers.sequence(0, page.totalPages - (page.totalPages > 0 ? 1 : 0))}">
-                <a class="page-link"
-                   th:classappend="${pageNumber == page.number} ? 'active' : ''"
-                   th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', pageNumber).build().toUriString()}}"
-                   th:text="${pageNumber + 1}">
-                </a>
-            </div>
-            <div class="page-item">
-                <a aria-label="Next"
-                   class="page-link"
-                   th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.nextOrLastPageable().pageNumber).build().toUriString()}}"
-                >
-                    <span aria-hidden="true">&raquo;</span>
-                    <span class="d-none">Next</span>
-                </a>
-            </div>
+                <li class="page-item d-none d-sm-block" th:each="pageNumber : ${#numbers.sequence(0, page.totalPages - (page.totalPages > 0 ? 1 : 0))}"
+                    th:classappend="${pageNumber == page.number} ? 'active' : ''">
+                    <a class="page-link"
+                       th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', pageNumber).build().toUriString()}}"
+                       th:text="${pageNumber + 1}">
+                    </a>
+                </li>
+
+                <li class="page-item d-sm-none" th:if="${!page.isEmpty()}">
+                    <span class="page-link">
+                        <span th:text="${page.number + 1}"></span> / <span th:text="${page.totalPages}"></span>
+                    </span>
+                </li>
+
+                <li class="page-item" th:classappend="${page.last} ? 'disabled' : ''">
+                    <a aria-label="Next"
+                       class="page-link"
+                       th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.nextOrLastPageable().pageNumber).build().toUriString()}}"
+                       title="다음 페이지"
+                    >
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+            </ul>
         </nav>
     </div>
 </section>
+</body>
 </html>
