@@ -8,10 +8,6 @@ document.addEventListener('DOMContentLoaded', e => {
         '.open-aside': e => {
             const asideDialog = document.getElementById('aside-dialog');
             asideDialog.showModal();
-        },
-        '#aside button[name="close"]': e => {
-            const asideDialog = document.getElementById('aside-dialog');
-            asideDialog.close();
         }
     };
 });

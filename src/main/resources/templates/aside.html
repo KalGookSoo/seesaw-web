@@ -10,22 +10,19 @@
 </head>
 
     <aside id="aside" th:fragment="aside" class="h-100 bg-white">
-        <header class="bg-main-color text-white p-3 pb-4">
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="flex-grow-0">
-                    <!-- Left section empty -->
+        <header class="bg-main-color text-white p-3 pb-4 position-relative">
+            <div class="position-absolute top-0 end-0 p-2">
+                <form method="dialog">
+                    <button type="submit" class="btn btn-close-white" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+                </form>
+            </div>
+            <div class="text-center pt-4">
+                <div class="mx-auto mb-2" style="width: 100px; height: 100px;">
+                    <img class="w-100 h-100 rounded-circle" th:src="@{|/api/attachments/${SITE_CONTEXT.profileImage.id}|}" th:alt="${SITE_CONTEXT.profileImage.originalName}">
                 </div>
-                <div class="text-center">
-                    <div class="mx-auto mb-2" style="width: 100px; height: 100px;">
-                        <img class="w-100 h-100 rounded-circle" th:src="@{|/api/attachments/${SITE_CONTEXT.profileImage.id}|}" th:alt="${SITE_CONTEXT.profileImage.originalName}">
-                    </div>
-                    <h5 class="fw-bold mb-1">대전포스트잇 ♣대전독서모임</h5>
-                    <div class="small text-white-50 mb-2" sec:authorize="isAuthenticated()" th:text="${#authentication.name}"></div>
-                    <button type="button" class="btn btn-outline-light btn-sm rounded-pill px-3" sec:authorize="isAuthenticated()" th:text="${#authentication.authorities[0]}">톡톡관리</button>
-                </div>
-                <div class="flex-grow-0">
-                    <button type="button" name="close" class="btn-close btn-close-white" aria-label="Close"></button>
-                </div>
+                <h5 class="fw-bold mb-1">대전포스트잇 ♣대전독서모임</h5>
+                <div class="small text-white-50 mb-2" sec:authorize="isAuthenticated()" th:text="${#authentication.name}"></div>
+                <button type="button" class="btn btn-outline-light btn-sm rounded-pill px-3" sec:authorize="isAuthenticated()" th:text="${#authentication.authorities[0]}">톡톡관리</button>
             </div>
         </header>
         <section class="bg-main-color text-white border-top border-bottom border-main-color-subtle" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
