@@ -153,40 +153,76 @@
     <input name="categoryId" th:value="${article.categoryId}" type="hidden">
     <input class="d-none" multiple name="multipartFiles" type="file">
     <section class="container-sm py-4 mb-4">
-        <div class="container">
-            <div class="row py-2">
-                <div class="col-1">작성자</div>
-                <div class="col-11 d-flex justify-content-between align-items-center">
-                    <div th:text="${article.createdBy}"></div>
-                    <div class="d-flex justify-content-start align-items-center gap-2 text-muted small">
-                        <label for="fixed">공지글로등록</label>
-                        <input aria-label="고정여부" type="checkbox" id="fixed" th:checked="${article.fixed}">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white py-3">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-pencil-square me-2"></i>게시글 수정
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="mb-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-2 col-lg-1">
+                            <label class="form-label fw-medium">작성자</label>
+                        </div>
+                        <div class="col-md-10 col-lg-11 d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-person-circle me-2 text-secondary"></i>
+                                <span th:text="${article.createdBy}" class="fw-medium"></span>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="fixed" aria-label="고정여부" th:checked="${article.fixed}">
+                                <label class="form-check-label small text-muted" for="fixed">공지글로 등록</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="row py-2">
-                <div class="col-1">
-                    <label for="title" th:text="#{entity.article.title}"></label>
+
+                <div class="mb-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-2 col-lg-1">
+                            <label for="title" class="form-label fw-medium" th:text="#{entity.article.title}"></label>
+                        </div>
+                        <div class="col-md-10 col-lg-11">
+                            <div class="input-group">
+                                <span class="input-group-text bg-white">
+                                    <i class="bi bi-type"></i>
+                                </span>
+                                <input type="text" class="form-control" id="title" name="title" th:value="${article.title}" required 
+                                       placeholder="제목을 입력하세요" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-11">
-                    <input type="text" class="form-control" id="title" name="title" th:value="${article.title}" required>
-                </div>
-            </div>
-            <div class="row py-2">
-                <div class="col-1">내용</div>
-                <div class="col-11">
-                    <div id="editor"></div>
+
+                <div class="mb-3">
+                    <div class="row align-items-start">
+                        <div class="col-md-2 col-lg-1">
+                            <label class="form-label fw-medium">내용</label>
+                        </div>
+                        <div class="col-md-10 col-lg-11">
+                            <div id="editor" class="border rounded"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
-    <footer class="container-sm content-footer d-flex justify-content-end align-items-center my-4">
-        <div class="d-flex justify-content-end gap-2">
-            <a class="btn btn-outline-secondary"
-               th:href="@{|/articles/view${search.getUriComponentsBuilder().queryParam('page', page).build().toUriString()}|}"
-               th:text="#{label.cancel}">
-            </a>
-            <button class="btn btn-primary" type="submit" th:text="#{label.save}"></button>
+    <footer class="container-sm content-footer my-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-3 d-flex justify-content-end">
+                <div class="d-flex gap-3">
+                    <a class="btn btn-outline-secondary d-flex align-items-center px-4"
+                       th:href="@{|/articles/view${search.getUriComponentsBuilder().queryParam('page', page).build().toUriString()}|}">
+                        <i class="bi bi-x-lg me-2"></i>
+                        <span th:text="#{label.cancel}"></span>
+                    </a>
+                    <button class="btn btn-primary d-flex align-items-center px-4" type="submit">
+                        <i class="bi bi-check-lg me-2"></i>
+                        <span th:text="#{label.save}"></span>
+                    </button>
+                </div>
+            </div>
         </div>
     </footer>
 </form>
