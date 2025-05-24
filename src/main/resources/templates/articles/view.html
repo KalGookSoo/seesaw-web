@@ -235,88 +235,164 @@
         <div class="title h5 pb-1" th:text="${CURRENT_CATEGORY.name}"></div>
     </div>
 </header>
-<section class="container-sm article-title-section d-flex justify-content-between align-items-center py-4 mb-4">
-    <div class="h5" th:text="${page.content.get(0).title}"></div>
-    <div class="d-flex justify-content-start align-items-center">
-        <small class="text-muted" th:text="${page.content.get(0).maskedAuthor}"></small>
-        <small class="text-muted mx-2">|</small>
-        <small class="text-muted" th:text="${#temporals.format(page.content.get(0).createdDate, 'yyyy.MM.dd')}"></small>
-    </div>
-</section>
-<section class="container-sm article-content-section mb-5"></section>
-<section class="container-sm d-flex justify-content-start align-items-center gap-2 my-2">
-    <div class="small text-muted" th:text="#{entity.reply}"></div>
-    <div class="main-color small" th:text="${page.content.get(0).replies.size()}"></div>
-</section>
-<section class="container-sm reply-section px-4 py-2">
-    <div class="reply-item py-2"
-         th:classappend="${!replyStat.last ? 'border-bottom' : ''}"
-         th:each="reply : ${page.content.get(0).replies}"
-         th:if="${!page.content.get(0).replies.isEmpty()}"
-    >
-        <div class="d-flex justify-content-between my-2">
-            <div class="d-flex justify-content-start align-items-center gap-2">
-                <div class="small text-muted" th:text="${reply.maskedAuthor}"></div>
-                <div class="small text-muted" th:text="${#temporals.format(reply.createdDate, 'yyyy.MM.dd')}"></div>
-            </div>
-            <div class="d-flex justify-content-end align-items-center" sec:authorize="isAuthenticated()">
-                <div th:if="${#strings.equals(reply.createdBy, #authentication.principal.username)}">
-                    <button class="btn" name="update" type="button" th:data-id="${reply.id}" th:text="#{label.update}"></button>
-                    <button class="btn d-none" name="cancel" type="button" th:text="#{label.cancel}"></button>
-                </div>
-                <div th:if="${#authentication.principal.hasRole('ROLE_ADMIN') or #authentication.principal.hasRole('ROLE_MANAGER') or #strings.equals(reply.createdBy, #authentication.principal.username)}">
-                    <button class="btn" name="delete" type="button" th:data-id="${reply.id}" th:text="#{label.delete}"></button>
+<section class="container-sm mb-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0" th:text="${page.content.get(0).title}"></h5>
+                <div class="d-flex justify-content-start align-items-center">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-person-circle me-2 text-secondary"></i>
+                        <span class="text-muted" th:text="${page.content.get(0).maskedAuthor}"></span>
+                    </div>
+                    <span class="text-muted mx-2">|</span>
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-calendar3 me-1 text-secondary"></i>
+                        <span class="text-muted" th:text="${#temporals.format(page.content.get(0).createdDate, 'yyyy.MM.dd')}"></span>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="my-2 reply-content">
-            <pre th:utext="${reply.content}"></pre>
+        <div class="card-body p-4">
+            <div class="article-content-section"></div>
         </div>
-        <form class="d-none"
-              enctype="multipart/form-data"
-              name="updateReplyForm"
-              th:action="@{|/api/replies/${reply.id}|}"
-              th:if="${#authentication.isAuthenticated()}"
-              th:method="post"
-        >
-            <div class="input-group my-4">
-                <textarea aria-label="댓글 입력" class="form-control" name="content" th:utext="${reply.content}"></textarea>
-                <button class="input-group-text" type="submit" th:text="#{label.save}"></button>
-            </div>
-        </form>
-    </div>
-    <form enctype="multipart/form-data" name="insertReplyForm" th:action="@{/api/replies}" th:method="post" sec:authorize="isAuthenticated()">
-        <input name="articleId" th:value="${page.content.get(0).id}" type="hidden">
-        <div class="input-group my-4">
-            <textarea aria-label="댓글 입력" class="form-control" name="content"></textarea>
-            <button class="input-group-text" type="submit" th:text="|#{entity.reply} #{label.input}|"></button>
-        </div>
-    </form>
-    <div class="input-group my-4" sec:authorize="isAnonymous()">
-        <textarea aria-label="댓글 입력" class="form-control" name="content" readonly></textarea>
-        <a class="input-group-text none" th:href="@{/oauth2/authorization/naver}" th:text="#{label.sign.in}"></a>
     </div>
 </section>
-<footer class="container-sm content-footer d-flex justify-content-between align-items-center my-4">
-    <div class="d-flex justify-content-start gap-2">
-        <a class="btn btn-outline-secondary" th:href="@{|/articles/view${search.getUriComponentsBuilder().queryParam('page', page.previousOrFirstPageable().pageNumber).build().toUriString()}|}" th:text="#{label.prevous.article}">이전글</a>
-        <a class="btn btn-outline-secondary" th:href="@{|/articles${search.getUriComponentsBuilder().queryParam('page', 0).build().toUriString()}|}" th:text="#{label.list}"></a>
-        <a class="btn btn-outline-secondary" th:href="@{|/articles/view${search.getUriComponentsBuilder().queryParam('page', page.nextOrLastPageable().pageNumber).build().toUriString()}|}" th:text="#{label.next.article}">다음글</a>
-    </div>
-    <div class="d-flex justify-content-end gap-2" sec:authorize="isAuthenticated()">
-        <a class="btn btn-outline-secondary"
-           th:href="@{|/articles/${page.content.get(0).id}/edit${search.getUriComponentsBuilder().queryParam('page', page.pageable.pageNumber).build().toUriString()}|}"
-           th:if="${#strings.equals(#authentication.principal.username, page.content.get(0).createdBy)}"
-           th:text="#{label.update}"
-        >
-        </a>
-        <button class="btn btn-outline-secondary"
-                name="delete"
-                type="button"
-                th:data-id="${page.content.get(0).id}"
-                th:text="#{label.delete}"
+<section class="container-sm mb-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-chat-dots me-2 text-primary"></i>
+                <h6 class="mb-0" th:text="#{entity.reply}"></h6>
+                <span class="badge bg-primary rounded-pill ms-2" th:text="${page.content.get(0).replies.size()}"></span>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <!-- Existing replies -->
+            <div class="reply-item p-3" 
+                 th:classappend="${!replyStat.last ? 'border-bottom' : ''}"
+                 th:each="reply : ${page.content.get(0).replies}"
+                 th:if="${!page.content.get(0).replies.isEmpty()}"
+            >
+                <div class="d-flex justify-content-between mb-2">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-person-circle me-2 text-secondary"></i>
+                        <span class="fw-medium" th:text="${reply.maskedAuthor}"></span>
+                        <span class="text-muted mx-2">|</span>
+                        <div class="d-flex align-items-center text-muted small">
+                            <i class="bi bi-calendar3 me-1"></i>
+                            <span th:text="${#temporals.format(reply.createdDate, 'yyyy.MM.dd')}"></span>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center" sec:authorize="isAuthenticated()">
+                        <div th:if="${#strings.equals(reply.createdBy, #authentication.principal.username)}">
+                            <button class="btn btn-sm btn-outline-secondary d-flex align-items-center" name="update" type="button" th:data-id="${reply.id}">
+                                <i class="bi bi-pencil me-1"></i>
+                                <span th:text="#{label.update}"></span>
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary d-flex align-items-center d-none" name="cancel" type="button">
+                                <i class="bi bi-x-lg me-1"></i>
+                                <span th:text="#{label.cancel}"></span>
+                            </button>
+                        </div>
+                        <div class="ms-2" th:if="${#authentication.principal.hasRole('ROLE_ADMIN') or #authentication.principal.hasRole('ROLE_MANAGER') or #strings.equals(reply.createdBy, #authentication.principal.username)}">
+                            <button class="btn btn-sm btn-outline-danger d-flex align-items-center" name="delete" type="button" th:data-id="${reply.id}">
+                                <i class="bi bi-trash me-1"></i>
+                                <span th:text="#{label.delete}"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="reply-content bg-light p-3 rounded">
+                    <pre class="mb-0" th:utext="${reply.content}"></pre>
+                </div>
+                <form class="d-none mt-3"
+                      enctype="multipart/form-data"
+                      name="updateReplyForm"
+                      th:action="@{|/api/replies/${reply.id}|}"
+                      th:if="${#authentication.isAuthenticated()}"
+                      th:method="post"
                 >
-        </button>
+                    <div class="input-group">
+                        <textarea aria-label="댓글 입력" class="form-control" name="content" rows="3" th:utext="${reply.content}"></textarea>
+                        <button class="btn btn-primary d-flex align-items-center" type="submit">
+                            <i class="bi bi-check-lg me-1"></i>
+                            <span th:text="#{label.save}"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Reply form for authenticated users -->
+            <div class="p-3" sec:authorize="isAuthenticated()">
+                <form enctype="multipart/form-data" name="insertReplyForm" th:action="@{/api/replies}" th:method="post">
+                    <input name="articleId" th:value="${page.content.get(0).id}" type="hidden">
+                    <div class="input-group">
+                        <textarea aria-label="댓글 입력" class="form-control" name="content" rows="3" placeholder="댓글을 입력하세요..."></textarea>
+                        <button class="btn btn-primary d-flex align-items-center" type="submit">
+                            <i class="bi bi-send me-1"></i>
+                            <span th:text="|#{entity.reply} #{label.input}|"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Login prompt for anonymous users -->
+            <div class="p-3" sec:authorize="isAnonymous()">
+                <div class="input-group">
+                    <textarea aria-label="댓글 입력" class="form-control" name="content" rows="3" readonly placeholder="로그인 후 댓글을 작성할 수 있습니다."></textarea>
+                    <a class="btn btn-primary d-flex align-items-center" th:href="@{/oauth2/authorization/naver}">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>
+                        <span th:text="#{label.sign.in}"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<footer class="container-sm my-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex gap-2">
+                    <a class="btn btn-outline-secondary d-flex align-items-center" 
+                       th:href="@{|/articles/view${search.getUriComponentsBuilder().queryParam('page', page.previousOrFirstPageable().pageNumber).build().toUriString()}|}"
+                       title="이전글">
+                        <i class="bi bi-chevron-left me-1"></i>
+                        <span th:text="#{label.prevous.article}">이전글</span>
+                    </a>
+                    <a class="btn btn-outline-secondary d-flex align-items-center" 
+                       th:href="@{|/articles${search.getUriComponentsBuilder().queryParam('page', 0).build().toUriString()}|}"
+                       title="목록">
+                        <i class="bi bi-list me-1"></i>
+                        <span th:text="#{label.list}"></span>
+                    </a>
+                    <a class="btn btn-outline-secondary d-flex align-items-center" 
+                       th:href="@{|/articles/view${search.getUriComponentsBuilder().queryParam('page', page.nextOrLastPageable().pageNumber).build().toUriString()}|}"
+                       title="다음글">
+                        <i class="bi bi-chevron-right me-1"></i>
+                        <span th:text="#{label.next.article}">다음글</span>
+                    </a>
+                </div>
+                <div class="d-flex gap-2" sec:authorize="isAuthenticated()">
+                    <a class="btn btn-outline-primary d-flex align-items-center"
+                       th:href="@{|/articles/${page.content.get(0).id}/edit${search.getUriComponentsBuilder().queryParam('page', page.pageable.pageNumber).build().toUriString()}|}"
+                       th:if="${#strings.equals(#authentication.principal.username, page.content.get(0).createdBy)}"
+                       title="수정">
+                        <i class="bi bi-pencil-square me-1"></i>
+                        <span th:text="#{label.update}"></span>
+                    </a>
+                    <button class="btn btn-outline-danger d-flex align-items-center"
+                            name="delete"
+                            type="button"
+                            th:data-id="${page.content.get(0).id}"
+                            title="삭제">
+                        <i class="bi bi-trash me-1"></i>
+                        <span th:text="#{label.delete}"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </footer>
 </body>
