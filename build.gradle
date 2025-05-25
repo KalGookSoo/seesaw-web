@@ -53,3 +53,9 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+// Exclude scss and css.map files from the build output
+tasks.named('processResources') {
+	exclude '**/*.scss'
+	exclude '**/*.css.map'
+}
