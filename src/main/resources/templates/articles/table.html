@@ -15,9 +15,9 @@
     <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', e => {
             e.target.addEventListener('click', e => {
-                const deleteButton = e.target.closest(`.board-pagination-section [name="delete"]`);
+                const deleteButton = e.target.closest(`[name="delete"]`);
                 if (deleteButton) {
-                    const checkboxes = document.querySelectorAll(`.board-table-section [name="selected"]:checked`);
+                    const checkboxes = document.querySelectorAll(`[name="selected"]:checked`);
                     const ids = [...checkboxes].map(checkbox => checkbox.dataset.id);
                     const httpEntity = {
                         method: 'delete',
