@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ public class CreateArticleCommand {
     @Schema(description = "제목", example = "제목")
     @NotBlank
     @NotNull
+    @Length(min =1, max = 20)
     private String title;
 
     @Parameter(description = "본문", required = true)
