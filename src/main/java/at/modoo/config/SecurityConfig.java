@@ -9,6 +9,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
@@ -34,6 +35,12 @@ public class SecurityConfig {
     @Bean
     public SavedRequestAwareAuthenticationSuccessHandler authenticationSuccessHandler() {
         return new SavedRequestAwareAuthenticationSuccessHandler();
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring()
+                .requestMatchers("/styles/**", "/scripts/**", "/images/**", "/favicon.ico");
     }
 
     @Bean
@@ -66,8 +73,11 @@ public class SecurityConfig {
     }
 
     private void handleAuthorizeHttpRequests(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry config) {
-        // TODO /swagger resources 관련 ROLE_ADMIN만 접근할 수 있도록 할 것
-        config.requestMatchers(new AntPathRequestMatcher("/managers/**")).hasAnyRole("MANAGER", "ADMIN")
+        config.requestMatchers(new AntPathRequestMatcher("/styles/**")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/scripts/**")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/images/**")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/favicon.ico")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/managers/**")).hasAnyRole("MANAGER", "ADMIN")
                 .requestMatchers(new AntPathRequestMatcher("/admins/**")).hasRole("ADMIN")
                 .requestMatchers(new AntPathRequestMatcher("/actuator/**")).hasRole("ADMIN")
                 .anyRequest()
