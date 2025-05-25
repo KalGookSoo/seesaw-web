@@ -15,9 +15,9 @@
     <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', e => {
             e.target.addEventListener('click', e => {
-                const deleteButton = e.target.closest(`.board-table-search-section [name="delete"]`);
+                const deleteButton = e.target.closest(`[name="delete"]`);
                 if (deleteButton) {
-                    const checkboxes = document.querySelectorAll(`.board-card-section [name="selected"]:checked`);
+                    const checkboxes = document.querySelectorAll(`[name="selected"]:checked`);
                     const ids = [...checkboxes].map(checkbox => checkbox.dataset.id);
                     const httpEntity = {
                         method: 'delete',
@@ -173,6 +173,18 @@
                 </div>
             </a>
         </article>
+    </div>
+    <!--/* Fallback message when no content */-->
+    <div class="row" th:if="${page.isEmpty()}">
+        <div class="col-12">
+            <div class="card shadow-sm border-0 rounded-3 p-4 text-center">
+                <div class="card-body">
+                    <i class="bi bi-inbox display-1 text-muted mb-3"></i>
+                    <h5 class="card-title" th:text="#{label.result.empty}">게시물이 없습니다</h5>
+                    <p class="card-text text-muted">새로운 글을 작성해보세요!</p>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 <!--/* Pagination row */-->
