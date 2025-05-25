@@ -229,7 +229,7 @@
     </script>
 </head>
 <body layout:fragment="content">
-<nav th:replace="~{components/local_navigation_bar :: localNavigationBar}"></nav>
+<section th:replace="~{components/breadcrumbs :: breadcrumbs}"></section>
 <header class="container-sm title-section">
     <div class="d-flex">
         <div class="title h5 pb-1" th:text="${CURRENT_CATEGORY.name}"></div>
