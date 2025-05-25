@@ -1,5 +1,6 @@
 package at.modoo.model;
 
+import at.modoo.model.vo.RoleName;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -115,4 +116,18 @@ public class UserPrincipal implements UserDetails, OAuth2User {
                 .stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(role));
     }
+
+    public String getRoleDescription() {
+        if (hasRole(RoleName.ROLE_ADMIN.name())) {
+            return RoleName.ROLE_ADMIN.getDescription();
+        }
+        if (hasRole(RoleName.ROLE_MANAGER.name())) {
+            return RoleName.ROLE_MANAGER.getDescription();
+        }
+        if (hasRole(RoleName.ROLE_USER.name())) {
+            return RoleName.ROLE_USER.getDescription();
+        }
+        return RoleName.ROLE_ANONYMOUS.getDescription();
+    }
+
 }

@@ -4,6 +4,7 @@ import at.modoo.model.Role;
 import at.modoo.model.User;
 import at.modoo.model.UserPrincipal;
 import at.modoo.model.vo.Email;
+import at.modoo.model.vo.RoleName;
 import at.modoo.oauth2.provider.NaverUserDetail;
 import at.modoo.oauth2.provider.OAuth2UserDetail;
 import at.modoo.repository.RoleRepository;
@@ -62,7 +63,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                 .orElseGet(() -> {
                     User user = User.create(username, new Email(email.split("@")[0], email.split("@")[1]));
                     userRepository.save(user);
-                    Role role = Role.create(user.getId(), siteId, "ROLE_USER", "일반사용자");
+                    Role role = Role.create(user.getId(), siteId, RoleName.ROLE_USER.name(), RoleName.ROLE_USER.getDescription());
                     roleRepository.save(role);
                     user.addRole(role);
                     return new UserPrincipal(user, oAuth2User.getAttributes());

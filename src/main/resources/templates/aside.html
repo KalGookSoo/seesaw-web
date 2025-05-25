@@ -22,7 +22,7 @@
                 </div>
                 <h5 class="fw-bold mb-1">대전포스트잇 ♣대전독서모임</h5>
                 <div class="small text-white-50 mb-2" sec:authorize="isAuthenticated()" th:text="${#authentication.name}"></div>
-                <button type="button" class="btn btn-outline-light btn-sm rounded-pill px-3" sec:authorize="isAuthenticated()" th:text="${#authentication.authorities[0]}">톡톡관리</button>
+                <button type="button" class="btn btn-outline-light btn-sm rounded-pill px-3" sec:authorize="isAuthenticated()" th:text="${#authentication.principal.roleDescription}">톡톡관리</button>
             </div>
         </header>
         <section class="bg-main-color text-white border-top border-bottom border-main-color-subtle" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
