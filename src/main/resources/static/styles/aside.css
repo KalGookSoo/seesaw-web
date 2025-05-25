@@ -1,6 +1,22 @@
 #aside {
   height: 100vh;
-  width: 24rem;
+  width: 100%;
+  max-width: 100%;
+}
+@media (min-width: 576px) {
+  #aside {
+    width: 320px;
+  }
+}
+@media (min-width: 768px) {
+  #aside {
+    width: 360px;
+  }
+}
+@media (min-width: 992px) {
+  #aside {
+    width: 24rem;
+  }
 }
 
 .bg-main-color {
