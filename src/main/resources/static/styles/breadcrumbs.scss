@@ -7,6 +7,7 @@
   .breadcrumb-item {
     display: flex;
     align-items: center;
+    color: var(--bs-gray-600);
 
     &:not(:first-child)::before {
       content: "/";
@@ -15,7 +16,7 @@
     }
 
     .dropdown-toggle {
-      color: var(--main-color);
+      color: var(--bs-gray-600);
       text-decoration: none;
       font-weight: 500;
       padding: 0.25rem 0.5rem;
@@ -38,7 +39,7 @@
     }
 
     &.active .dropdown-toggle {
-      color: var(--bs-gray-600);
+      color: var(--main-color);
       font-weight: 600;
     }
 
