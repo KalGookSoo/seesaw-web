@@ -141,6 +141,20 @@
         });
     </script>
 
+    <style>
+        #editor img {
+            border-radius: 8px;
+            padding: 10px;
+            margin: 1rem;
+            background-color: #29e;
+
+            touch-action: none;
+
+            /* This makes things *much* easier */
+            box-sizing: border-box;
+        }
+    </style>
+
     <script type="module">
         import 'https://cdn.interactjs.io/v1.9.20/auto-start/index.js';
         import 'https://cdn.interactjs.io/v1.9.20/actions/drag/index.js';
@@ -150,13 +164,28 @@
         import interact from 'https://cdn.interactjs.io/v1.9.20/interactjs/index.js';
 
         document.addEventListener('DOMContentLoaded', e => {
-            interact('#editor img')
+            // Prevent default dragstart behavior on images in the editor
+            document.querySelector('#editor').addEventListener('dragstart', (event) => {
+                if (event.target.tagName === 'IMG') {
+                    event.preventDefault();
+                }
+            }, true);
+
+            interact('#editor img[src]')
+
                 .resizable({
                     // resize from all edges and corners
                     edges: {left: true, right: true, bottom: true, top: true},
 
                     listeners: {
+                        start(event) {
+                            // Prevent default behavior at the start of resize
+                            event.preventDefault();
+                        },
                         move(event) {
+                            // Prevent default behavior during resize
+                            event.preventDefault();
+
                             let target = event.target;
                             let x = (parseFloat(target.dataset.x) || 0);
                             let y = (parseFloat(target.dataset.y) || 0);
@@ -188,6 +217,16 @@
                     ],
 
                     inertia: true
+                })
+                .draggable({
+                    listeners: { move: window.dragMoveListener },
+                    inertia: true,
+                    modifiers: [
+                        interact.modifiers.restrictRect({
+                            restriction: 'parent',
+                            endOnly: true
+                        })
+                    ]
                 });
         });
 
