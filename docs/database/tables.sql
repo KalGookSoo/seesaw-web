@@ -48,7 +48,7 @@ COMMENT ON COLUMN tb_attachment.reference_id IS '참조 식별자';
 COMMENT ON COLUMN tb_attachment.size IS '크기';
 
 ALTER TABLE tb_attachment
-    OWNER TO modoo_admin;
+    OWNER TO seesaw_admin;
 
 CREATE TABLE tb_code
 (
@@ -96,7 +96,7 @@ COMMENT ON COLUMN tb_code.name IS '이름';
 COMMENT ON COLUMN tb_code.sequence IS '순서';
 
 ALTER TABLE tb_code
-    OWNER TO modoo_admin;
+    OWNER TO seesaw_admin;
 
 CREATE TABLE tb_menu
 (
@@ -144,7 +144,7 @@ COMMENT ON COLUMN tb_menu.sequence IS '순번';
 COMMENT ON COLUMN tb_menu.uri IS 'URI';
 
 ALTER TABLE tb_menu
-    OWNER TO modoo_admin;
+    OWNER TO seesaw_admin;
 
 CREATE TABLE tb_remember_me_token
 (
@@ -156,7 +156,7 @@ CREATE TABLE tb_remember_me_token
 );
 
 ALTER TABLE tb_remember_me_token
-    OWNER TO modoo_admin;
+    OWNER TO seesaw_admin;
 
 CREATE TABLE tb_site
 (
@@ -229,7 +229,7 @@ COMMENT ON COLUMN tb_site.search_engine_exposed IS '검색엔진 노출여부';
 COMMENT ON COLUMN tb_site.tags IS '태그';
 
 ALTER TABLE tb_site
-    OWNER TO modoo_admin;
+    OWNER TO seesaw_admin;
 
 CREATE TABLE tb_category
 (
@@ -296,7 +296,7 @@ COMMENT ON COLUMN tb_category.site_id IS '사이트 식별자';
 COMMENT ON COLUMN tb_category.type IS '타입';
 
 ALTER TABLE tb_category
-    OWNER TO modoo_admin;
+    OWNER TO seesaw_admin;
 
 CREATE TABLE tb_article
 (
@@ -360,7 +360,7 @@ COMMENT ON COLUMN tb_article.title IS '제목';
 COMMENT ON COLUMN tb_article.type IS '타입';
 
 ALTER TABLE tb_article
-    OWNER TO modoo_admin;
+    OWNER TO seesaw_admin;
 
 CREATE TABLE tb_notification
 (
@@ -404,7 +404,7 @@ COMMENT ON COLUMN tb_notification.category_id IS '카테고리 식별자';
 COMMENT ON COLUMN tb_notification.type IS '유형';
 
 ALTER TABLE tb_notification
-    OWNER TO modoo_admin;
+    OWNER TO seesaw_admin;
 
 CREATE TABLE tb_reply
 (
@@ -454,7 +454,7 @@ COMMENT ON COLUMN tb_reply.content IS '본문';
 COMMENT ON COLUMN tb_reply.exposed IS '노출여부';
 
 ALTER TABLE tb_reply
-    OWNER TO modoo_admin;
+    OWNER TO seesaw_admin;
 
 CREATE TABLE tb_role
 (
@@ -500,7 +500,7 @@ COMMENT ON COLUMN tb_role.name IS '이름';
 COMMENT ON COLUMN tb_role.reference_id IS '참조 식별자';
 
 ALTER TABLE tb_role
-    OWNER TO modoo_admin;
+    OWNER TO seesaw_admin;
 
 CREATE TABLE tb_user
 (
@@ -561,7 +561,7 @@ COMMENT ON COLUMN tb_user.password IS '패스워드';
 COMMENT ON COLUMN tb_user.username IS '계정명';
 
 ALTER TABLE tb_user
-    OWNER TO modoo_admin;
+    OWNER TO seesaw_admin;
 
 CREATE TABLE tb_view
 (
@@ -600,7 +600,7 @@ COMMENT ON COLUMN tb_view.version IS '버전';
 COMMENT ON COLUMN tb_view.article_id IS '게시글 식별자';
 
 ALTER TABLE tb_view
-    OWNER TO modoo_admin;
+    OWNER TO seesaw_admin;
 
 CREATE TABLE tb_vote
 (
@@ -640,5 +640,5 @@ COMMENT ON COLUMN tb_vote.approved IS '찬성여부';
 COMMENT ON COLUMN tb_vote.reference_id IS '참조 식별자';
 
 ALTER TABLE tb_vote
-    OWNER TO modoo_admin;
+    OWNER TO seesaw_admin;
 
