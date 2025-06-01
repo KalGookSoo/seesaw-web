@@ -141,6 +141,97 @@
             };
         });
     </script>
+
+    <style>
+        #editor img:not([class*="ProseMirror"]) {
+            border-radius: 8px;
+            padding: 0.25rem;
+            margin: 0.25rem;
+            background-color: #29e;
+
+            touch-action: none;
+
+            /* This makes things *much* easier */
+            box-sizing: border-box;
+        }
+    </style>
+
+    <script type="module">
+        import 'https://cdn.interactjs.io/v1.9.20/auto-start/index.js';
+        import 'https://cdn.interactjs.io/v1.9.20/actions/drag/index.js';
+        import 'https://cdn.interactjs.io/v1.9.20/actions/resize/index.js';
+        import 'https://cdn.interactjs.io/v1.9.20/modifiers/index.js';
+        import 'https://cdn.interactjs.io/v1.9.20/dev-tools/index.js';
+        import interact from 'https://cdn.interactjs.io/v1.9.20/interactjs/index.js';
+
+        document.addEventListener('DOMContentLoaded', e => {
+            // Prevent default dragstart behavior on images in the editor
+            document.querySelector('#editor').addEventListener('dragstart', (event) => {
+                if (event.target.tagName === 'IMG') {
+                    event.preventDefault();
+                }
+            }, true);
+
+            interact(`#editor img:not([class*="ProseMirror"])`)
+                .resizable({
+                    // resize from all edges and corners
+                    edges: {left: true, right: true, bottom: true, top: true},
+
+                    listeners: {
+                        start(event) {
+                            // Prevent default behavior at the start of resize
+                            event.preventDefault();
+                        },
+                        move(event) {
+                            // Prevent default behavior during resize
+                            event.preventDefault();
+
+                            let target = event.target;
+                            let x = (parseFloat(target.dataset.x) || 0);
+                            let y = (parseFloat(target.dataset.y) || 0);
+
+                            // update the element's width and height attributes
+                            target.width = event.rect.width;
+                            target.height = event.rect.height;
+
+                            // translate when resizing from top or left edges
+                            x += event.deltaRect.left;
+                            y += event.deltaRect.top;
+
+                            // target.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+
+                            target.dataset.x = x;
+                            target.dataset.y = y;
+                        }
+                    },
+                    modifiers: [
+                        // keep the edges inside the parent
+                        interact.modifiers.restrictEdges({
+                            outer: 'parent'
+                        }),
+
+                        // minimum size
+                        interact.modifiers.restrictSize({
+                            min: {width: 100, height: 50}
+                        })
+                    ],
+
+                    inertia: true
+                })
+                .draggable({
+                    listeners: { move: window.dragMoveListener },
+                    inertia: true,
+                    modifiers: [
+                        interact.modifiers.restrictRect({
+                            restriction: 'parent',
+                            endOnly: true
+                        })
+                    ]
+                });
+        });
+
+
+    </script>
 </head>
 <body layout:fragment="content">
 <section th:replace="~{components/breadcrumbs :: breadcrumbs}"></section>
