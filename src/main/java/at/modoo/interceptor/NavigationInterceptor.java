@@ -28,12 +28,29 @@ public class NavigationInterceptor implements HandlerInterceptor {
             @NonNull Object handler
     ) throws Exception {
         try {
-            // 현재 요청 URL을 속성에 할당
+
+            // TODO 리팩토링할 것
             StringBuffer requestURL = request.getRequestURL();
-            if (request.getQueryString() != null) {
-                requestURL.append("?").append(request.getQueryString());
+            String queryString = request.getQueryString();
+            if (queryString != null) {
+                requestURL.append("?").append(queryString);
             }
             request.setAttribute(ContextEnvironment.REQUEST_URL, requestURL.toString());
+
+            String scheme = request.getScheme();
+            String serverName = request.getServerName();
+            int serverPort = request.getServerPort();
+            String host = scheme + "://" + serverName;
+            if (("http".equals(scheme) && serverPort != 80) || ("https".equals(scheme) && serverPort != 443)) {
+                host += ":" + serverPort;
+            }
+            request.setAttribute(ContextEnvironment.REQUEST_HOST, host);
+
+            String path = request.getRequestURI();
+            request.setAttribute(ContextEnvironment.REQUEST_PATH, path);
+
+            request.setAttribute(ContextEnvironment.REQUEST_QUERY_STRING, queryString != null ? queryString : "");
+
 
             Site site = siteService.getSiteContext(domainName);
             request.setAttribute(ContextEnvironment.SITE_CONTEXT, site);

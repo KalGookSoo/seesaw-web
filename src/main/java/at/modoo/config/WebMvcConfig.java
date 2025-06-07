@@ -66,7 +66,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/styles/**", "/scripts/**", "/images/**", "/favicon.ico");
         registry.addInterceptor(navigationInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/styles/**", "/scripts/**", "/images/**", "/favicon.ico", "/error", "/api/**");
+                .excludePathPatterns("/styles/**", "/scripts/**", "/images/**", "/favicon.ico", "/error", "/api/**", "/robots.txt", "/sitemap.xml");
     }
 
     @Bean

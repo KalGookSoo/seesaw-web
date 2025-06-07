@@ -6,4 +6,7 @@ public interface ContextEnvironment {
     String ALL_CATEGORIES = "ALL_CATEGORIES";
     String CURRENT_CATEGORY = "CURRENT_CATEGORY";
     String REQUEST_URL = "REQUEST_URL";
+    String REQUEST_HOST = "REQUEST_HOST";
+    String REQUEST_PATH = "REQUEST_PATH";
+    String REQUEST_QUERY_STRING = "REQUEST_QUERY_STRING";
 }
