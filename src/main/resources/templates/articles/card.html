@@ -8,8 +8,6 @@
 >
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>[[${CURRENT_CATEGORY.name}]] | [[${SITE_CONTEXT.name}]]</title>
     <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
     <script th:inline="javascript">
@@ -47,7 +45,7 @@
 <section th:replace="~{components/breadcrumbs :: breadcrumbs}"></section>
 <section class="container-sm title-section">
     <div class="d-flex justify-content-between">
-        <div class="title h5 pb-1" th:text="${CURRENT_CATEGORY.name}"></div>
+        <h5 class="title pb-1" th:text="${CURRENT_CATEGORY.name}"></h5>
         <div class="d-flex">
             <div>
                 <a class="btn d-flex align-items-center"

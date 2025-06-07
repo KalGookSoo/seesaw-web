@@ -28,6 +28,13 @@ public class NavigationInterceptor implements HandlerInterceptor {
             @NonNull Object handler
     ) throws Exception {
         try {
+            // 현재 요청 URL을 속성에 할당
+            StringBuffer requestURL = request.getRequestURL();
+            if (request.getQueryString() != null) {
+                requestURL.append("?").append(request.getQueryString());
+            }
+            request.setAttribute(ContextEnvironment.REQUEST_URL, requestURL.toString());
+
             Site site = siteService.getSiteContext(domainName);
             request.setAttribute(ContextEnvironment.SITE_CONTEXT, site);
 

@@ -8,8 +8,22 @@
 >
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="" th:content="${page.content.get(0).plainContent}"/>
+    <meta name="keyword" content="" th:content="${CURRENT_CATEGORY.name}"/>
+
+    <meta property="og:type" content="article"/>
+    <meta property="og:title" content="페이지 제목" th:content="${page.content.get(0).title}"/>
+    <meta property="og:description" content="페이지 설명" th:content="${page.content.get(0).plainContent}"/>
+    <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${!page.content.get(0).inlineImages.isEmpty()}"
+          th:content="@{|/api/attachments/${page.content.get(0).inlineImages.get(0).id}|}"/>
+    <meta property="og:url" content="페이지 주소" th:content="${REQUEST_URL}"/>
+
+    <meta property="twitter:card" content="summary"/>
+    <meta property="twitter:title" content="페이지 제목" th:content="${page.content.get(0).title}"/>
+    <meta property="twitter:description" content="페이지 설명" th:content="${page.content.get(0).plainContent}"/>
+    <meta property="twitter:image" content="페이지 썸네일 이미지 주소" th:if="${!page.content.get(0).inlineImages.isEmpty()}"
+          th:content="@{|/api/attachments/${page.content.get(0).inlineImages.get(0).id}|}"/>
+
     <title>[[${CURRENT_CATEGORY.name}]] | [[${SITE_CONTEXT.name}]]</title>
     <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
 
@@ -232,7 +246,7 @@
 <section th:replace="~{components/breadcrumbs :: breadcrumbs}"></section>
 <header class="container-sm title-section">
     <div class="d-flex">
-        <div class="title h5 pb-1" th:text="${CURRENT_CATEGORY.name}"></div>
+        <h5 class="title pb-1" th:text="${CURRENT_CATEGORY.name}"></h5>
     </div>
 </header>
 <section class="container-sm mb-4">
