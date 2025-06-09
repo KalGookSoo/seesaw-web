@@ -77,6 +77,7 @@ public class SecurityConfig {
                 .requestMatchers(new AntPathRequestMatcher("/scripts/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/images/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/favicon.ico")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/actuator/health")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/managers/**")).hasAnyRole("MANAGER", "ADMIN")
                 .requestMatchers(new AntPathRequestMatcher("/admins/**")).hasRole("ADMIN")
                 .requestMatchers(new AntPathRequestMatcher("/actuator/**")).hasRole("ADMIN")

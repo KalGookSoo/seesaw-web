@@ -1,6 +1,16 @@
 name: Production Release Build
 
 # GitHub Actions 워크플로우 문서: https://docs.github.com/ko/actions/using-workflows
+#
+# 필요한 시크릿(Secrets) 설정:
+# - SSH_PRIVATE_KEY: 원격 서버 접속을 위한 SSH 개인 키
+# - REMOTE_HOST: 원격 서버 주소
+# - REMOTE_USER: 원격 서버 접속 사용자 이름
+# - REMOTE_DIR: 원격 서버에서 애플리케이션을 배포할 디렉토리 경로
+#
+# 선택적 시크릿(Secrets) 설정:
+# - APP_PORT: 애플리케이션이 실행되는 포트
+# - HEALTH_ENDPOINT: 애플리케이션 상태 확인 엔드포인트
 
 on:
   push:
@@ -46,6 +56,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -92,3 +104,131 @@ jobs:
           name: app-release-${{ steps.get_version.outputs.version }}
           path: build/libs/*.jar
           retention-days: 7
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: app-release-${{ needs.build.outputs.version }}
+          path: ./artifacts
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy to remote server
+        id: deploy
+        env:
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          REMOTE_DIR: ${{ secrets.REMOTE_DIR }}
+          APP_NAME: modoo-${{ needs.build.outputs.version }}.jar
+        run: |
+          echo "원격 서버에 배포를 시작합니다..."
+          # 오류 처리 설정
+          set -e
+
+          # SSH 연결 확인
+          echo "SSH 연결 확인 중..."
+          ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST "echo '연결 성공'"
+
+          # 배포 디렉토리 생성 (없는 경우)
+          echo "배포 디렉토리 확인 중..."
+          ssh $REMOTE_USER@$REMOTE_HOST "mkdir -p $REMOTE_DIR"
+
+          # JAR 파일 전송
+          echo "JAR 파일 전송 중..."
+          find ./artifacts -name "*.jar" -type f -exec ls -la {} \;
+          JAR_FILE=$(find ./artifacts -name "*.jar" -type f | head -n 1)
+
+          if [ -z "$JAR_FILE" ]; then
+            echo "오류: JAR 파일을 찾을 수 없습니다."
+            exit 1
+          fi
+
+          echo "전송할 JAR 파일: $JAR_FILE"
+          scp "$JAR_FILE" $REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/$APP_NAME
+
+          echo "배포가 완료되었습니다."
+          echo "deployed=true" >> $GITHUB_OUTPUT
+
+
+      - name: Restart application
+        if: steps.deploy.outputs.deployed == 'true'
+        env:
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          REMOTE_DIR: ${{ secrets.REMOTE_DIR }}
+          APP_NAME: modoo-${{ needs.build.outputs.version }}.jar
+        run: |
+          echo "애플리케이션 재시작 중..."
+          ssh $REMOTE_USER@$REMOTE_HOST "cd $REMOTE_DIR && \
+            # 기존 애플리케이션 종료
+            echo \"애플리케이션 종료 중...\" && \
+            ./shutdown.sh && \
+
+            # 새 애플리케이션 시작
+            echo \"애플리케이션 시작 중...\" && \
+            ./startup.sh $APP_NAME && \
+            echo \"애플리케이션이 재시작되었습니다.\"
+          "
+
+      - name: Verify application
+        if: steps.deploy.outputs.deployed == 'true'
+        env:
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          APP_PORT: ${{ secrets.APP_PORT || '8080' }}
+          HEALTH_ENDPOINT: ${{ secrets.HEALTH_ENDPOINT || '/actuator/health' }}
+          MAX_RETRIES: 10
+        run: |
+          echo "애플리케이션 상태 확인 중..."
+
+          # 애플리케이션이 시작될 때까지 대기
+          sleep 10
+
+          # 애플리케이션 프로세스 확인
+          ssh $REMOTE_USER@$REMOTE_HOST "ps -ef | grep java | grep modoo | grep -v grep" || {
+            echo "오류: 애플리케이션 프로세스가 실행 중이지 않습니다."
+            exit 1
+          }
+
+          # 애플리케이션 상태 확인 (Spring Boot Actuator 사용 시)
+          if [[ ! -z "$HEALTH_ENDPOINT" ]]; then
+            RETRY=0
+            while [ $RETRY -lt $MAX_RETRIES ]; do
+              HEALTH_STATUS=$(ssh $REMOTE_USER@$REMOTE_HOST "curl -s -o /dev/null -w '%{http_code}' http://localhost:$APP_PORT$HEALTH_ENDPOINT" || echo "000")
+
+              if [ "$HEALTH_STATUS" == "200" ]; then
+                echo "애플리케이션이 정상적으로 실행 중입니다."
+                break
+              else
+                echo "애플리케이션이 아직 준비되지 않았습니다. 상태 코드: $HEALTH_STATUS (재시도 $RETRY/$MAX_RETRIES)"
+                RETRY=$((RETRY+1))
+                sleep 5
+              fi
+
+              if [ $RETRY -eq $MAX_RETRIES ]; then
+                echo "오류: 애플리케이션이 정상적으로 시작되지 않았습니다."
+                exit 1
+              fi
+            done
+          fi
+
+          echo "애플리케이션 검증이 완료되었습니다."
+
+      - name: Deployment notification
+        if: always()
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "배포가 성공적으로 완료되었습니다."
+            echo "버전: ${{ needs.build.outputs.version }}"
+            echo "배포 시간: $(date)"
+          else
+            echo "배포 중 오류가 발생했습니다."
+            echo "상태: ${{ job.status }}"
+          fi
