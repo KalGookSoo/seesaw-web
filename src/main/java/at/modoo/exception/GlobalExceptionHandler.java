@@ -36,7 +36,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<String> handleNoSuchElementException(NoSuchElementException e) {
-        logger.warn(e.getMessage());
+        logger.error(e.getMessage());
         String message = messageSource.getMessage("error.not.found.resource");
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(message);
     }
@@ -89,20 +89,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException e) {
-        logger.warn(e.getMessage());
+        logger.error(e.getMessage());
         String message = messageSource.getMessage("error.access.denied");
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(message);
     }
 
     @ExceptionHandler(value = AccessDeniedException.class, produces = MediaType.TEXT_HTML_VALUE)
     public String handleAccessDeniedExceptionHtml(AccessDeniedException e) {
-        logger.warn(e.getMessage());
+        logger.error(e.getMessage());
         return "error/403";
     }
 
     @ExceptionHandler(InvalidCsrfTokenException.class)
     public ResponseEntity<String> handleInvalidCsrfTokenException(InvalidCsrfTokenException e) {
-        logger.warn(e.getMessage());
+        logger.error(e.getMessage());
         return handleAccessDeniedException(e);
     }
 
