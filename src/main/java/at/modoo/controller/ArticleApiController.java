@@ -22,6 +22,7 @@ public class ArticleApiController {
 
     private final ArticleService articleService;
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping
     public ResponseEntity<String> create(@Valid CreateArticleCommand command) throws IOException {
         articleService.create(command);
