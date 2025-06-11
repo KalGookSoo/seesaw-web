@@ -9,7 +9,7 @@
 
 <head>
     <meta name="description" content="" th:content="${page.content.get(0).plainContent}"/>
-    <meta name="keyword" content="" th:content="${page.content.get(0).title}"/>
+    <meta name="keyword" content="" th:content="${CURRENT_CATEGORY.name}"/>
 
     <meta property="og:type" content="article"/>
     <meta property="og:title" content="페이지 제목" th:content="${page.content.get(0).title}"/>
