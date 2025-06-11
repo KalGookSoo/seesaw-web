@@ -40,7 +40,7 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
-                .requestMatchers("/styles/**", "/scripts/**", "/images/**", "/favicon.ico");
+                .requestMatchers("/styles/**", "/scripts/**", "/images/**", "/fonts/**", "/favicon.ico");
     }
 
     @Bean
@@ -76,6 +76,7 @@ public class SecurityConfig {
         config.requestMatchers(new AntPathRequestMatcher("/styles/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/scripts/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/images/**")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/fonts/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/favicon.ico")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/actuator/health")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/managers/**")).hasAnyRole("MANAGER", "ADMIN")

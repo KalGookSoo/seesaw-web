@@ -32,10 +32,10 @@
   }
 }
 
-.reply-section {
-  background-color: #fafafa;
-  border-block: 1px solid var(--bs-gray-400);
-
+.reply-content {
+  pre {
+    font-family: inherit;
+  }
 }
 
 .board-card-section {
