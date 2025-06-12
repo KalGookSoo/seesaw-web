@@ -64,10 +64,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(localeChangeInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/styles/**", "/scripts/**", "/images/**", "/favicon.ico");
+                .excludePathPatterns("/styles/**", "/scripts/**", "/images/**", "/fonts/**", "/favicon.ico");
         registry.addInterceptor(navigationInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/styles/**", "/scripts/**", "/images/**", "/favicon.ico", "/error", "/api/**", "/robots.txt", "/sitemap.xml");
+                .excludePathPatterns("/styles/**", "/scripts/**", "/images/**", "/fonts/**", "/favicon.ico", "/error", "/api/**", "/robots.txt", "/sitemap.xml");
     }
 
     @Bean
