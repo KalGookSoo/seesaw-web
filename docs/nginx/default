@@ -22,9 +22,6 @@ server {
 	listen 80 default_server;
 	listen [::]:80 default_server;
 
-	# 사용자 요청 본문 용량 제한 추가
-    client_max_body_size 10M;
-
 	# SSL configuration
 	#
 	# listen 443 ssl default_server;
