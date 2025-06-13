@@ -46,10 +46,6 @@
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
 }
-.modern-breadcrumb .breadcrumb-item .dropdown-menu .dropdown-item.active {
-  background-color: var(--main-color);
-  color: white;
-}
 .modern-breadcrumb .breadcrumb-item .dropdown-menu .dropdown-item:hover:not(.active) {
   background-color: rgba(0, 0, 0, 0.05);
 }
