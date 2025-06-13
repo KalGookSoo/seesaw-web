@@ -12,8 +12,8 @@ import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.jsoup.Jsoup;
-import org.jsoup.safety.Safelist;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,6 +86,11 @@ public class Article extends AbstractHierarchical<Article> implements Hierarchic
     @ToString.Exclude
     @JsonManagedReference
     private List<Vote> votes = new ArrayList<>();
+
+    public boolean isRecentlyGenerated() {
+        LocalDateTime now = LocalDateTime.now();
+        return !getCreatedDate().isBefore(now.minusDays(7));
+    }
 
     @Override
     public void addChild(Article child) {

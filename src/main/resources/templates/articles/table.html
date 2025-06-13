@@ -103,6 +103,7 @@
                 <div>
                     <a class="none" th:href="@{|/articles/view${search.getUriComponentsBuilder().queryParam('id', article.id).build().toUriString()}|}">
                         [[${article.title}]]
+                        <span class="badge bg-primary ms-1" th:if="${article.isRecentlyGenerated()}">New</span>
                     </a>
                 </div>
                 <div class="small text-muted mt-1">
@@ -127,6 +128,7 @@
                 <div>
                     <a class="none" th:href="@{|/articles/view${search.getUriComponentsBuilder().queryParam('page', page.pageable.offset + articleStat.index).build().toUriString()}|}">
                         [[${article.title}]]
+                        <span class="badge bg-primary ms-1" th:if="${article.isRecentlyGenerated()}">New</span>
                     </a>
                 </div>
                 <div class="small text-muted mt-1">
