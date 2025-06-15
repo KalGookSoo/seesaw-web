@@ -8,60 +8,60 @@
 >
 
 <head>
-    <meta name="description" content="" th:content="${page.content.get(0).plainContent}"/>
-    <meta name="keyword" content="" th:content="${CURRENT_CATEGORY.name}"/>
+    <meta name="description" content="" th:content="${page.content.get(0).plainContent}">
+    <meta name="keyword" content="" th:content="${CURRENT_CATEGORY.name}">
 
-    <meta property="og:type" content="article"/>
-    <meta property="og:title" content="페이지 제목" th:content="${page.content.get(0).title}"/>
-    <meta property="og:description" content="페이지 설명" th:content="${page.content.get(0).plainContent}"/>
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="페이지 제목" th:content="${page.content.get(0).title}">
+    <meta property="og:description" content="페이지 설명" th:content="${page.content.get(0).plainContent}">
     <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${!page.content.get(0).inlineImages.isEmpty()}"
-          th:content="@{|${REQUEST_HOST}/api/attachments/${page.content.get(0).inlineImages.get(0).id}|}"/>
-    <meta property="og:url" content="페이지 주소" th:content="${REQUEST_URL}"/>
+          th:content="@{|${REQUEST_HOST}/api/attachments/${page.content.get(0).inlineImages.get(0).id}|}">
+    <meta property="og:url" content="페이지 주소" th:content="${REQUEST_URL}">
 
-    <meta property="twitter:card" content="summary"/>
-    <meta property="twitter:title" content="페이지 제목" th:content="${page.content.get(0).title}"/>
-    <meta property="twitter:description" content="페이지 설명" th:content="${page.content.get(0).plainContent}"/>
+    <meta property="twitter:card" content="summary">
+    <meta property="twitter:title" content="페이지 제목" th:content="${page.content.get(0).title}">
+    <meta property="twitter:description" content="페이지 설명" th:content="${page.content.get(0).plainContent}">
     <meta property="twitter:image" content="페이지 썸네일 이미지 주소" th:if="${!page.content.get(0).inlineImages.isEmpty()}"
-          th:content="@{|${REQUEST_HOST}/api/attachments/${page.content.get(0).inlineImages.get(0).id}|}"/>
+          th:content="@{|${REQUEST_HOST}/api/attachments/${page.content.get(0).inlineImages.get(0).id}|}">
 
     <title>[[${CURRENT_CATEGORY.name}]] | [[${SITE_CONTEXT.name}]]</title>
     <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
 
-    <!-- Editor -->
+    <!--/* Editor */-->
     <link rel="stylesheet" th:href="@{/styles/toastui-editor.min.css}">
 
-    <!-- Color picker -->
-    <link rel="stylesheet" th:href="@{/styles/tui-color-picker.min.css}"/>
-    <link rel="stylesheet" th:href="@{/styles/toastui-editor-plugin-color-syntax.min.css}"/>
+    <!--/* Color picker */-->
+    <link rel="stylesheet" th:href="@{/styles/tui-color-picker.min.css}">
+    <link rel="stylesheet" th:href="@{/styles/toastui-editor-plugin-color-syntax.min.css}">
 
-    <!-- Code syntax highlight -->
-    <link rel="stylesheet" th:href="@{/styles/prism.min.css}"/>
-    <link rel="stylesheet" th:href="@{/styles/toastui-editor-plugin-code-syntax-highlight.min.css}"/>
+    <!--/* Code syntax highlight */-->
+    <link rel="stylesheet" th:href="@{/styles/prism.min.css}">
+    <link rel="stylesheet" th:href="@{/styles/toastui-editor-plugin-code-syntax-highlight.min.css}">
 
-    <!-- Chart -->
-    <link rel="stylesheet" th:href="@{/styles/toastui-chart.min.css}"/>
+    <!--/* Chart */-->
+    <link rel="stylesheet" th:href="@{/styles/toastui-chart.min.css}">
 
-    <!-- Table merged cell -->
-    <link rel="stylesheet" th:href="@{/styles/toastui-editor-plugin-table-merged-cell.min.css}"/>
+    <!--/* Table merged cell */-->
+    <link rel="stylesheet" th:href="@{/styles/toastui-editor-plugin-table-merged-cell.min.css}">
 
-    <!-- Editor -->
+    <!--/* Editor */-->
     <script th:src="@{/scripts/toastui-editor-all.min.js}"></script>
 
-    <!-- Color picker -->
+    <!--/* Color picker */-->
     <script th:src="@{/scripts/tui-color-picker.min.js}"></script>
     <script th:src="@{/scripts/toastui-editor-plugin-color-syntax.min.js}"></script>
 
-    <!-- Code syntax highlight -->
+    <!--/* Code syntax highlight */-->
     <script th:src="@{/scripts/toastui-editor-plugin-code-syntax-highlight-all.min.js}"></script>
 
-    <!-- Chart -->
+    <!--/* Chart */-->
     <script th:src="@{/scripts/toastui-chart.min.js}"></script>
     <script th:src="@{/scripts/toastui-editor-plugin-chart.min.js}"></script>
 
-    <!-- Table merged cell -->
+    <!--/* Table merged cell */-->
     <script th:src="@{/scripts/toastui-editor-plugin-table-merged-cell.min.js}"></script>
 
-    <!-- UML -->
+    <!--/* UML */-->
     <script th:src="@{/scripts/toastui-editor-plugin-uml.min.js}"></script>
 
     <script th:inline="javascript">
@@ -242,7 +242,7 @@
         });
     </script>
 </head>
-<body layout:fragment="content">
+<div layout:fragment="content">
 <section th:replace="~{components/breadcrumbs :: breadcrumbs}"></section>
 <header class="container-sm title-section">
     <div class="d-flex">
@@ -282,7 +282,7 @@
             </div>
         </div>
         <div class="card-body p-0">
-            <!-- Existing replies -->
+            <!--/* Existing replies */-->
             <div class="reply-item p-3" 
                  th:classappend="${!replyStat.last ? 'border-bottom' : ''}"
                  th:each="reply : ${page.content.get(0).replies}"
@@ -337,7 +337,7 @@
                 </form>
             </div>
 
-            <!-- Reply form for authenticated users -->
+            <!--/* Reply form for authenticated users */-->
             <div class="p-3" sec:authorize="isAuthenticated()">
                 <form enctype="multipart/form-data" name="insertReplyForm" th:action="@{/api/replies}" th:method="post">
                     <input name="articleId" th:value="${page.content.get(0).id}" type="hidden">
@@ -351,7 +351,7 @@
                 </form>
             </div>
 
-            <!-- Login prompt for anonymous users -->
+            <!--/* Login prompt for anonymous users */-->
             <div class="p-3" sec:authorize="isAnonymous()">
                 <div class="input-group">
                     <textarea aria-label="댓글 입력" class="form-control" name="content" rows="3" readonly placeholder="로그인 후 댓글을 작성할 수 있습니다."></textarea>
@@ -409,5 +409,5 @@
         </div>
     </div>
 </footer>
-</body>
+</div>
 </html>

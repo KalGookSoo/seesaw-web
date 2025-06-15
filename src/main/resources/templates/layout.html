@@ -5,20 +5,21 @@
       th:lang="${#locale.language}"
 >
 <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <meta name="robots" content="index, follow"/>
+    <meta name="robots" content="index, follow">
 
-    <meta name="google-site-verification" content="SmP65FAXUDTeiNBaujsGFx3c2dbyNPze6Fu0FLDlCnY" />
+    <meta name="google-site-verification" content="SmP65FAXUDTeiNBaujsGFx3c2dbyNPze6Fu0FLDlCnY">
 
-    <meta name="theme-color" content="#cc4202"/>
+    <meta name="theme-color" content="#cc4202">
 
-    <meta name="naver-site-verification" content="3d44ef25fe0fdc4aa0c39c38f36b5c0b1ac0d87b" />
+    <meta name="naver-site-verification" content="3d44ef25fe0fdc4aa0c39c38f36b5c0b1ac0d87b">
 
     <title>홈 | 대전포스트잇 ♣대전독서모임</title>
 
-    <!-- CSS -->
+    <!--/* CSS */-->
+    <link rel="canonical" th:href="${REQUEST_URL}">
     <link rel="stylesheet" th:href="@{/styles/bootstrap.css}">
     <link rel="stylesheet" th:href="@{/styles/bootstrap-icons.min.css}">
     <link rel="stylesheet" th:href="@{/styles/global.css}">
@@ -45,7 +46,7 @@
 
     </style>
 
-    <!-- JS -->
+    <!--/* JS */-->
     <script th:src="@{/scripts/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/scripts/header.js}"></script>
     <script th:src="@{/scripts/main.js}"></script>
