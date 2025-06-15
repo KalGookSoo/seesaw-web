@@ -7,6 +7,9 @@ SEESAW PORTAL는 SEESAW CMS로 만들어낸 포털 웹사이트입니다. 게시
 현재 프로젝트는 다음 URL에서 운영 배포 중입니다:
 - [대전포스트잇 포털](https://daejeonstickybook.seesaw.me.kr)
 
+### 배포 절차
+- [Production Release 워크플로우](./docs/prod-release-workflow.md) - GitHub Actions를 사용한 배포 절차 시각화
+
 ## 개발 환경 설정
 
 ### 데이터베이스 설정
