@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!--suppress HtmlFormInputWithoutLabel -->
+<!--suppress HtmlFormInputWithoutLabel */-->
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
@@ -9,21 +9,21 @@
 
 <head>
 
-    <meta name="description" content="" th:content="${SITE_CONTEXT.description}"/>
-    <meta name="keyword" content="" th:content="${SITE_CONTEXT.name}"/>
+    <meta name="description" content="" th:content="${SITE_CONTEXT.description}">
+    <meta name="keyword" content="" th:content="${SITE_CONTEXT.name}">
 
-    <meta property="og:type" content="article"/>
-    <meta property="og:title" content="페이지 제목" th:content="${SITE_CONTEXT.name}"/>
-    <meta property="og:description" content="페이지 설명" th:content="${SITE_CONTEXT.description}"/>
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="페이지 제목" th:content="${SITE_CONTEXT.name}">
+    <meta property="og:description" content="페이지 설명" th:content="${SITE_CONTEXT.description}">
     <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${SITE_CONTEXT.profileImage != null}"
-          th:content="@{|${REQUEST_HOST}/api/attachments/${SITE_CONTEXT.profileImage.id}|}"/>
-    <meta property="og:url" content="페이지 주소" th:content="${REQUEST_URL}"/>
+          th:content="@{|${REQUEST_HOST}/api/attachments/${SITE_CONTEXT.profileImage.id}|}">
+    <meta property="og:url" content="페이지 주소" th:content="${REQUEST_URL}">
 
-    <meta property="twitter:card" content="summary"/>
-    <meta property="twitter:title" content="페이지 제목" th:content="${SITE_CONTEXT.name}"/>
-    <meta property="twitter:description" content="페이지 설명" th:content="${SITE_CONTEXT.description}"/>
+    <meta property="twitter:card" content="summary">
+    <meta property="twitter:title" content="페이지 제목" th:content="${SITE_CONTEXT.name}">
+    <meta property="twitter:description" content="페이지 설명" th:content="${SITE_CONTEXT.description}">
     <meta property="twitter:image" content="페이지 썸네일 이미지 주소" th:if="${SITE_CONTEXT.profileImage != null}"
-          th:content="@{|${REQUEST_HOST}/api/attachments/${SITE_CONTEXT.profileImage.id}|}"/>
+          th:content="@{|${REQUEST_HOST}/api/attachments/${SITE_CONTEXT.profileImage.id}|}">
 
     <title>홈 | [[${SITE_CONTEXT.name}]]</title>
     <link rel="stylesheet" href="/static/styles/index.css" th:href="@{/styles/index.css}">
@@ -48,10 +48,10 @@
     </script>
 </head>
 
-<body layout:fragment="content">
+<div layout:fragment="content">
 <section class="profile-section d-flex flex-column justify-content-center align-items-center" th:style="|background-image: url('/api/attachments/${SITE_CONTEXT.backgroundImage.id}')|">
     <div class="profile d-flex flex-column justify-content-center align-items-center container-fluid px-3">
-        <p class="image mb-3"><img class="rounded-circle shadow" alt="프로필이미지" th:src="@{|/api/attachments/${SITE_CONTEXT.profileImage.id}|}"/></p>
+        <p class="image mb-3"><img class="rounded-circle shadow" alt="프로필이미지" th:src="@{|/api/attachments/${SITE_CONTEXT.profileImage.id}|}"></p>
         <h2 class="mb-3" th:text="${SITE_CONTEXT.name}"></h2>
         <p class="text-center px-2" th:text="${SITE_CONTEXT.description}"></p>
     </div>
@@ -62,7 +62,7 @@
 </section>
 <section class="board-section container-fluid container-lg px-3" th:each="page : ${siteExposedPages}">
     <header class="d-flex justify-content-between align-items-center">
-        <div class="h5 main-color" th:text="${ALL_CATEGORIES.get(page.getKey()).parent.name}"></div>
+        <h5 class="h5 main-color" th:text="${ALL_CATEGORIES.get(page.getKey()).parent.name}"></h5>
         <p><a class="none d-flex align-items-center" th:href="@{/articles(categoryId=${page.getKey()}, categoryType=${ALL_CATEGORIES.get(page.getKey()).type})}">더보기 <i class="bi bi-arrow-right ms-1"></i></a></p>
     </header>
     <div class="container-fluid px-0">
@@ -94,5 +94,5 @@
         </div>
     </div>
 </section>
-</body>
+</div>
 </html>

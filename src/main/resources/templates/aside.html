@@ -83,27 +83,27 @@
         </section>
 
         <section class="accordion accordion-flush" id="siteMapAccordion">
-            <!-- Home link -->
+            <!--/* Home link */-->
             <div class="accordion-item border-bottom">
                 <h2 class="accordion-header">
                     <a class="accordion-button collapsed py-3 fw-medium text-decoration-none text-dark" th:href="@{/}">홈</a>
                 </h2>
             </div>
 
-            <!-- Nested categories -->
+            <!--/* Nested categories */-->
             <div th:replace="~{::nestedCategories(${NESTED_CATEGORIES})}"></div>
 
             <th:block th:fragment="nestedCategories(categories)">
                 <div class="accordion-item border-bottom" th:each="category : ${categories}">
                     <h2 class="accordion-header">
-                        <!-- Non-root category with link -->
+                        <!--/* Non-root category with link */-->
                         <a class="accordion-button collapsed py-3 fw-medium text-decoration-none text-dark"
                            th:if="${!category.isRoot() && #lists.isEmpty(category.children)}"
                            th:href="@{/articles(categoryType=${category.type}, categoryId=${category.id})}"
                            th:text="${category.name}">
                         </a>
 
-                        <!-- Category with children (collapsible) -->
+                        <!--/* Category with children (collapsible) */-->
                         <button class="accordion-button collapsed py-3 fw-medium" type="button" 
                                 th:if="${!#lists.isEmpty(category.children)}"
                                 data-bs-toggle="collapse" 
@@ -113,14 +113,14 @@
                             <span th:text="${category.name}"></span>
                         </button>
 
-                        <!-- Root category without children -->
+                        <!--/* Root category without children */-->
                         <span class="accordion-button py-3 fw-medium text-muted" 
                               th:if="${category.isRoot() && #lists.isEmpty(category.children)}"
                               th:text="${category.name}">
                         </span>
                     </h2>
 
-                    <!-- Collapsible content for categories with children -->
+                    <!--/* Collapsible content for categories with children */-->
                     <div th:if="${!#lists.isEmpty(category.children)}"
                          th:id="${'collapse-' + category.id}" 
                          class="accordion-collapse collapse"
