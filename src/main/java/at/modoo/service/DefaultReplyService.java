@@ -2,7 +2,7 @@ package at.modoo.service;
 
 import at.modoo.command.CreateReplyCommand;
 import at.modoo.command.UpdateReplyCommand;
-import at.modoo.model.Reply;
+import at.modoo.domain.Reply;
 import at.modoo.repository.ReplyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

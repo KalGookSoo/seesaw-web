@@ -1,6 +1,6 @@
 package at.modoo.repository;
 
-import at.modoo.model.User;
+import at.modoo.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.lang.NonNull;
 

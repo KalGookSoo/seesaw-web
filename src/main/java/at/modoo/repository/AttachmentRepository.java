@@ -1,6 +1,6 @@
 package at.modoo.repository;
 
-import at.modoo.model.Attachment;
+import at.modoo.domain.Attachment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

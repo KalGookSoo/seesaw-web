@@ -1,6 +1,6 @@
-package at.modoo.model;
+package at.modoo.domain;
 
-import at.modoo.model.vo.Email;
+import at.modoo.domain.vo.Email;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;

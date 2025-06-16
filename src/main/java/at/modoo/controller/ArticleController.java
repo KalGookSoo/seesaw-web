@@ -1,6 +1,6 @@
 package at.modoo.controller;
 
-import at.modoo.model.Article;
+import at.modoo.domain.Article;
 import at.modoo.search.ArticleSearch;
 import at.modoo.service.ArticleService;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package at.modoo.model;
+package at.modoo.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;

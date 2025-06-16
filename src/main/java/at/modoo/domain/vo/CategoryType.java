@@ -1,4 +1,4 @@
-package at.modoo.model.vo;
+package at.modoo.domain.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

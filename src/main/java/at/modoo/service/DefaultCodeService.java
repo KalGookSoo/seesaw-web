@@ -1,7 +1,7 @@
 package at.modoo.service;
 
 import at.modoo.core.hierarchy.HierarchicalFactory;
-import at.modoo.model.Code;
+import at.modoo.domain.Code;
 import at.modoo.repository.CodeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;

@@ -1,6 +1,6 @@
 package at.modoo.service;
 
-import at.modoo.model.Attachment;
+import at.modoo.domain.Attachment;
 import at.modoo.repository.AttachmentRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package at.modoo.model;
+package at.modoo.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -1,6 +1,6 @@
 package at.modoo.repository;
 
-import at.modoo.model.Role;
+import at.modoo.domain.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

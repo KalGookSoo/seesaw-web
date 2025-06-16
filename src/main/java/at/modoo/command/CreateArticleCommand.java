@@ -1,6 +1,6 @@
 package at.modoo.command;
 
-import at.modoo.model.vo.ArticleType;
+import at.modoo.domain.vo.ArticleType;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;

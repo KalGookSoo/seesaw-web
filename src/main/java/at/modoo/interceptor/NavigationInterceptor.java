@@ -1,8 +1,8 @@
 package at.modoo.interceptor;
 
 import at.modoo.core.hierarchy.HierarchicalFactory;
-import at.modoo.model.Category;
-import at.modoo.model.Site;
+import at.modoo.domain.Category;
+import at.modoo.domain.Site;
 import at.modoo.service.SiteService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

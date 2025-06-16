@@ -1,6 +1,6 @@
 package at.modoo.search;
 
-import at.modoo.model.vo.CategoryType;
+import at.modoo.domain.vo.CategoryType;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

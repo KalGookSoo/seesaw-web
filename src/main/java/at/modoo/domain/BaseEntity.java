@@ -1,4 +1,4 @@
-package at.modoo.model;
+package at.modoo.domain;
 
 import at.modoo.annotation.CreatedIp;
 import at.modoo.annotation.LastModifiedIp;

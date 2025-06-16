@@ -1,8 +1,8 @@
 package at.modoo;
 
 import at.modoo.interceptor.ContextEnvironment;
-import at.modoo.model.Article;
-import at.modoo.model.Category;
+import at.modoo.domain.Article;
+import at.modoo.domain.Category;
 import at.modoo.service.ArticleService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

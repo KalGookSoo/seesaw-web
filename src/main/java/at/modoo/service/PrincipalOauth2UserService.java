@@ -1,10 +1,10 @@
 package at.modoo.service;
 
-import at.modoo.model.Role;
-import at.modoo.model.User;
-import at.modoo.model.UserPrincipal;
-import at.modoo.model.vo.Email;
-import at.modoo.model.vo.RoleName;
+import at.modoo.domain.Role;
+import at.modoo.domain.User;
+import at.modoo.domain.UserPrincipal;
+import at.modoo.domain.vo.Email;
+import at.modoo.domain.vo.RoleName;
 import at.modoo.oauth2.provider.NaverUserDetail;
 import at.modoo.oauth2.provider.OAuth2UserDetail;
 import at.modoo.repository.RoleRepository;

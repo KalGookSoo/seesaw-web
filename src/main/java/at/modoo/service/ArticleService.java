@@ -2,7 +2,7 @@ package at.modoo.service;
 
 import at.modoo.command.CreateArticleCommand;
 import at.modoo.command.UpdateArticleCommand;
-import at.modoo.model.Article;
+import at.modoo.domain.Article;
 import at.modoo.search.ArticleSearch;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

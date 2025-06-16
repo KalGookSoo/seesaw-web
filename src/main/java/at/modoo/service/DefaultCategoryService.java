@@ -2,7 +2,7 @@ package at.modoo.service;
 
 import at.modoo.command.CreateCategoryCommand;
 import at.modoo.command.UpdateCategoryCommand;
-import at.modoo.model.Category;
+import at.modoo.domain.Category;
 import at.modoo.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

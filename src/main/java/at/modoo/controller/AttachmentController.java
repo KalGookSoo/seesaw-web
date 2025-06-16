@@ -1,8 +1,8 @@
 package at.modoo.controller;
 
 import at.modoo.core.file.FileIOService;
-import at.modoo.model.Article;
-import at.modoo.model.Attachment;
+import at.modoo.domain.Article;
+import at.modoo.domain.Attachment;
 import at.modoo.service.ArticleService;
 import at.modoo.service.AttachmentService;
 import jakarta.servlet.http.HttpServletResponse;

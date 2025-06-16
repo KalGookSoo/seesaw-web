@@ -119,7 +119,7 @@
         </tr>
         <!--/* 비공지 */-->
         <tr th:each="article : ${page.content}" th:if="${page.hasContent() and !article.isFixed}">
-            <!--/*@thymesVar id="page" type="org.springframework.data.domain.Page<at.modoo.model.Article>"*/-->
+            <!--/*@thymesVar id="page" type="org.springframework.data.domain.Page<at.modoo.domain.Article>"*/-->
             <td class="py-3 text-center align-middle" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
                 <input aria-label="선택" name="selected" type="checkbox" th:data-id="${article.id}">
             </td>

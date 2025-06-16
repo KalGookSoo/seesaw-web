@@ -1,9 +1,9 @@
-package at.modoo.model;
+package at.modoo.domain;
 
 import at.modoo.command.CreateArticleCommand;
 import at.modoo.command.UpdateArticleCommand;
 import at.modoo.core.hierarchy.Hierarchical;
-import at.modoo.model.vo.ArticleType;
+import at.modoo.domain.vo.ArticleType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;

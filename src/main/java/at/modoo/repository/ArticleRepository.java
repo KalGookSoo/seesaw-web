@@ -1,6 +1,6 @@
 package at.modoo.repository;
 
-import at.modoo.model.Article;
+import at.modoo.domain.Article;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;

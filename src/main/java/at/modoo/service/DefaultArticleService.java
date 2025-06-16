@@ -4,7 +4,7 @@ import at.modoo.command.CreateArticleCommand;
 import at.modoo.command.UpdateArticleCommand;
 import at.modoo.core.authentication.PrincipalProvider;
 import at.modoo.core.file.FileIOService;
-import at.modoo.model.*;
+import at.modoo.domain.*;
 import at.modoo.repository.*;
 import at.modoo.search.ArticleSearch;
 import org.jsoup.Jsoup;

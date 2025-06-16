@@ -1,6 +1,6 @@
 package at.modoo.service;
 
-import at.modoo.model.Attachment;
+import at.modoo.domain.Attachment;
 
 public interface AttachmentService {
     Attachment find(String id);

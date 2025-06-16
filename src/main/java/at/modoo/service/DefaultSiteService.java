@@ -1,9 +1,9 @@
 package at.modoo.service;
 
-import at.modoo.model.Article;
-import at.modoo.model.BaseEntity;
-import at.modoo.model.Category;
-import at.modoo.model.Site;
+import at.modoo.domain.Article;
+import at.modoo.domain.BaseEntity;
+import at.modoo.domain.Category;
+import at.modoo.domain.Site;
 import at.modoo.repository.ArticleSearchRepository;
 import at.modoo.repository.AttachmentRepository;
 import at.modoo.repository.CategoryRepository;

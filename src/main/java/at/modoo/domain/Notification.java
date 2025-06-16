@@ -1,6 +1,6 @@
-package at.modoo.model;
+package at.modoo.domain;
 
-import at.modoo.model.vo.NotificationType;
+import at.modoo.domain.vo.NotificationType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;

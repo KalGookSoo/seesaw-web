@@ -1,7 +1,7 @@
 package at.modoo.controller;
 
 import at.modoo.core.file.FileIOService;
-import at.modoo.model.Attachment;
+import at.modoo.domain.Attachment;
 import at.modoo.service.AttachmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;

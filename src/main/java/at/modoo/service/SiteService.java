@@ -1,6 +1,6 @@
 package at.modoo.service;
 
-import at.modoo.model.Site;
+import at.modoo.domain.Site;
 
 public interface SiteService {
 

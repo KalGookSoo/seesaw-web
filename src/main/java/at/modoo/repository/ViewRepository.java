@@ -1,6 +1,6 @@
 package at.modoo.repository;
 
-import at.modoo.model.View;
+import at.modoo.domain.View;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

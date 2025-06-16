@@ -1,6 +1,6 @@
 package at.modoo.repository;
 
-import at.modoo.model.Article;
+import at.modoo.domain.Article;
 import at.modoo.search.ArticleSearch;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.EntityManager;

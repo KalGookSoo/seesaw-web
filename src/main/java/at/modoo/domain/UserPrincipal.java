@@ -1,6 +1,6 @@
-package at.modoo.model;
+package at.modoo.domain;
 
-import at.modoo.model.vo.RoleName;
+import at.modoo.domain.vo.RoleName;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

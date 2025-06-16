@@ -1,4 +1,5 @@
-package at.modoo.model.vo;
+package at.modoo.domain.vo;
+
 
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
@@ -7,30 +8,31 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 import static lombok.AccessLevel.PROTECTED;
 
 /**
- * 주소
+ * 이메일
  */
 @Embeddable
 @Getter
 @EqualsAndHashCode
 @NoArgsConstructor(access = PROTECTED)
 @AllArgsConstructor
-public class Address implements Serializable {
+public class Email implements Serializable {
 
-    private String zipcode;
+    private String id;
 
-    private String value;
+    private String domain;
 
-    public static Address empty() {
-        return new Address(null, null);
+    public static Email empty() {
+        return new Email(null, null);
     }
 
     @Override
     public String toString() {
-        return value + " [" + zipcode + "]";
+        return Optional.ofNullable(id).orElse("") + "@" + Optional.ofNullable(domain).orElse("");
     }
 
 }
