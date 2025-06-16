@@ -57,7 +57,7 @@ public class NavigationInterceptor implements HandlerInterceptor {
 
             // 요소 탐색 편의를 위한 속성 할당
             Map<String, Category> allCategories = site.getCategories().stream()
-                    .collect(Collectors.toMap(Category::getId, Function.identity()));
+                    .collect(Collectors.toMap(Category::getId, Function.identity(), (oldValue, newValue) -> oldValue, LinkedHashMap::new));
             request.setAttribute(ContextEnvironment.ALL_CATEGORIES, allCategories);
 
             // 계층형 목록 출력을 위한 속성 할당
