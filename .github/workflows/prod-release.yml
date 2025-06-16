@@ -129,7 +129,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           REMOTE_DIR: ${{ secrets.REMOTE_DIR }}
-          APP_NAME: modoo-${{ needs.build.outputs.version }}.jar
+          APP_NAME: seesaw-web-${{ needs.build.outputs.version }}.jar
         run: |
           echo "원격 서버에 배포를 시작합니다..."
           # 오류 처리 설정
@@ -166,7 +166,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           REMOTE_DIR: ${{ secrets.REMOTE_DIR }}
-          APP_NAME: modoo-${{ needs.build.outputs.version }}.jar
+          APP_NAME: seesaw-web-${{ needs.build.outputs.version }}.jar
         run: |
           echo "애플리케이션 재시작 중..."
           ssh $REMOTE_USER@$REMOTE_HOST "cd $REMOTE_DIR && \
@@ -195,7 +195,7 @@ jobs:
           sleep 10
 
           # 애플리케이션 프로세스 확인
-          ssh $REMOTE_USER@$REMOTE_HOST "ps -ef | grep java | grep modoo | grep -v grep" || {
+          ssh $REMOTE_USER@$REMOTE_HOST "ps -ef | grep java | grep seesaw-web | grep -v grep" || {
             echo "오류: 애플리케이션 프로세스가 실행 중이지 않습니다."
             exit 1
           }

@@ -14,6 +14,16 @@
             <div>
                 <span><button type="button" class="btn" title="신고"><i class="bi bi-exclamation-triangle"></i><span class="d-none d-sm-inline ms-1">신고</span></button></span>
                 <span><button type="button" class="btn" title="문의" data-bs-toggle="modal" data-bs-target="#inquiryModal"><i class="bi bi-question-circle"></i><span class="d-none d-sm-inline ms-1">문의</span></button></span>
+                <span>
+                    <a th:href="|https://validator.w3.org/check?uri=${REQUEST_URL}|" class="btn btn-outline-success text-decoration-none" target="_blank">
+                        <i class="bi bi-check-circle-fill"></i> HTML5
+                    </a>
+                </span>
+                <span>
+                    <a th:href="|https://jigsaw.w3.org/css-validator/validator?uri=${REQUEST_URL}|" class="btn btn-outline-success text-decoration-none" target="_blank">
+                        <i class="bi bi-check-circle-fill"></i> CSS3
+                    </a>
+                </span>
             </div>
         </div>
         <div class="right">

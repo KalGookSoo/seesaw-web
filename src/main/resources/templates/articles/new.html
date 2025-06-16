@@ -231,7 +231,7 @@
     </script>
 </head>
 <div layout:fragment="content">
-<section th:replace="~{components/breadcrumbs :: breadcrumbs}"></section>
+<section th:replace="~{components/breadcrumb :: breadcrumbs}"></section>
 <header class="container-sm title-section">
     <div class="d-flex">
         <h5 class="title pb-1" th:text="${ALL_CATEGORIES.get(search.categoryId).name}"></h5>
@@ -278,7 +278,7 @@
                                 <span class="input-group-text bg-white">
                                     <i class="bi bi-type"></i>
                                 </span>
-                                <input type="text" class="form-control" id="title" name="title" required maxlength="20"
+                                <input type="text" class="form-control" id="title" name="title" required maxlength="30"
                                        placeholder="제목을 입력하세요" autocomplete="off">
                             </div>
                         </div>
