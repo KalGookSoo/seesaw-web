@@ -40,7 +40,7 @@ public class CreateArticleCommand {
     @Schema(description = "제목", example = "제목")
     @NotBlank
     @NotNull
-    @Length(min =1, max = 20)
+    @Length(min = 1, max = 30)
     private String title;
 
     @Parameter(description = "본문", required = true)
