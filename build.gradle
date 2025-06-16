@@ -5,7 +5,7 @@ plugins {
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
-group = 'at'
+group = 'kr.me.seesaw'
 project.version = project.hasProperty('appVersion') ? project.getProperty('appVersion') : '0.0.1-SNAPSHOT'
 
 java {
