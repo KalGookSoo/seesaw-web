@@ -28,7 +28,7 @@ import java.util.*;
 @Service
 public class DefaultArticleService implements ArticleService {
 
-    @Value("${at.modoo.filepath}")
+    @Value("${kr.me.seesaw.filepath}")
     private final String filepath;
 
     private final ArticleRepository articleRepository;
@@ -44,7 +44,7 @@ public class DefaultArticleService implements ArticleService {
     private final PrincipalProvider principalProvider;
 
     public DefaultArticleService(
-            @Value("${at.modoo.filepath}") String filepath,
+            @Value("${kr.me.seesaw.filepath}") String filepath,
             ArticleRepository articleRepository,
             ArticleSearchRepository articleSearchRepository,
             ReplyRepository replyRepository,

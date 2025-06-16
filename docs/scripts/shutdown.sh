@@ -7,7 +7,7 @@
 cd "$(dirname "$0")"
 
 # 실행 중인 Java 프로세스 찾기
-PID=$(ps -ef | grep java | grep modoo | grep -v grep | awk '{print $2}')
+PID=$(ps -ef | grep java | grep seesaw-web | grep -v grep | awk '{print $2}')
 
 if [ -z "$PID" ]; then
   echo "실행 중인 애플리케이션이 없습니다."

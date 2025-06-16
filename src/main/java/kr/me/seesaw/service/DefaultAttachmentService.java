@@ -18,7 +18,7 @@ public class DefaultAttachmentService implements AttachmentService {
     private final AttachmentRepository attachmentRepository;
 
     public DefaultAttachmentService(
-            @Value("${at.modoo.filepath}") String filepath,
+            @Value("${kr.me.seesaw.filepath}") String filepath,
             AttachmentRepository attachmentRepository
     ) {
         this.filepath = filepath;
