@@ -21,7 +21,7 @@
             부모 카테고리
           </a>
           <ul class="dropdown-menu shadow-sm" aria-labelledby="parentDropdown">
-            <li th:each="siblingCategory : ${CURRENT_CATEGORY.parent.parent != null ? CURRENT_CATEGORY.parent.parent.children : ALL_CATEGORIES.values()}"
+            <li th:each="siblingCategory : ${ALL_CATEGORIES.values()}"
                 th:if="${siblingCategory.parentId == null || #strings.equals(siblingCategory.parentId, CURRENT_CATEGORY.parent.parentId)}">
               <a class="dropdown-item"
                  th:classappend="${#strings.equals(siblingCategory.id, CURRENT_CATEGORY.parent.id)} ? 'active' : ''"
