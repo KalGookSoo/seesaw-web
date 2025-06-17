@@ -12,16 +12,18 @@
     <div class="content-section container-sm content d-flex justify-content-between">
         <div class="left">
             <div>
-                <span><button type="button" class="btn" title="신고"><i class="bi bi-exclamation-triangle"></i><span class="d-none d-sm-inline ms-1">신고</span></button></span>
+                <span><button type="button" class="btn" title="신고" data-bs-toggle="modal" data-bs-target="#reportModal"><i class="bi bi-exclamation-triangle"></i><span class="d-none d-sm-inline ms-1">신고</span></button></span>
                 <span><button type="button" class="btn" title="문의" data-bs-toggle="modal" data-bs-target="#inquiryModal"><i class="bi bi-question-circle"></i><span class="d-none d-sm-inline ms-1">문의</span></button></span>
                 <span>
-                    <a th:href="|https://validator.w3.org/check?uri=${REQUEST_URL}|" class="btn btn-outline-success text-decoration-none" target="_blank">
-                        <i class="bi bi-check-circle-fill"></i> HTML5
+                    <a th:href="|https://validator.w3.org/check?uri=${REQUEST_HOST}|" class="btn btn-outline-success text-decoration-none" target="_blank">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span class="d-none d-sm-inline ms-1">HTML5</span>
                     </a>
                 </span>
                 <span>
-                    <a th:href="|https://jigsaw.w3.org/css-validator/validator?uri=${REQUEST_URL}|" class="btn btn-outline-success text-decoration-none" target="_blank">
-                        <i class="bi bi-check-circle-fill"></i> CSS3
+                    <a th:href="|https://jigsaw.w3.org/css-validator/validator?uri=${REQUEST_HOST}|" class="btn btn-outline-success text-decoration-none" target="_blank">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span class="d-none d-sm-inline ms-1">CSS3</span>
                     </a>
                 </span>
             </div>
@@ -37,6 +39,65 @@
     </div>
     <div class="banner-section d-flex align-items-center justify-content-center">
         <div>© 2025 NXCOA / SEESAW. All Rights Reserved.</div>
+    </div>
+
+    <!--/* 신고 */-->
+    <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reportModalLabel">신고하기</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="reportForm" name="reportForm" th:action="@{/}" th:method="post">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="reportSiteName" class="form-label">홈페이지명</label>
+                            <input type="text" class="form-control" id="reportSiteName" name="reportSiteName" th:value="${SITE_CONTEXT.name}" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="reportDomainName" class="form-label">도메인명</label>
+                            <input type="text" class="form-control" id="reportDomainName" name="reportDomainName" th:value="${SITE_CONTEXT.domainName}" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">신고사유</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="reportReason" id="reportReason1" value="음란성 또는 청소년에게 부적합한 내용" required>
+                                <label class="form-check-label" for="reportReason1">
+                                    음란성 또는 청소년에게 부적합한 내용
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="reportReason" id="reportReason2" value="부적합한 스팸성 내용">
+                                <label class="form-check-label" for="reportReason2">
+                                    부적합한 스팸성 내용
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="reportReason" id="reportReason3" value="기타">
+                                <label class="form-check-label" for="reportReason3">
+                                    기타
+                                </label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="reportContent" class="form-label">상세내용</label>
+                            <textarea class="form-control" id="reportContent" rows="5" required></textarea>
+                        </div>
+                        <div class="alert alert-info" role="alert">
+                            <p class="mb-1">신고하기전에 잠깐!</p>
+                            <p class="mb-1">- 게시중단 및 홈페이지 도용 신고는 아래 도움말을 통해서만 신고 접수 가능합니다.</p>
+                            <p class="mb-1">- 특정 게시물로 인해 명예훼손의 피해를 입었다면? <a href="#" class="alert-link">권리보호센터 도움말 바로가기</a></p>
+                            <p class="mb-0">- 홈페이지 도용 등의 저작권침해로 피해를 입었다면? <a href="#" class="alert-link">seesaw 도움말 바로가기</a></p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                        <button type="submit" class="btn btn-primary" id="sendReportBtn">보내기</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     <!--/* 문의 */-->
@@ -74,15 +135,33 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+
+            // 신고 폼
+            const reportForm = document.reportForm;
+            reportForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                // Get selected reason
+                const selectedReason = document.querySelector('input[name="reportReason"]:checked').value;
+
+                // TODO Fetch API
+
+                alert(`신고가 성공적으로 접수되었습니다.(미구현)`);
+                reportForm.reset();
+                bootstrap.Modal.getInstance(document.getElementById('reportModal')).hide();
+            });
+
+            // 문의 폼
             const inquiryForm = document.inquiryForm;
             inquiryForm.addEventListener('submit', (e) => {
                 e.preventDefault();
 
                 // TODO Fetch API
 
+                const email = document.getElementById('inquiryEmail').value;
                 alert(`문의가 성공적으로 전송되었습니다.\n회신은 ${email} 주소로 발송됩니다.(미구현)`);
                 inquiryForm.reset();
-                bootstrap.Modal.getInstance(inquiryForm).hide();
+                bootstrap.Modal.getInstance(document.getElementById('inquiryModal')).hide();
             });
         });
     </script>
