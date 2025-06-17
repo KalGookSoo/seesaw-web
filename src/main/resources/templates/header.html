@@ -23,7 +23,7 @@
                    data-bs-toggle="dropdown" aria-expanded="false"
                 >
                     [[${category.name}]]
-                    <span class="badge notification-badge mx-1" th:if="${!category.recentArticles.isEmpty()}" th:text="${category.recentArticles.size()}"></span>
+                    <span class="badge bg-primary ms-1" th:if="${!category.recentArticles.isEmpty()}" th:text="${category.recentArticles.size()}"></span>
                 </a>
                 <ul class="dropdown-menu">
                     <li th:each="subCategory : ${category.children}">
@@ -31,7 +31,7 @@
                            th:href="@{/articles(categoryType=${subCategory.type}, categoryId=${subCategory.id})}"
                            th:classappend="${CURRENT_CATEGORY != null && #strings.equals(subCategory.id, CURRENT_CATEGORY.id)} ? 'active' : ''">
                             [[${subCategory.name}]]
-                            <span class="badge notification-badge mx-1" th:if="${!subCategory.recentArticles.isEmpty()}" th:text="${subCategory.recentArticles.size()}"></span>
+                            <span class="badge bg-primary ms-1" th:if="${!subCategory.recentArticles.isEmpty()}" th:text="${subCategory.recentArticles.size()}"></span>
                         </a>
                     </li>
                 </ul>

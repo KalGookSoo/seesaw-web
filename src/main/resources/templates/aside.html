@@ -100,7 +100,9 @@
                         <a class="accordion-button collapsed py-3 fw-medium text-decoration-none text-dark"
                            th:if="${!category.isRoot() && #lists.isEmpty(category.children)}"
                            th:href="@{/articles(categoryType=${category.type}, categoryId=${category.id})}"
-                           th:text="${category.name}">
+                        >
+                            [[${category.name}]]
+                            <span class="badge bg-primary ms-1" th:if="${!category.recentArticles.isEmpty()}" th:text="${category.recentArticles.size()}"></span>
                         </a>
 
                         <!--/* Category with children (collapsible) */-->
@@ -111,6 +113,7 @@
                                 th:aria-expanded="false" 
                                 th:aria-controls="${'collapse-' + category.id}">
                             <span th:text="${category.name}"></span>
+                            <span class="badge bg-primary ms-1" th:if="${!category.recentArticles.isEmpty()}" th:text="${category.recentArticles.size()}"></span>
                         </button>
 
                         <!--/* Root category without children */-->

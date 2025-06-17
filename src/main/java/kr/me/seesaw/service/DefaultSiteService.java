@@ -75,6 +75,14 @@ public class DefaultSiteService implements SiteService {
                         .filter(article -> category.getId().equals(allCategories.get(article.getCategoryId()).getParentId()))
                         .forEach(category::addRecentArticle));
 
+        // 최근 게시글을 해당 카테고리에도 바인딩
+        articles.forEach(article -> {
+            Category category = allCategories.get(article.getCategoryId());
+            if (category != null) {
+                category.addRecentArticle(article);
+            }
+        });
+
         return site;
     }
 }
