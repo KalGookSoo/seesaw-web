@@ -24,7 +24,7 @@
     <meta property="twitter:image" content="페이지 썸네일 이미지 주소" th:if="${!page.content.get(0).inlineImages.isEmpty()}"
           th:content="@{|${REQUEST_HOST}/api/attachments/${page.content.get(0).inlineImages.get(0).id}|}">
 
-    <title>[[${CURRENT_CATEGORY.name}]] | [[${SITE_CONTEXT.name}]]</title>
+    <title>[[${page.content.get(0).title}]]</title>
     <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
 
     <!--/* Editor */-->
