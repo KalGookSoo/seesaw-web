@@ -12,7 +12,7 @@
 
 <header id="header" class="d-flex align-items-center justify-content-center" th:fragment="header">
     <div class="container-sm wrapper d-flex align-items-center justify-content-between">
-        <div class="logo"><a class="none" th:href="@{/}">대전포스트잇 ♣대전독서모임</a></div>
+        <h1 class="logo mb-0"><a class="none" th:href="@{/}">대전포스트잇 ♣대전독서모임</a></h1>
         <nav class="gnb nav d-none d-lg-flex align-items-center justify-content-start">
             <div class="px-2 nav-item"><a class="btn nav-link" th:classappend="${CURRENT_CATEGORY == null} ? 'main-color' : ''" th:href="@{/}">홈</a></div>
             <div class="px-2 nav-item dropdown" th:each="category : ${NESTED_CATEGORIES}" th:if="${!#lists.isEmpty(category.children)}">
