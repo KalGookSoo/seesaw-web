@@ -9,7 +9,7 @@
 
 <head>
     <meta name="description" th:content="${page.content.get(0).plainContent}">
-    <meta name="keyword" th:content="${page.content.get(0).title.split(' ').join(',')}">
+    <meta name="keyword" th:content="${page.content.get(0).title}">
     <meta name="author" th:content="${page.content.get(0).createdBy}">
 
     <meta property="og:type" content="article">
