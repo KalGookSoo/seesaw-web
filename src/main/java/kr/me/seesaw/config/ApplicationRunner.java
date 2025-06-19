@@ -6,10 +6,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.lang.NonNull;
 
-@Profile("local")
 @Configuration
 public class ApplicationRunner implements CommandLineRunner, ApplicationListener<ApplicationStartedEvent> {
 
