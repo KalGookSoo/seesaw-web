@@ -54,7 +54,7 @@ class JsoupTest {
                 <p><img src="http://localhost:8080/api/attachments/cd031c7c-e3db-412b-bf15-8b2a50b28699" alt="carousel_3.jpeg"><br></p>
                 <p><br></p>
                 <p><br></p>
-                <p><img src="http://localhost:8080/api/attachments/b65857dc-077f-4db2-83fe-9f3334b9659c" alt="sample1.jpeg"><br></p>            
+                <p><img src="http://localhost:8080/api/attachments/b65857dc-077f-4db2-83fe-9f3334b9659c" alt="sample1.jpeg"><br></p>
                 """;
 
         // When
