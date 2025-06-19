@@ -1,9 +1,9 @@
 package kr.me.seesaw.domain;
 
-import kr.me.seesaw.domain.vo.Email;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import kr.me.seesaw.domain.vo.Email;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicInsert;
@@ -132,7 +132,6 @@ public class User extends BaseEntity {
 
     public void addRole(Role role) {
         roles.add(role);
-        role.setUser(this);
     }
 
     public Email getEmail() {

@@ -1,5 +1,9 @@
 -- 제약조건(보관용)
-ALTER TABLE tb_role ADD CONSTRAINT fk_tb_role_site FOREIGN KEY (site_id) REFERENCES tb_site (id);
+ALTER TABLE tb_menu_role ADD CONSTRAINT fk_tb_menu_role FOREIGN KEY (menu_id) REFERENCES tb_menu (id);
+ALTER TABLE tb_menu_role ADD CONSTRAINT fk_tb_role_menu FOREIGN KEY (role_id) REFERENCES tb_role (id);
+ALTER TABLE tb_role_mapping ADD CONSTRAINT fk_tb_mapping_user FOREIGN KEY (user_id) REFERENCES tb_user (id);
+ALTER TABLE tb_role_mapping ADD CONSTRAINT fk_tb_mapping_site FOREIGN KEY (site_id) REFERENCES tb_site (id);
+ALTER TABLE tb_role_mapping ADD CONSTRAINT fk_tb_mapping_role FOREIGN KEY (role_id) REFERENCES tb_role (id);
 ALTER TABLE tb_category ADD CONSTRAINT fk_tb_category_site FOREIGN KEY (site_id) REFERENCES tb_site (id);
 ALTER TABLE tb_article ADD CONSTRAINT fk_tb_article_category FOREIGN KEY (category_id) REFERENCES tb_category (id);
 ALTER TABLE tb_notification ADD CONSTRAINT fk_tb_notification_category FOREIGN KEY (category_id) REFERENCES tb_category (id);

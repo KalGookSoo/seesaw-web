@@ -9,19 +9,19 @@
 
 <head>
 
-    <meta name="description" content="" th:content="${SITE_CONTEXT.description}">
-    <meta name="keyword" content="" th:content="${SITE_CONTEXT.name}">
+    <meta name="description" th:content="|${SITE_CONTEXT.name} ${CURRENT_CATEGORY.name} ${CURRENT_CATEGORY.description != null ? CURRENT_CATEGORY.description : ''}|">
+    <meta name="keyword" content="키워드(CSV)" th:content="${SITE_CONTEXT.name}">
 
-    <meta property="og:type" content="article">
-    <meta property="og:title" content="페이지 제목" th:content="${SITE_CONTEXT.name}">
-    <meta property="og:description" content="페이지 설명" th:content="${SITE_CONTEXT.description}">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="페이지 제목" th:content="|${SITE_CONTEXT.name} ${CURRENT_CATEGORY.name}|">
+    <meta property="og:description" content="페이지 설명" th:content="|${SITE_CONTEXT.name} ${CURRENT_CATEGORY.name} ${CURRENT_CATEGORY.description != null ? CURRENT_CATEGORY.description : ''}|">
     <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${SITE_CONTEXT.profileImage != null}"
           th:content="@{|${REQUEST_HOST}/api/attachments/${SITE_CONTEXT.profileImage.id}|}">
     <meta property="og:url" content="페이지 주소" th:content="${REQUEST_URL}">
 
     <meta property="twitter:card" content="summary">
-    <meta property="twitter:title" content="페이지 제목" th:content="${SITE_CONTEXT.name}">
-    <meta property="twitter:description" content="페이지 설명" th:content="${SITE_CONTEXT.description}">
+    <meta property="twitter:title" content="페이지 제목" th:content="|${SITE_CONTEXT.name}  ${CURRENT_CATEGORY.name}|">
+    <meta property="twitter:description" content="페이지 설명" th:content="|${SITE_CONTEXT.name} ${CURRENT_CATEGORY.name} ${CURRENT_CATEGORY.description != null ? CURRENT_CATEGORY.description : ''}|">
     <meta property="twitter:image" content="페이지 썸네일 이미지 주소" th:if="${SITE_CONTEXT.profileImage != null}"
           th:content="@{|${REQUEST_HOST}/api/attachments/${SITE_CONTEXT.profileImage.id}|}">
 

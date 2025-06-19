@@ -65,9 +65,9 @@ public class NavigationInterceptor implements HandlerInterceptor {
             request.setAttribute(ContextEnvironment.NESTED_CATEGORIES, nestedCategories);
 
             // 요청 파라미터에 카테고리 식별자가 있을 경우 현재 카테고리 정보를 속성에 할당
-            Optional.ofNullable(request.getParameter("categoryId")).map(Objects::toString).ifPresent(categoryId -> {
-                request.setAttribute(ContextEnvironment.CURRENT_CATEGORY, allCategories.get(categoryId));
-            });
+            Optional.ofNullable(request.getParameter("categoryId"))
+                    .map(Objects::toString)
+                    .ifPresent(categoryId -> request.setAttribute(ContextEnvironment.CURRENT_CATEGORY, allCategories.get(categoryId)));
         } catch (NoSuchElementException e) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return false;

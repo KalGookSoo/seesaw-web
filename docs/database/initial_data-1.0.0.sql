@@ -115,6 +115,11 @@ INSERT INTO tb_code (id, created_by, created_date, created_ip, last_modified_by,
 INSERT INTO tb_code (id, created_by, created_date, created_ip, last_modified_by, last_modified_date, last_modified_ip, version, description, name, sequence, parent_id) VALUES ('cdcc9cf5-e70d-44f1-b273-1f6aee1d22cb', 'admin', '2025-03-27 16:53:41.459067', '127.0.0.1', null, '2025-03-27 16:53:41.459067', null, 0, '초중고등학교', 'SITE_DISTRIBUTION', null, 'b5c98f46-413e-4165-92c7-002aaa6fdf2c');
 INSERT INTO tb_code (id, created_by, created_date, created_ip, last_modified_by, last_modified_date, last_modified_ip, version, description, name, sequence, parent_id) VALUES ('c1d3b5ed-b63e-4b35-bb92-a803ff981ec1', 'admin', '2025-03-27 16:53:41.460992', '127.0.0.1', null, '2025-03-27 16:53:41.460992', null, 0, '기타', 'SITE_DISTRIBUTION', null, 'b5c98f46-413e-4165-92c7-002aaa6fdf2c');
 
+-- 역할
+INSERT INTO tb_role (id, created_by, created_date, created_ip, last_modified_by, last_modified_date, last_modified_ip, version, alias, name) VALUES ('298d0316-3a2c-4612-a4c8-76e2e594fa07', 'admin', now(), '127.0.0.1', null, null, null, 0, '최고관리자', 'ROLE_ADMIN');
+INSERT INTO tb_role (id, created_by, created_date, created_ip, last_modified_by, last_modified_date, last_modified_ip, version, alias, name) VALUES ('4d33ca36-886d-4d54-a392-84062d1bb541', 'admin', now(), '127.0.0.1', null, null, null, 0, '관리자', 'ROLE_MANAGER');
+INSERT INTO tb_role (id, created_by, created_date, created_ip, last_modified_by, last_modified_date, last_modified_ip, version, alias, name) VALUES ('8979da3f-b6a0-4a1f-8190-a7666f5da7b7', 'admin', now(), '127.0.0.1', null, null, null, 0, '일반사용자', 'ROLE_USER');
+
 -- 사이트
 insert into tb_site (id, created_by, created_date, created_ip, last_modified_by, last_modified_date, last_modified_ip, version, address, zipcode, contact_number, description, distribution_code, image_exposed, name, parent_id, search_engine_exposed, tags, domain_name, intro, content) values ('e75dd9a0-7a23-40d2-b4d5-1463c0544e24', 'admin', now(), '127.0.0.1', null, null, null, 0, null, null, null, '대전독서모임 홈페이지', '95017abd-2b98-4466-9511-c399352f3742', true, '대전포스트잇 ♣대전독서모임', null, true, '#대전포스트잇 #대전독서모임 #대전독서 #독서모임 #대전모임연합', 'daejeonstickybook.seesaw.me.kr', '대전 독서모임 인원 모집 중', '독서 모임을 시작으로 대전시에서 주최하는 다양한 문화 및 지원 행사에 참여하고 싶으신 분들 환영합니다!');
 
