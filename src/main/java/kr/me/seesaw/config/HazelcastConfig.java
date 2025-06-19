@@ -42,7 +42,7 @@ public class HazelcastConfig {
     );
 */
 
-    private final List<String> productionMembers = Arrays.asList(
+    private final List<String> productionMembers = List.of(
             "10.0.0.177:5701"
     );
 

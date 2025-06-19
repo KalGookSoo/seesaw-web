@@ -158,6 +158,86 @@ CREATE TABLE tb_remember_me_token
 ALTER TABLE tb_remember_me_token
     OWNER TO seesaw_admin;
 
+CREATE TABLE tb_role
+(
+    id VARCHAR(36) NOT NULL
+        PRIMARY KEY,
+    created_by VARCHAR(255),
+    created_date TIMESTAMP(6),
+    created_ip VARCHAR(45),
+    last_modified_by VARCHAR(255),
+    last_modified_date TIMESTAMP(6),
+    last_modified_ip VARCHAR(45),
+    version INTEGER NOT NULL,
+    alias VARCHAR(255),
+    name VARCHAR(255)
+);
+
+COMMENT ON TABLE tb_role IS '역할';
+
+COMMENT ON COLUMN tb_role.id IS '식별자';
+
+COMMENT ON COLUMN tb_role.created_by IS '생성자';
+
+COMMENT ON COLUMN tb_role.created_date IS '생성일시';
+
+COMMENT ON COLUMN tb_role.created_ip IS '생성 IP';
+
+COMMENT ON COLUMN tb_role.last_modified_by IS '수정자';
+
+COMMENT ON COLUMN tb_role.last_modified_date IS '수정일시';
+
+COMMENT ON COLUMN tb_role.last_modified_ip IS '수정 IP';
+
+COMMENT ON COLUMN tb_role.version IS '버전';
+
+COMMENT ON COLUMN tb_role.alias IS '별칭';
+
+COMMENT ON COLUMN tb_role.name IS '이름';
+
+ALTER TABLE tb_role
+    OWNER TO seesaw_admin;
+
+CREATE TABLE tb_menu_role
+(
+    id VARCHAR(36) NOT NULL
+        PRIMARY KEY,
+    created_by VARCHAR(255),
+    created_date TIMESTAMP(6),
+    created_ip VARCHAR(45),
+    last_modified_by VARCHAR(255),
+    last_modified_date TIMESTAMP(6),
+    last_modified_ip VARCHAR(45),
+    version INTEGER NOT NULL,
+    menu_id VARCHAR(36)
+        CONSTRAINT fk_tb_menu_role
+            REFERENCES tb_menu,
+    role_id VARCHAR(36)
+        CONSTRAINT fk_tb_role_menu
+            REFERENCES tb_role
+);
+
+COMMENT ON TABLE tb_menu_role IS '메뉴 역할 매핑';
+
+COMMENT ON COLUMN tb_menu_role.id IS '식별자';
+
+COMMENT ON COLUMN tb_menu_role.created_by IS '생성자';
+
+COMMENT ON COLUMN tb_menu_role.created_date IS '생성일시';
+
+COMMENT ON COLUMN tb_menu_role.created_ip IS '생성 IP';
+
+COMMENT ON COLUMN tb_menu_role.last_modified_by IS '수정자';
+
+COMMENT ON COLUMN tb_menu_role.last_modified_date IS '수정일시';
+
+COMMENT ON COLUMN tb_menu_role.last_modified_ip IS '수정 IP';
+
+COMMENT ON COLUMN tb_menu_role.version IS '버전';
+
+ALTER TABLE tb_menu_role
+    OWNER TO seesaw_admin;
+
 CREATE TABLE tb_site
 (
     id VARCHAR(36) NOT NULL
@@ -456,52 +536,6 @@ COMMENT ON COLUMN tb_reply.exposed IS '노출여부';
 ALTER TABLE tb_reply
     OWNER TO seesaw_admin;
 
-CREATE TABLE tb_role
-(
-    id VARCHAR(36) NOT NULL
-        PRIMARY KEY,
-    created_by VARCHAR(255),
-    created_date TIMESTAMP(6),
-    created_ip VARCHAR(45),
-    last_modified_by VARCHAR(255),
-    last_modified_date TIMESTAMP(6),
-    last_modified_ip VARCHAR(45),
-    version INTEGER NOT NULL,
-    alias VARCHAR(255),
-    name VARCHAR(255),
-    reference_id VARCHAR(36),
-    site_id VARCHAR(36)
-        CONSTRAINT fk_tb_role_site
-            REFERENCES tb_site
-);
-
-COMMENT ON TABLE tb_role IS '역할';
-
-COMMENT ON COLUMN tb_role.id IS '식별자';
-
-COMMENT ON COLUMN tb_role.created_by IS '생성자';
-
-COMMENT ON COLUMN tb_role.created_date IS '생성일시';
-
-COMMENT ON COLUMN tb_role.created_ip IS '생성 IP';
-
-COMMENT ON COLUMN tb_role.last_modified_by IS '수정자';
-
-COMMENT ON COLUMN tb_role.last_modified_date IS '수정일시';
-
-COMMENT ON COLUMN tb_role.last_modified_ip IS '수정 IP';
-
-COMMENT ON COLUMN tb_role.version IS '버전';
-
-COMMENT ON COLUMN tb_role.alias IS '별칭';
-
-COMMENT ON COLUMN tb_role.name IS '이름';
-
-COMMENT ON COLUMN tb_role.reference_id IS '참조 식별자';
-
-ALTER TABLE tb_role
-    OWNER TO seesaw_admin;
-
 CREATE TABLE tb_user
 (
     id VARCHAR(36) NOT NULL
@@ -561,6 +595,49 @@ COMMENT ON COLUMN tb_user.password IS '패스워드';
 COMMENT ON COLUMN tb_user.username IS '계정명';
 
 ALTER TABLE tb_user
+    OWNER TO seesaw_admin;
+
+CREATE TABLE tb_role_mapping
+(
+    id VARCHAR(36) NOT NULL
+        PRIMARY KEY,
+    created_by VARCHAR(255),
+    created_date TIMESTAMP(6),
+    created_ip VARCHAR(45),
+    last_modified_by VARCHAR(255),
+    last_modified_date TIMESTAMP(6),
+    last_modified_ip VARCHAR(45),
+    version INTEGER NOT NULL,
+    role_id VARCHAR(36)
+        CONSTRAINT fk_tb_mapping_role
+            REFERENCES tb_role,
+    site_id VARCHAR(36)
+        CONSTRAINT fk_tb_mapping_site
+            REFERENCES tb_site,
+    user_id VARCHAR(36)
+        CONSTRAINT fk_tb_mapping_user
+            REFERENCES tb_user
+);
+
+COMMENT ON TABLE tb_role_mapping IS '역할 매핑';
+
+COMMENT ON COLUMN tb_role_mapping.id IS '식별자';
+
+COMMENT ON COLUMN tb_role_mapping.created_by IS '생성자';
+
+COMMENT ON COLUMN tb_role_mapping.created_date IS '생성일시';
+
+COMMENT ON COLUMN tb_role_mapping.created_ip IS '생성 IP';
+
+COMMENT ON COLUMN tb_role_mapping.last_modified_by IS '수정자';
+
+COMMENT ON COLUMN tb_role_mapping.last_modified_date IS '수정일시';
+
+COMMENT ON COLUMN tb_role_mapping.last_modified_ip IS '수정 IP';
+
+COMMENT ON COLUMN tb_role_mapping.version IS '버전';
+
+ALTER TABLE tb_role_mapping
     OWNER TO seesaw_admin;
 
 CREATE TABLE tb_view
