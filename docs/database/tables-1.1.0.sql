@@ -1,63 +1,3 @@
-CREATE TABLE tb_article
-(
-    id VARCHAR(36) NOT NULL
-        PRIMARY KEY,
-    created_by VARCHAR(255),
-    created_date TIMESTAMP(6),
-    created_ip VARCHAR(45),
-    last_modified_by VARCHAR(255),
-    last_modified_date TIMESTAMP(6),
-    last_modified_ip VARCHAR(45),
-    version INTEGER NOT NULL,
-    parent_id VARCHAR(36),
-    category_id VARCHAR(36),
-    content TEXT,
-    exposed BOOLEAN NOT NULL,
-    fixed BOOLEAN NOT NULL,
-    fixed_order INTEGER,
-    title VARCHAR(255),
-    type VARCHAR(255)
-        CONSTRAINT tb_article_type_check
-            CHECK ((type)::TEXT = ANY ((ARRAY ['MAP'::CHARACTER VARYING, 'HTML'::CHARACTER VARYING, 'CAROUSEL'::CHARACTER VARYING, 'BUTTON_GROUP'::CHARACTER VARYING, 'IMAGE'::CHARACTER VARYING, 'TABLE'::CHARACTER VARYING, 'VIDEO'::CHARACTER VARYING])::TEXT[]))
-    );
-
-COMMENT ON TABLE tb_article IS '게시글';
-
-COMMENT ON COLUMN tb_article.id IS '식별자';
-
-COMMENT ON COLUMN tb_article.created_by IS '생성자';
-
-COMMENT ON COLUMN tb_article.created_date IS '생성일시';
-
-COMMENT ON COLUMN tb_article.created_ip IS '생성 IP';
-
-COMMENT ON COLUMN tb_article.last_modified_by IS '수정자';
-
-COMMENT ON COLUMN tb_article.last_modified_date IS '수정일시';
-
-COMMENT ON COLUMN tb_article.last_modified_ip IS '수정 IP';
-
-COMMENT ON COLUMN tb_article.version IS '버전';
-
-COMMENT ON COLUMN tb_article.parent_id IS '부모 식별자';
-
-COMMENT ON COLUMN tb_article.category_id IS '카테고리 식별자';
-
-COMMENT ON COLUMN tb_article.content IS '본문';
-
-COMMENT ON COLUMN tb_article.exposed IS '노출여부';
-
-COMMENT ON COLUMN tb_article.fixed IS '고정여부';
-
-COMMENT ON COLUMN tb_article.fixed_order IS '고정순서';
-
-COMMENT ON COLUMN tb_article.title IS '제목';
-
-COMMENT ON COLUMN tb_article.type IS '타입';
-
-ALTER TABLE tb_article
-    OWNER TO seesaw_admin;
-
 CREATE TABLE tb_attachment
 (
     id VARCHAR(36) NOT NULL
@@ -110,69 +50,6 @@ COMMENT ON COLUMN tb_attachment.size IS '크기';
 ALTER TABLE tb_attachment
     OWNER TO seesaw_admin;
 
-CREATE TABLE tb_category
-(
-    id VARCHAR(36) NOT NULL
-        PRIMARY KEY,
-    created_by VARCHAR(255),
-    created_date TIMESTAMP(6),
-    created_ip VARCHAR(45),
-    last_modified_by VARCHAR(255),
-    last_modified_date TIMESTAMP(6),
-    last_modified_ip VARCHAR(45),
-    version INTEGER NOT NULL,
-    parent_id VARCHAR(36),
-    description VARCHAR(255),
-    exposed BOOLEAN NOT NULL,
-    name VARCHAR(255),
-    sequence INTEGER,
-    site_exposed BOOLEAN NOT NULL,
-    site_exposed_order INTEGER NOT NULL,
-    site_id VARCHAR(36),
-    type VARCHAR(255)
-        CONSTRAINT tb_category_type_check
-            CHECK ((type)::TEXT = ANY ((ARRAY ['NONE'::CHARACTER VARYING, 'STATIC_CONTENT'::CHARACTER VARYING, 'BOARD'::CHARACTER VARYING, 'QNA'::CHARACTER VARYING, 'SCHEDULE'::CHARACTER VARYING, 'STORE'::CHARACTER VARYING, 'BUSINESS'::CHARACTER VARYING])::TEXT[]))
-    );
-
-COMMENT ON TABLE tb_category IS '카테고리';
-
-COMMENT ON COLUMN tb_category.id IS '식별자';
-
-COMMENT ON COLUMN tb_category.created_by IS '생성자';
-
-COMMENT ON COLUMN tb_category.created_date IS '생성일시';
-
-COMMENT ON COLUMN tb_category.created_ip IS '생성 IP';
-
-COMMENT ON COLUMN tb_category.last_modified_by IS '수정자';
-
-COMMENT ON COLUMN tb_category.last_modified_date IS '수정일시';
-
-COMMENT ON COLUMN tb_category.last_modified_ip IS '수정 IP';
-
-COMMENT ON COLUMN tb_category.version IS '버전';
-
-COMMENT ON COLUMN tb_category.parent_id IS '부모 식별자';
-
-COMMENT ON COLUMN tb_category.description IS '설명';
-
-COMMENT ON COLUMN tb_category.exposed IS '노출여부';
-
-COMMENT ON COLUMN tb_category.name IS '이름';
-
-COMMENT ON COLUMN tb_category.sequence IS '순서';
-
-COMMENT ON COLUMN tb_category.site_exposed IS '사이트 노출여부';
-
-COMMENT ON COLUMN tb_category.site_exposed_order IS '사이트 노출순서';
-
-COMMENT ON COLUMN tb_category.site_id IS '사이트 식별자';
-
-COMMENT ON COLUMN tb_category.type IS '타입';
-
-ALTER TABLE tb_category
-    OWNER TO seesaw_admin;
-
 CREATE TABLE tb_code
 (
     id VARCHAR(36) NOT NULL
@@ -184,7 +61,9 @@ CREATE TABLE tb_code
     last_modified_date TIMESTAMP(6),
     last_modified_ip VARCHAR(45),
     version INTEGER NOT NULL,
-    parent_id VARCHAR(36),
+    parent_id VARCHAR(36)
+        CONSTRAINT fk_tb_code_parent
+            REFERENCES tb_code,
     description VARCHAR(255),
     name VARCHAR(255),
     sequence INTEGER
@@ -230,7 +109,9 @@ CREATE TABLE tb_menu
     last_modified_date TIMESTAMP(6),
     last_modified_ip VARCHAR(45),
     version INTEGER NOT NULL,
-    parent_id VARCHAR(36),
+    parent_id VARCHAR(36)
+        CONSTRAINT fk_tb_menu_parent
+            REFERENCES tb_menu,
     name VARCHAR(255),
     sequence INTEGER,
     uri VARCHAR(255)
@@ -265,84 +146,6 @@ COMMENT ON COLUMN tb_menu.uri IS 'URI';
 ALTER TABLE tb_menu
     OWNER TO seesaw_admin;
 
-CREATE TABLE tb_menu_role
-(
-    id VARCHAR(36) NOT NULL
-        PRIMARY KEY,
-    created_by VARCHAR(255),
-    created_date TIMESTAMP(6),
-    created_ip VARCHAR(45),
-    last_modified_by VARCHAR(255),
-    last_modified_date TIMESTAMP(6),
-    last_modified_ip VARCHAR(45),
-    version INTEGER NOT NULL,
-    menu_id VARCHAR(255),
-    role_id VARCHAR(255)
-);
-
-COMMENT ON TABLE tb_menu_role IS '메뉴 역할 매핑';
-
-COMMENT ON COLUMN tb_menu_role.id IS '식별자';
-
-COMMENT ON COLUMN tb_menu_role.created_by IS '생성자';
-
-COMMENT ON COLUMN tb_menu_role.created_date IS '생성일시';
-
-COMMENT ON COLUMN tb_menu_role.created_ip IS '생성 IP';
-
-COMMENT ON COLUMN tb_menu_role.last_modified_by IS '수정자';
-
-COMMENT ON COLUMN tb_menu_role.last_modified_date IS '수정일시';
-
-COMMENT ON COLUMN tb_menu_role.last_modified_ip IS '수정 IP';
-
-COMMENT ON COLUMN tb_menu_role.version IS '버전';
-
-ALTER TABLE tb_menu_role
-    OWNER TO seesaw_admin;
-
-CREATE TABLE tb_notification
-(
-    id VARCHAR(36) NOT NULL
-        PRIMARY KEY,
-    created_by VARCHAR(255),
-    created_date TIMESTAMP(6),
-    created_ip VARCHAR(45),
-    last_modified_by VARCHAR(255),
-    last_modified_date TIMESTAMP(6),
-    last_modified_ip VARCHAR(45),
-    version INTEGER NOT NULL,
-    category_id VARCHAR(36),
-    type VARCHAR(255)
-        CONSTRAINT tb_notification_type_check
-            CHECK ((type)::TEXT = ANY ((ARRAY ['TOKTOK'::CHARACTER VARYING, 'SMS'::CHARACTER VARYING, 'EMAIL'::CHARACTER VARYING])::TEXT[]))
-    );
-
-COMMENT ON TABLE tb_notification IS '알림';
-
-COMMENT ON COLUMN tb_notification.id IS '식별자';
-
-COMMENT ON COLUMN tb_notification.created_by IS '생성자';
-
-COMMENT ON COLUMN tb_notification.created_date IS '생성일시';
-
-COMMENT ON COLUMN tb_notification.created_ip IS '생성 IP';
-
-COMMENT ON COLUMN tb_notification.last_modified_by IS '수정자';
-
-COMMENT ON COLUMN tb_notification.last_modified_date IS '수정일시';
-
-COMMENT ON COLUMN tb_notification.last_modified_ip IS '수정 IP';
-
-COMMENT ON COLUMN tb_notification.version IS '버전';
-
-COMMENT ON COLUMN tb_notification.category_id IS '카테고리 식별자';
-
-COMMENT ON COLUMN tb_notification.type IS '유형';
-
-ALTER TABLE tb_notification
-    OWNER TO seesaw_admin;
-
 CREATE TABLE tb_remember_me_token
 (
     series VARCHAR(255) NOT NULL
@@ -353,52 +156,6 @@ CREATE TABLE tb_remember_me_token
 );
 
 ALTER TABLE tb_remember_me_token
-    OWNER TO seesaw_admin;
-
-CREATE TABLE tb_reply
-(
-    id VARCHAR(36) NOT NULL
-        PRIMARY KEY,
-    created_by VARCHAR(255),
-    created_date TIMESTAMP(6),
-    created_ip VARCHAR(45),
-    last_modified_by VARCHAR(255),
-    last_modified_date TIMESTAMP(6),
-    last_modified_ip VARCHAR(45),
-    version INTEGER NOT NULL,
-    parent_id VARCHAR(36),
-    article_id VARCHAR(36),
-    content TEXT,
-    exposed BOOLEAN NOT NULL
-);
-
-COMMENT ON TABLE tb_reply IS '댓글';
-
-COMMENT ON COLUMN tb_reply.id IS '식별자';
-
-COMMENT ON COLUMN tb_reply.created_by IS '생성자';
-
-COMMENT ON COLUMN tb_reply.created_date IS '생성일시';
-
-COMMENT ON COLUMN tb_reply.created_ip IS '생성 IP';
-
-COMMENT ON COLUMN tb_reply.last_modified_by IS '수정자';
-
-COMMENT ON COLUMN tb_reply.last_modified_date IS '수정일시';
-
-COMMENT ON COLUMN tb_reply.last_modified_ip IS '수정 IP';
-
-COMMENT ON COLUMN tb_reply.version IS '버전';
-
-COMMENT ON COLUMN tb_reply.parent_id IS '부모 식별자';
-
-COMMENT ON COLUMN tb_reply.article_id IS '게시글 식별자';
-
-COMMENT ON COLUMN tb_reply.content IS '본문';
-
-COMMENT ON COLUMN tb_reply.exposed IS '노출여부';
-
-ALTER TABLE tb_reply
     OWNER TO seesaw_admin;
 
 CREATE TABLE tb_role
@@ -441,7 +198,7 @@ COMMENT ON COLUMN tb_role.name IS '이름';
 ALTER TABLE tb_role
     OWNER TO seesaw_admin;
 
-CREATE TABLE tb_role_mapping
+CREATE TABLE tb_menu_role
 (
     id VARCHAR(36) NOT NULL
         PRIMARY KEY,
@@ -452,30 +209,33 @@ CREATE TABLE tb_role_mapping
     last_modified_date TIMESTAMP(6),
     last_modified_ip VARCHAR(45),
     version INTEGER NOT NULL,
-    role_id VARCHAR(255),
-    site_id VARCHAR(255),
-    user_id VARCHAR(255)
+    menu_id VARCHAR(36)
+        CONSTRAINT fk_tb_menu_role
+            REFERENCES tb_menu,
+    role_id VARCHAR(36)
+        CONSTRAINT fk_tb_role_menu
+            REFERENCES tb_role
 );
 
-COMMENT ON TABLE tb_role_mapping IS '역할 매핑';
+COMMENT ON TABLE tb_menu_role IS '메뉴 역할 매핑';
 
-COMMENT ON COLUMN tb_role_mapping.id IS '식별자';
+COMMENT ON COLUMN tb_menu_role.id IS '식별자';
 
-COMMENT ON COLUMN tb_role_mapping.created_by IS '생성자';
+COMMENT ON COLUMN tb_menu_role.created_by IS '생성자';
 
-COMMENT ON COLUMN tb_role_mapping.created_date IS '생성일시';
+COMMENT ON COLUMN tb_menu_role.created_date IS '생성일시';
 
-COMMENT ON COLUMN tb_role_mapping.created_ip IS '생성 IP';
+COMMENT ON COLUMN tb_menu_role.created_ip IS '생성 IP';
 
-COMMENT ON COLUMN tb_role_mapping.last_modified_by IS '수정자';
+COMMENT ON COLUMN tb_menu_role.last_modified_by IS '수정자';
 
-COMMENT ON COLUMN tb_role_mapping.last_modified_date IS '수정일시';
+COMMENT ON COLUMN tb_menu_role.last_modified_date IS '수정일시';
 
-COMMENT ON COLUMN tb_role_mapping.last_modified_ip IS '수정 IP';
+COMMENT ON COLUMN tb_menu_role.last_modified_ip IS '수정 IP';
 
-COMMENT ON COLUMN tb_role_mapping.version IS '버전';
+COMMENT ON COLUMN tb_menu_role.version IS '버전';
 
-ALTER TABLE tb_role_mapping
+ALTER TABLE tb_menu_role
     OWNER TO seesaw_admin;
 
 CREATE TABLE tb_site
@@ -489,7 +249,9 @@ CREATE TABLE tb_site
     last_modified_date TIMESTAMP(6),
     last_modified_ip VARCHAR(45),
     version INTEGER NOT NULL,
-    parent_id VARCHAR(36),
+    parent_id VARCHAR(36)
+        CONSTRAINT fk_tb_site_parent
+            REFERENCES tb_site,
     address VARCHAR(255),
     zipcode VARCHAR(255),
     contact_number VARCHAR(255),
@@ -547,6 +309,231 @@ COMMENT ON COLUMN tb_site.search_engine_exposed IS '검색엔진 노출여부';
 COMMENT ON COLUMN tb_site.tags IS '태그';
 
 ALTER TABLE tb_site
+    OWNER TO seesaw_admin;
+
+CREATE TABLE tb_category
+(
+    id VARCHAR(36) NOT NULL
+        PRIMARY KEY,
+    created_by VARCHAR(255),
+    created_date TIMESTAMP(6),
+    created_ip VARCHAR(45),
+    last_modified_by VARCHAR(255),
+    last_modified_date TIMESTAMP(6),
+    last_modified_ip VARCHAR(45),
+    version INTEGER NOT NULL,
+    parent_id VARCHAR(36)
+        CONSTRAINT fk_tb_category_parent
+            REFERENCES tb_category,
+    description VARCHAR(255),
+    exposed BOOLEAN NOT NULL,
+    name VARCHAR(255),
+    sequence INTEGER,
+    site_exposed BOOLEAN NOT NULL,
+    site_exposed_order INTEGER NOT NULL,
+    site_id VARCHAR(36)
+        CONSTRAINT fk_tb_category_site
+            REFERENCES tb_site,
+    type VARCHAR(255)
+        CONSTRAINT tb_category_type_check
+            CHECK ((type)::TEXT = ANY ((ARRAY ['NONE'::CHARACTER VARYING, 'STATIC_CONTENT'::CHARACTER VARYING, 'BOARD'::CHARACTER VARYING, 'QNA'::CHARACTER VARYING, 'SCHEDULE'::CHARACTER VARYING, 'STORE'::CHARACTER VARYING, 'BUSINESS'::CHARACTER VARYING])::TEXT[]))
+    );
+
+COMMENT ON TABLE tb_category IS '카테고리';
+
+COMMENT ON COLUMN tb_category.id IS '식별자';
+
+COMMENT ON COLUMN tb_category.created_by IS '생성자';
+
+COMMENT ON COLUMN tb_category.created_date IS '생성일시';
+
+COMMENT ON COLUMN tb_category.created_ip IS '생성 IP';
+
+COMMENT ON COLUMN tb_category.last_modified_by IS '수정자';
+
+COMMENT ON COLUMN tb_category.last_modified_date IS '수정일시';
+
+COMMENT ON COLUMN tb_category.last_modified_ip IS '수정 IP';
+
+COMMENT ON COLUMN tb_category.version IS '버전';
+
+COMMENT ON COLUMN tb_category.parent_id IS '부모 식별자';
+
+COMMENT ON COLUMN tb_category.description IS '설명';
+
+COMMENT ON COLUMN tb_category.exposed IS '노출여부';
+
+COMMENT ON COLUMN tb_category.name IS '이름';
+
+COMMENT ON COLUMN tb_category.sequence IS '순서';
+
+COMMENT ON COLUMN tb_category.site_exposed IS '사이트 노출여부';
+
+COMMENT ON COLUMN tb_category.site_exposed_order IS '사이트 노출순서';
+
+COMMENT ON COLUMN tb_category.site_id IS '사이트 식별자';
+
+COMMENT ON COLUMN tb_category.type IS '타입';
+
+ALTER TABLE tb_category
+    OWNER TO seesaw_admin;
+
+CREATE TABLE tb_article
+(
+    id VARCHAR(36) NOT NULL
+        PRIMARY KEY,
+    created_by VARCHAR(255),
+    created_date TIMESTAMP(6),
+    created_ip VARCHAR(45),
+    last_modified_by VARCHAR(255),
+    last_modified_date TIMESTAMP(6),
+    last_modified_ip VARCHAR(45),
+    version INTEGER NOT NULL,
+    parent_id VARCHAR(36)
+        CONSTRAINT fk_tb_article_parent
+            REFERENCES tb_article,
+    category_id VARCHAR(36)
+        CONSTRAINT fk_tb_article_category
+            REFERENCES tb_category,
+    content TEXT,
+    exposed BOOLEAN NOT NULL,
+    fixed BOOLEAN NOT NULL,
+    fixed_order INTEGER,
+    title VARCHAR(255),
+    type VARCHAR(255)
+        CONSTRAINT tb_article_type_check
+            CHECK ((type)::TEXT = ANY ((ARRAY ['MAP'::CHARACTER VARYING, 'HTML'::CHARACTER VARYING, 'CAROUSEL'::CHARACTER VARYING, 'BUTTON_GROUP'::CHARACTER VARYING, 'IMAGE'::CHARACTER VARYING, 'TABLE'::CHARACTER VARYING, 'VIDEO'::CHARACTER VARYING])::TEXT[]))
+    );
+
+COMMENT ON TABLE tb_article IS '게시글';
+
+COMMENT ON COLUMN tb_article.id IS '식별자';
+
+COMMENT ON COLUMN tb_article.created_by IS '생성자';
+
+COMMENT ON COLUMN tb_article.created_date IS '생성일시';
+
+COMMENT ON COLUMN tb_article.created_ip IS '생성 IP';
+
+COMMENT ON COLUMN tb_article.last_modified_by IS '수정자';
+
+COMMENT ON COLUMN tb_article.last_modified_date IS '수정일시';
+
+COMMENT ON COLUMN tb_article.last_modified_ip IS '수정 IP';
+
+COMMENT ON COLUMN tb_article.version IS '버전';
+
+COMMENT ON COLUMN tb_article.parent_id IS '부모 식별자';
+
+COMMENT ON COLUMN tb_article.category_id IS '카테고리 식별자';
+
+COMMENT ON COLUMN tb_article.content IS '본문';
+
+COMMENT ON COLUMN tb_article.exposed IS '노출여부';
+
+COMMENT ON COLUMN tb_article.fixed IS '고정여부';
+
+COMMENT ON COLUMN tb_article.fixed_order IS '고정순서';
+
+COMMENT ON COLUMN tb_article.title IS '제목';
+
+COMMENT ON COLUMN tb_article.type IS '타입';
+
+ALTER TABLE tb_article
+    OWNER TO seesaw_admin;
+
+CREATE TABLE tb_notification
+(
+    id VARCHAR(36) NOT NULL
+        PRIMARY KEY,
+    created_by VARCHAR(255),
+    created_date TIMESTAMP(6),
+    created_ip VARCHAR(45),
+    last_modified_by VARCHAR(255),
+    last_modified_date TIMESTAMP(6),
+    last_modified_ip VARCHAR(45),
+    version INTEGER NOT NULL,
+    category_id VARCHAR(36)
+        CONSTRAINT fk_tb_notification_category
+            REFERENCES tb_category,
+    type VARCHAR(255)
+        CONSTRAINT tb_notification_type_check
+            CHECK ((type)::TEXT = ANY ((ARRAY ['TOKTOK'::CHARACTER VARYING, 'SMS'::CHARACTER VARYING, 'EMAIL'::CHARACTER VARYING])::TEXT[]))
+    );
+
+COMMENT ON TABLE tb_notification IS '알림';
+
+COMMENT ON COLUMN tb_notification.id IS '식별자';
+
+COMMENT ON COLUMN tb_notification.created_by IS '생성자';
+
+COMMENT ON COLUMN tb_notification.created_date IS '생성일시';
+
+COMMENT ON COLUMN tb_notification.created_ip IS '생성 IP';
+
+COMMENT ON COLUMN tb_notification.last_modified_by IS '수정자';
+
+COMMENT ON COLUMN tb_notification.last_modified_date IS '수정일시';
+
+COMMENT ON COLUMN tb_notification.last_modified_ip IS '수정 IP';
+
+COMMENT ON COLUMN tb_notification.version IS '버전';
+
+COMMENT ON COLUMN tb_notification.category_id IS '카테고리 식별자';
+
+COMMENT ON COLUMN tb_notification.type IS '유형';
+
+ALTER TABLE tb_notification
+    OWNER TO seesaw_admin;
+
+CREATE TABLE tb_reply
+(
+    id VARCHAR(36) NOT NULL
+        PRIMARY KEY,
+    created_by VARCHAR(255),
+    created_date TIMESTAMP(6),
+    created_ip VARCHAR(45),
+    last_modified_by VARCHAR(255),
+    last_modified_date TIMESTAMP(6),
+    last_modified_ip VARCHAR(45),
+    version INTEGER NOT NULL,
+    parent_id VARCHAR(36)
+        CONSTRAINT fk_tb_reply_parent
+            REFERENCES tb_reply,
+    article_id VARCHAR(36)
+        CONSTRAINT fk_tb_reply_article
+            REFERENCES tb_article,
+    content TEXT,
+    exposed BOOLEAN NOT NULL
+);
+
+COMMENT ON TABLE tb_reply IS '댓글';
+
+COMMENT ON COLUMN tb_reply.id IS '식별자';
+
+COMMENT ON COLUMN tb_reply.created_by IS '생성자';
+
+COMMENT ON COLUMN tb_reply.created_date IS '생성일시';
+
+COMMENT ON COLUMN tb_reply.created_ip IS '생성 IP';
+
+COMMENT ON COLUMN tb_reply.last_modified_by IS '수정자';
+
+COMMENT ON COLUMN tb_reply.last_modified_date IS '수정일시';
+
+COMMENT ON COLUMN tb_reply.last_modified_ip IS '수정 IP';
+
+COMMENT ON COLUMN tb_reply.version IS '버전';
+
+COMMENT ON COLUMN tb_reply.parent_id IS '부모 식별자';
+
+COMMENT ON COLUMN tb_reply.article_id IS '게시글 식별자';
+
+COMMENT ON COLUMN tb_reply.content IS '본문';
+
+COMMENT ON COLUMN tb_reply.exposed IS '노출여부';
+
+ALTER TABLE tb_reply
     OWNER TO seesaw_admin;
 
 CREATE TABLE tb_user
@@ -610,6 +597,49 @@ COMMENT ON COLUMN tb_user.username IS '계정명';
 ALTER TABLE tb_user
     OWNER TO seesaw_admin;
 
+CREATE TABLE tb_role_mapping
+(
+    id VARCHAR(36) NOT NULL
+        PRIMARY KEY,
+    created_by VARCHAR(255),
+    created_date TIMESTAMP(6),
+    created_ip VARCHAR(45),
+    last_modified_by VARCHAR(255),
+    last_modified_date TIMESTAMP(6),
+    last_modified_ip VARCHAR(45),
+    version INTEGER NOT NULL,
+    role_id VARCHAR(36)
+        CONSTRAINT fk_tb_mapping_role
+            REFERENCES tb_role,
+    site_id VARCHAR(36)
+        CONSTRAINT fk_tb_mapping_site
+            REFERENCES tb_site,
+    user_id VARCHAR(36)
+        CONSTRAINT fk_tb_mapping_user
+            REFERENCES tb_user
+);
+
+COMMENT ON TABLE tb_role_mapping IS '역할 매핑';
+
+COMMENT ON COLUMN tb_role_mapping.id IS '식별자';
+
+COMMENT ON COLUMN tb_role_mapping.created_by IS '생성자';
+
+COMMENT ON COLUMN tb_role_mapping.created_date IS '생성일시';
+
+COMMENT ON COLUMN tb_role_mapping.created_ip IS '생성 IP';
+
+COMMENT ON COLUMN tb_role_mapping.last_modified_by IS '수정자';
+
+COMMENT ON COLUMN tb_role_mapping.last_modified_date IS '수정일시';
+
+COMMENT ON COLUMN tb_role_mapping.last_modified_ip IS '수정 IP';
+
+COMMENT ON COLUMN tb_role_mapping.version IS '버전';
+
+ALTER TABLE tb_role_mapping
+    OWNER TO seesaw_admin;
+
 CREATE TABLE tb_view
 (
     id VARCHAR(36) NOT NULL
@@ -622,6 +652,8 @@ CREATE TABLE tb_view
     last_modified_ip VARCHAR(45),
     version INTEGER NOT NULL,
     article_id VARCHAR(36)
+        CONSTRAINT fk_tb_view_article
+            REFERENCES tb_article
 );
 
 COMMENT ON TABLE tb_view IS '뷰';

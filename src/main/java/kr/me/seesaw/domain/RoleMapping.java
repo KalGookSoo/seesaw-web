@@ -1,5 +1,6 @@
 package kr.me.seesaw.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.*;
@@ -22,10 +23,16 @@ import static lombok.AccessLevel.PROTECTED;
 @DynamicUpdate
 public class RoleMapping extends BaseEntity {
 
+    @Comment("역할 식별자")
+    @Column(length = 36)
     private String roleId;
 
+    @Comment("계정 식별자")
+    @Column(length = 36)
     private String userId;
 
+    @Comment("사이트 식별자")
+    @Column(length = 36)
     private String siteId;
 
     public static RoleMapping create(String roleId, String userId, String siteId) {

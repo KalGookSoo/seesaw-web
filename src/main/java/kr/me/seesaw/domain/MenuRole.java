@@ -1,5 +1,6 @@
 package kr.me.seesaw.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.*;
@@ -22,8 +23,12 @@ import static lombok.AccessLevel.PROTECTED;
 @DynamicUpdate
 public class MenuRole extends BaseEntity {
 
+    @Comment("메뉴 식별자")
+    @Column(length = 36)
     private String menuId;
 
+    @Comment("역할 식별자")
+    @Column(length = 36)
     private String roleId;
 
     public static MenuRole create(String menuId, String roleId) {
