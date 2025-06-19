@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * 사용자 인증 주체
+ * 계정 인증 주체
  */
 public class UserPrincipal implements UserDetails, OAuth2User {
 

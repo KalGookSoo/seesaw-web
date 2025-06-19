@@ -1,10 +1,10 @@
 package kr.me.seesaw.domain;
 
-import kr.me.seesaw.core.hierarchy.Hierarchical;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import kr.me.seesaw.core.hierarchy.Hierarchical;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -50,11 +50,6 @@ public class Menu extends AbstractHierarchical<Menu> implements Hierarchical<Men
         children.add(child);
         child.setParentId(getId());
         child.setParent(this);
-    }
-
-    public void addRole(Role role) {
-        roles.add(role);
-        role.setMenu(this);
     }
 
 }

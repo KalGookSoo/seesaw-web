@@ -16,22 +16,21 @@ import static lombok.AccessLevel.PROTECTED;
 @ToString(callSuper = true)
 
 @Entity
-@Table(name = "tb_role")
-@Comment("역할")
+@Table(name = "tb_menu_role")
+@Comment("메뉴 역할 매핑")
 @DynamicInsert
 @DynamicUpdate
-public class Role extends BaseEntity {
+public class MenuRole extends BaseEntity {
 
-    @Comment("이름")
-    private String name;
+    private String menuId;
 
-    @Comment("별칭")
-    private String alias;
+    private String roleId;
 
-    public static Role create(String name, String alias) {
-        Role role = new Role();
-        role.name = name;
-        role.alias = alias;
-        return role;
+    public static MenuRole create(String menuId, String roleId) {
+        MenuRole menuRole = new MenuRole();
+        menuRole.menuId = menuId;
+        menuRole.roleId = roleId;
+        return menuRole;
     }
+
 }

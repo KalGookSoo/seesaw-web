@@ -16,22 +16,24 @@ import static lombok.AccessLevel.PROTECTED;
 @ToString(callSuper = true)
 
 @Entity
-@Table(name = "tb_role")
-@Comment("역할")
+@Table(name = "tb_role_mapping")
+@Comment("역할 매핑")
 @DynamicInsert
 @DynamicUpdate
-public class Role extends BaseEntity {
+public class RoleMapping extends BaseEntity {
 
-    @Comment("이름")
-    private String name;
+    private String roleId;
 
-    @Comment("별칭")
-    private String alias;
+    private String userId;
 
-    public static Role create(String name, String alias) {
-        Role role = new Role();
-        role.name = name;
-        role.alias = alias;
-        return role;
+    private String siteId;
+
+    public static RoleMapping create(String roleId, String userId, String siteId) {
+        RoleMapping roleMapping = new RoleMapping();
+        roleMapping.roleId = roleId;
+        roleMapping.userId = userId;
+        roleMapping.siteId = siteId;
+        return roleMapping;
     }
+
 }
