@@ -76,6 +76,12 @@ jobs:
       - name: Make Gradle wrapper executable
         run: chmod +x ./gradlew
 
+      - name: Run unit tests
+        run: |
+          echo "단위 테스트 실행 중..."
+          ./gradlew test
+          echo "단위 테스트 완료"
+
       - name: Extract version from tag
         id: get_version
         run: |
