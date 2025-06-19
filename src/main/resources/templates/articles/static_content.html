@@ -10,6 +10,7 @@
 <head>
 
     <meta name="description" th:content="|${SITE_CONTEXT.name} ${CURRENT_CATEGORY.name} ${CURRENT_CATEGORY.description != null ? CURRENT_CATEGORY.description : ''}|">
+    <meta name="keywords" th:content="|${SITE_CONTEXT.name} ${CURRENT_CATEGORY.name}|">
 
     <meta property="og:type" content="website">
     <meta property="og:title" content="페이지 제목" th:content="|${SITE_CONTEXT.name} ${CURRENT_CATEGORY.name}|">
