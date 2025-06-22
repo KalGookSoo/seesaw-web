@@ -2,6 +2,7 @@ package kr.me.seesaw.controller;
 
 import kr.me.seesaw.command.CreateArticleCommand;
 import kr.me.seesaw.command.UpdateArticleCommand;
+import kr.me.seesaw.domain.vo.BasePermission;
 import kr.me.seesaw.message.CmsMessageSource;
 import kr.me.seesaw.service.ArticleService;
 import jakarta.validation.Valid;
@@ -22,7 +23,7 @@ public class ArticleApiController {
 
     private final ArticleService articleService;
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() and (hasAnyRole('ADMIN', 'MANAGER') or hasPermission(#command.categoryId, 'kr.me.seesaw.domain.Category', T(kr.me.seesaw.domain.vo.BasePermission).CREATE))")
     @PostMapping
     public ResponseEntity<String> create(@Valid CreateArticleCommand command) throws IOException {
         articleService.create(command);
