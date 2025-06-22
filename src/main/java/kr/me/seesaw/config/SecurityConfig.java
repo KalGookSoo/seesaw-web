@@ -1,11 +1,16 @@
 package kr.me.seesaw.config;
 
+import kr.me.seesaw.security.SeesawPermissionEvaluator;
 import kr.me.seesaw.service.PrincipalOauth2UserService;
+import kr.me.seesaw.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.access.PermissionEvaluator;
+import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -31,6 +36,20 @@ import java.util.Collections;
 public class SecurityConfig {
 
     private final PrincipalOauth2UserService principalOauth2UserService;
+
+    private final RoleService roleService;
+
+    @Bean
+    public PermissionEvaluator seesawPermissionEvaluator() {
+        return new SeesawPermissionEvaluator(roleService);
+    }
+
+    @Bean
+    public MethodSecurityExpressionHandler methodSecurityExpressionHandler() {
+        DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
+        expressionHandler.setPermissionEvaluator(seesawPermissionEvaluator());
+        return expressionHandler;
+    }
 
     @Bean
     public SavedRequestAwareAuthenticationSuccessHandler authenticationSuccessHandler() {
