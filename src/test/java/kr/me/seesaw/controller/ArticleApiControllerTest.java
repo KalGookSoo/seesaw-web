@@ -132,7 +132,7 @@ class ArticleApiControllerTest {
     @SuppressWarnings("DefaultAnnotationParam")
     @Test
     @WithMockUser(username = "admin", roles = {"USER"})
-    @DisplayName("게시글 생성 - 사용자 인증 및 커맨드 검증 성공(200)")
+    @DisplayName("게시글 생성 - 사용자 인증 및 커맨드 검증 성공 - 쓰기권한 없음(403)")
     void createArticleCase4() throws Exception {
 
         CreateArticleCommand command = new CreateArticleCommand();
@@ -158,7 +158,7 @@ class ArticleApiControllerTest {
                         .contentType(MediaType.MULTIPART_FORM_DATA)
                 )
                 .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isForbidden());
     }
 
 }

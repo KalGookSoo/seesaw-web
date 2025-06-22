@@ -32,7 +32,7 @@ public class SeesawPermissionEvaluator implements PermissionEvaluator {
         }
 
         if (!(permission instanceof BasePermission basePermission)) {
-            logger.error("Permission type is not BasePermission: {}", permission.getClass().getName());
+            logger.error("hasPermission을 사용할 때 BasePermission 하위타입을 사용하세요. 현재 Permission Type: {}", permission.getClass().getName());
             return false;
         }
 
@@ -45,7 +45,6 @@ public class SeesawPermissionEvaluator implements PermissionEvaluator {
         // 사용자의 각 역할에 대해 권한 확인
         for (GrantedAuthority authority : authorities) {
             String roleName = authority.getAuthority();
-            logger.debug("권한 확인 중: {}", roleName);
 
             try {
                 // 역할 이름으로 역할 조회
@@ -55,7 +54,7 @@ public class SeesawPermissionEvaluator implements PermissionEvaluator {
                 List<Permission> permissions = roleService.getPermissions(role.getId());
 
                 if (permissions.isEmpty()) {
-                    logger.debug("역할 {}에 대한 권한이 없습니다.", roleName);
+                    logger.info("역할 {}에 대한 권한이 없습니다.", roleName);
                     continue;
                 }
 
@@ -67,14 +66,11 @@ public class SeesawPermissionEvaluator implements PermissionEvaluator {
 
                     // 비트 연산으로 권한 확인 (requiredMask가 permissionMask에 포함되어 있는지)
                     if ((permissionMask & requiredMask) == requiredMask) {
-                        logger.debug("권한 승인: 역할 {}", roleName);
                         return true;
                     }
                 }
-            } catch (NoSuchElementException e) {
-                logger.debug("역할 {}에 대한 권한을 찾을 수 없습니다.", roleName);
-            } catch (Exception e) {
-                logger.error("역할 {}에 대한 권한 확인 중 오류 발생", roleName, e);
+            } catch (RuntimeException e) {
+                logger.error("역할 {}에 대한 권한 확인 중 오류 발생", roleName);
             }
         }
         return false;
@@ -88,7 +84,7 @@ public class SeesawPermissionEvaluator implements PermissionEvaluator {
         }
 
         if (!(permission instanceof BasePermission basePermission)) {
-            logger.error("Permission type is not BasePermission: {}", permission.getClass().getName());
+            logger.error("hasPermission을 사용할 때 BasePermission 하위타입을 사용하세요. 현재 Permission Type: {}", permission.getClass().getName());
             return false;
         }
 
@@ -101,7 +97,7 @@ public class SeesawPermissionEvaluator implements PermissionEvaluator {
         // 사용자의 각 역할에 대해 권한 확인
         for (GrantedAuthority authority : authorities) {
             String roleName = authority.getAuthority();
-            logger.debug("권한 확인 중: {}, 대상: {}, 타입: {}", roleName, targetId, targetType);
+            logger.info("권한 확인 중: {}, 대상: {}, 타입: {}", roleName, targetId, targetType);
 
             try {
                 // 역할 이름으로 역할 조회
@@ -116,13 +112,10 @@ public class SeesawPermissionEvaluator implements PermissionEvaluator {
 
                 // 비트 연산으로 권한 확인 (requiredMask가 permissionMask에 포함되어 있는지)
                 if ((permissionMask & requiredMask) == requiredMask) {
-                    logger.debug("권한 승인: 역할 {}, 대상: {}", roleName, targetId);
                     return true;
                 }
-            } catch (NoSuchElementException e) {
-                logger.debug("역할 {} 또는 대상 {}에 대한 권한을 찾을 수 없습니다.", roleName, targetId);
-            } catch (Exception e) {
-                logger.error("역할 {}에 대한 권한 확인 중 오류 발생", roleName, e);
+            } catch (RuntimeException e) {
+                logger.error("역할 {}에 대한 권한 확인 중 오류 발생", roleName);
             }
         }
         return false;
