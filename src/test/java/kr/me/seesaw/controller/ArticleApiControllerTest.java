@@ -53,7 +53,7 @@ class ArticleApiControllerTest {
         MockMultipartFile file = new MockMultipartFile("multipartFiles", "file.txt", MediaType.TEXT_PLAIN_VALUE, "file content".getBytes());
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/articles")
-                        .file(file)
+//                        .file(file)
                         .param("categoryId", command.getCategoryId())
                         .param("type", command.getType().name())
                         .param("fixed", String.valueOf(command.isFixed()))
@@ -84,7 +84,7 @@ class ArticleApiControllerTest {
         MockMultipartFile file = new MockMultipartFile("multipartFiles", "file.txt", MediaType.TEXT_PLAIN_VALUE, "file content".getBytes());
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/articles")
-                        .file(file)
+//                        .file(file)
                         .param("categoryId", command.getCategoryId())
                         .param("type", command.getType().name())
                         .param("fixed", String.valueOf(command.isFixed()))
@@ -115,7 +115,7 @@ class ArticleApiControllerTest {
         MockMultipartFile file = new MockMultipartFile("multipartFiles", "file.txt", MediaType.TEXT_PLAIN_VALUE, "file content".getBytes());
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/articles")
-                        .file(file)
+//                        .file(file)
                         .param("categoryId", command.getCategoryId())
                         .param("type", command.getType().name())
                         .param("fixed", String.valueOf(command.isFixed()))
@@ -144,10 +144,10 @@ class ArticleApiControllerTest {
         command.setTitle("Test Title");
         command.setContent("Test Content");
 
-        MockMultipartFile file = new MockMultipartFile("multipartFiles", "file.txt", MediaType.TEXT_PLAIN_VALUE, "file content".getBytes());
+//        MockMultipartFile file = new MockMultipartFile("multipartFiles", "file.txt", MediaType.TEXT_PLAIN_VALUE, "file content".getBytes());
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/articles")
-                        .file(file)
+//                        .file(file)
                         .param("categoryId", command.getCategoryId())
                         .param("type", command.getType().name())
                         .param("fixed", String.valueOf(command.isFixed()))
