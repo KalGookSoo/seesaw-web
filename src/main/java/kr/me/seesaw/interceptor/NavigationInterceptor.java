@@ -1,12 +1,13 @@
 package kr.me.seesaw.interceptor;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import kr.me.seesaw.core.hierarchy.HierarchicalFactory;
 import kr.me.seesaw.domain.Category;
 import kr.me.seesaw.domain.Site;
 import kr.me.seesaw.service.SiteService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -20,7 +21,25 @@ public class NavigationInterceptor implements HandlerInterceptor {
     private final String domainName;
 
     private final SiteService siteService;
-// TODO 요청 속성이 아닌 세션 속성으로 변경할 것.
+
+    @Value("${spring.profiles.active:local}")
+    private String activeProfile;
+
+    private String getHost(HttpServletRequest request) {
+        String scheme = "prod".equals(activeProfile) ? "https" : request.getScheme();
+        String serverName = request.getServerName();
+        int serverPort = request.getServerPort();
+
+        StringBuilder baseUrl = new StringBuilder();
+        baseUrl.append(scheme).append("://").append(serverName);
+
+        if (("http".equals(scheme) && serverPort != 80) || ("https".equals(scheme) && serverPort != 443)) {
+            baseUrl.append(":").append(serverPort);
+        }
+
+        return baseUrl.toString();
+    }
+
     @Override
     public boolean preHandle(
             @NonNull HttpServletRequest request,
@@ -28,28 +47,20 @@ public class NavigationInterceptor implements HandlerInterceptor {
             @NonNull Object handler
     ) throws Exception {
         try {
-
-            // TODO 리팩토링할 것
-            StringBuffer requestURL = request.getRequestURL();
-            String queryString = request.getQueryString();
-            if (queryString != null) {
-                requestURL.append("?").append(queryString);
-            }
-            request.setAttribute(ContextEnvironment.REQUEST_URL, requestURL.toString());
-
-            String scheme = request.getScheme();
-            String serverName = request.getServerName();
-            int serverPort = request.getServerPort();
-            String host = scheme + "://" + serverName;
-            if (("http".equals(scheme) && serverPort != 80) || ("https".equals(scheme) && serverPort != 443)) {
-                host += ":" + serverPort;
-            }
+            String host = getHost(request);
             request.setAttribute(ContextEnvironment.REQUEST_HOST, host);
 
             String path = request.getRequestURI();
             request.setAttribute(ContextEnvironment.REQUEST_PATH, path);
 
-            request.setAttribute(ContextEnvironment.REQUEST_QUERY_STRING, queryString != null ? queryString : "");
+            String queryStr = Optional.ofNullable(request.getQueryString()).orElse("");
+            request.setAttribute(ContextEnvironment.REQUEST_QUERY_STRING, queryStr);
+
+            StringBuilder requestUrl = new StringBuilder(host).append(path);
+            if (!queryStr.isEmpty()) {
+                requestUrl.append("?").append(queryStr);
+            }
+            request.setAttribute(ContextEnvironment.REQUEST_URL, requestUrl.toString());
 
 
             Site site = siteService.getSiteContext(domainName);
