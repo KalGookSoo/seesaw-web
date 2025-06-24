@@ -9,7 +9,7 @@ import java.sql.SQLException;
 
 
 @Configuration
-@Profile("!local")
+@Profile("test")
 public class H2ServerConfig {
 
     @Bean(initMethod = "start", destroyMethod = "stop")
