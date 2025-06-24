@@ -5,7 +5,6 @@ import kr.me.seesaw.domain.Role;
 import kr.me.seesaw.domain.vo.BasePermission;
 import kr.me.seesaw.service.RoleService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.PermissionEvaluator;
@@ -15,7 +14,6 @@ import org.springframework.security.core.GrantedAuthority;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 public class SeesawPermissionEvaluator implements PermissionEvaluator {
@@ -97,7 +95,6 @@ public class SeesawPermissionEvaluator implements PermissionEvaluator {
         // 사용자의 각 역할에 대해 권한 확인
         for (GrantedAuthority authority : authorities) {
             String roleName = authority.getAuthority();
-            logger.info("권한 확인 중: {}, 대상: {}, 타입: {}", roleName, targetId, targetType);
 
             try {
                 // 역할 이름으로 역할 조회
