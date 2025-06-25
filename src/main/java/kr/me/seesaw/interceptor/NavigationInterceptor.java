@@ -7,7 +7,6 @@ import kr.me.seesaw.domain.Category;
 import kr.me.seesaw.domain.Site;
 import kr.me.seesaw.service.SiteService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -22,19 +21,16 @@ public class NavigationInterceptor implements HandlerInterceptor {
 
     private final SiteService siteService;
 
-    @Value("${spring.profiles.active:local}")
-    private String activeProfile;
+    private final String profiles;
 
     private String getHost(HttpServletRequest request) {
-        String scheme = "prod".equals(activeProfile) ? "https" : request.getScheme();
+        String scheme = "prod".equals(profiles) ? request.getHeader("X-Forwarded-Proto") : request.getScheme();
         String serverName = request.getServerName();
-        int serverPort = request.getServerPort();
-
         StringBuilder baseUrl = new StringBuilder();
         baseUrl.append(scheme).append("://").append(serverName);
 
-        if (("http".equals(scheme) && serverPort != 80) || ("https".equals(scheme) && serverPort != 443)) {
-            baseUrl.append(":").append(serverPort);
+        if (!"prod".equals(profiles)) {
+            baseUrl.append(":").append(request.getServerPort());
         }
 
         return baseUrl.toString();

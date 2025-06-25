@@ -33,6 +33,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Value("${site.domain.name}")
     private String domainName;
 
+    @Value("${spring.profiles.active:local}")
+    private String profiles;
+
     private final SiteService siteService;
 
     @Override
@@ -57,7 +60,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Bean
     public NavigationInterceptor navigationInterceptor() {
-        return new NavigationInterceptor(domainName, siteService);
+        return new NavigationInterceptor(domainName, siteService, profiles);
     }
 
     @Override
