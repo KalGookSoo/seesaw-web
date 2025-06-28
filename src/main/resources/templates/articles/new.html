@@ -90,6 +90,10 @@
             const submitHandlers = {
                 '[name="createArticleForm"]': e => {
                     e.preventDefault();
+
+                    e.submitter.classList.add('d-none');
+                    e.submitter.nextElementSibling.classList.remove('d-none');
+
                     const form = new FormData(e.target);
                     form.append('type', 'HTML');
                     form.set('fixed', e.target.elements.fixed.checked);
@@ -119,6 +123,8 @@
                     fetch(e.target.action, httpEntity)
                         .then(async response => {
                             const responseBody = await response.text();
+                            e.submitter.classList.remove('d-none');
+                            e.submitter.nextElementSibling.classList.add('d-none');
                             if (response.ok) {
                                 alert(/*[[#{command.success.create}]]*/'');
                                 location.href = /*[[@{|/articles/view${search.getUriComponentsBuilder().queryParam('page', 0).build().toUriString()}|}]]*/'';
@@ -310,6 +316,10 @@
                     <button class="btn btn-primary d-flex align-items-center px-4" type="submit">
                         <i class="bi bi-check-lg me-2"></i>
                         <span th:text="#{label.save}"></span>
+                    </button>
+                    <button class="btn btn-primary d-flex align-items-center px-4 d-none" type="button" disabled>
+                        <i class="bi bi-check-lg me-2 spinner-border spinner-border-sm" role="status" aria-hidden="true"></i>
+                        <span>Loading...</span>
                     </button>
                 </div>
             </div>
