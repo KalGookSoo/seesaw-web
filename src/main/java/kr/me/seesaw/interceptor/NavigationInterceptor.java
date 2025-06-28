@@ -7,7 +7,7 @@ import kr.me.seesaw.domain.Category;
 import kr.me.seesaw.domain.Site;
 import kr.me.seesaw.service.SiteService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -18,23 +18,18 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class NavigationInterceptor implements HandlerInterceptor {
 
-    private final String domainName;
+    private final Environment environment;
 
     private final SiteService siteService;
 
-    @Value("${spring.profiles.active:local}")
-    private String activeProfile;
-
     private String getHost(HttpServletRequest request) {
-        String scheme = "prod".equals(activeProfile) ? "https" : request.getScheme();
+        String scheme = environment.matchesProfiles("prod") ? request.getHeader("X-Forwarded-Proto") : request.getScheme();
         String serverName = request.getServerName();
-        int serverPort = request.getServerPort();
-
         StringBuilder baseUrl = new StringBuilder();
         baseUrl.append(scheme).append("://").append(serverName);
 
-        if (("http".equals(scheme) && serverPort != 80) || ("https".equals(scheme) && serverPort != 443)) {
-            baseUrl.append(":").append(serverPort);
+        if (!environment.matchesProfiles("prod")) {
+            baseUrl.append(":").append(request.getServerPort());
         }
 
         return baseUrl.toString();
@@ -62,8 +57,9 @@ public class NavigationInterceptor implements HandlerInterceptor {
             }
             request.setAttribute(ContextEnvironment.REQUEST_URL, requestUrl.toString());
 
+            request.setAttribute(ContextEnvironment.ACTIVE_PROFILES, environment.getActiveProfiles());
 
-            Site site = siteService.getSiteContext(domainName);
+            Site site = siteService.getSiteContext(environment.getProperty("site.domain.name"));
             request.setAttribute(ContextEnvironment.SITE_CONTEXT, site);
 
             // 요소 탐색 편의를 위한 속성 할당

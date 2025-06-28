@@ -5,6 +5,24 @@
       th:lang="${#locale.language}"
 >
 <head>
+    <!--/* Google Tag Manager */-->
+    <script th:if="${#arrays.contains(ACTIVE_PROFILES, 'prod')}">
+        (function (w, d, s, l, i) {
+            w[l] = w[l] || [];
+            w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            });
+            let f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l !== 'dataLayer' ? '&l=' + l : '';
+            j.async = true;
+            j.src =
+                'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+            f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-W7XRJNC9');
+    </script>
+    <!--/* End Google Tag Manager */-->
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -45,21 +63,23 @@
 
     <!--/* JS */-->
     <script th:src="@{/scripts/bootstrap.bundle.min.js}"></script>
-    <script th:src="@{/scripts/header.js}"></script>
     <script th:src="@{/scripts/main.js}"></script>
-    <script th:src="@{/scripts/footer.js}"></script>
     <script th:src="@{/scripts/aside.js}"></script>
     <script th:inline="javascript">
         sessionStorage.setItem("contextPath", /*[[@{/}]]*/'');
         const CSRF = /*[[${_csrf}]]*/{};
     </script>
 
-
     <script th:if="${message != null}" th:inline="javascript">
         alert(/*[[${message}]]*/'');
     </script>
 </head>
 <body id="body" class="d-flex flex-column min-vh-100">
+    <!--/* Google Tag Manager (noscript) */-->
+    <noscript th:if="${#arrays.contains(ACTIVE_PROFILES, 'prod')}">
+        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W7XRJNC9" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    <!--/* End Google Tag Manager (noscript) */-->
     <dialog id="aside-dialog" role="alertdialog">
         <th:block th:replace="~{aside :: aside}"></th:block>
     </dialog>

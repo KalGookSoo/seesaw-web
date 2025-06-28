@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', e => {
+    const asideDialog = document.getElementById('aside-dialog');
+
     document.addEventListener('click', e => {
         const selector = Object.keys(clickHandlers).find(selector => e.target.closest(selector));
         clickHandlers[selector]?.(e);
@@ -6,8 +8,13 @@ document.addEventListener('DOMContentLoaded', e => {
 
     const clickHandlers = {
         '.open-aside': e => {
-            const asideDialog = document.getElementById('aside-dialog');
             asideDialog.showModal();
+        },
+        '#aside-dialog': e => {
+            if (e.target === asideDialog) {
+                asideDialog.close();
+            }
         }
     };
+
 });

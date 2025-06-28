@@ -38,11 +38,24 @@
             </div>
         </nav>
         <div class="utility d-none d-lg-flex align-items-center">
-            <button type="button" class="btn site-map open-aside"><!--/*<span class="icon"></span>*/-->전체보기</button>
-            <a class="btn sign-in" sec:authorize="isAnonymous()" th:href="@{/oauth2/authorization/naver}"
-               th:text="#{label.sign.in}"></a>
+            <button class="btn site-map open-aside"
+                    th:title="전체보기"
+                    th:text="전체보기"
+                    type="button"
+            >
+            </button>
+            <a class="btn sign-in"
+               sec:authorize="isAnonymous()"
+               th:href="@{/oauth2/authorization/naver}"
+               th:text="#{label.sign.in}"
+               th:title="#{label.sign.in}"
+            ></a>
             <form sec:authorize="isAuthenticated()" th:action="@{/sign-out}" th:method="post">
-                <button type="submit" class="btn sign-out" th:text="#{label.sign.out}"></button>
+                <button class="btn sign-out"
+                        th:text="#{label.sign.out}"
+                        th:title="#{label.sign.out}"
+                        type="submit"
+                ></button>
             </form>
         </div>
         <div class="d-lg-none d-flex align-items-center gap-2">

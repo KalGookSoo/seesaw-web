@@ -9,4 +9,5 @@ public interface ContextEnvironment {
     String REQUEST_HOST = "REQUEST_HOST";
     String REQUEST_PATH = "REQUEST_PATH";
     String REQUEST_QUERY_STRING = "REQUEST_QUERY_STRING";
+    String ACTIVE_PROFILES = "ACTIVE_PROFILES";
 }
