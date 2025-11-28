@@ -6,7 +6,10 @@ spring:
   application:
     name: seesaw-web
     version: 0.0.1-SNAPSHOT
-  
+
+  banner:
+    location: classpath:banner.txt
+
   # DataSource
   h2:
     console:
@@ -24,8 +27,6 @@ spring:
     properties:
       hibernate:
         highlight_sql: true
-        format_sql: true
-    show-sql: false
     hibernate:
       ddl-auto: update
     open-in-view: false
