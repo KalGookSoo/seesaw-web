@@ -21,13 +21,13 @@ public class CodeApiController {
 
     @GetMapping
     public ResponseEntity<List<CodeModel>> getCodes() {
-        List<CodeModel> codes = codeService.get();
+        List<CodeModel> codes = codeService.getAllCodes();
         return ResponseEntity.ok(HierarchicalFactory.build(codes));
     }
 
     @GetMapping("/{name}")
     public ResponseEntity<List<CodeModel>> getCode(@PathVariable("name") String name) {
-        List<CodeModel> codes = codeService.findByName(name);
+        List<CodeModel> codes = codeService.getAllCodesByName(name);
         return ResponseEntity.ok(HierarchicalFactory.build(codes));
     }
 
