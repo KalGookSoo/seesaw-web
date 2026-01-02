@@ -49,6 +49,13 @@
     <script th:src="@{/scripts/aside.js}"></script>
     <script th:inline="javascript">
         sessionStorage.setItem("contextPath", /*[[@{/}]]*/'');
+
+        /**
+         * @typeDef {Object} CsrfToken
+         * @property {string} headerName
+         * @property {string} parameterName
+         * @property {string} token
+         */
         const CSRF = /*[[${_csrf}]]*/{};
     </script>
 

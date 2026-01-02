@@ -6,7 +6,9 @@
       layout:decorate="~{layout}"
       th:lang="${#locale.language}"
 >
-
+<!--/*@thymesVar id="REQUEST_URI_BUILDER" type="org.springframework.web.util.UriComponentsBuilder"*/-->
+<!--/*@thymesVar id="SITE_CONTEXT" type="kr.me.seesaw.model.SiteModel"*/-->
+<!--/*@thymesVar id="CURRENT_CATEGORY" type="kr.me.seesaw.model.CategoryModel"*/-->
 <head>
 
   <meta name="description"
@@ -18,15 +20,15 @@
   <meta property="og:description" content="페이지 설명"
         th:content="|${SITE_CONTEXT.name} ${CURRENT_CATEGORY.name} ${CURRENT_CATEGORY.description != null ? CURRENT_CATEGORY.description : ''}|">
   <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${SITE_CONTEXT.profileImage != null}"
-        th:content="@{|${REQUEST_HOST}/api/attachments/${SITE_CONTEXT.profileImage.id}|}">
-  <meta property="og:url" content="페이지 주소" th:content="${REQUEST_URL}">
+        th:content="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/api/attachments/' + SITE_CONTEXT.profileImage.id).replaceQuery(null).toUriString()}">
+  <meta property="og:url" content="페이지 주소" th:content="${REQUEST_URI_BUILDER.toUriString()}">
 
   <meta property="twitter:card" content="summary">
   <meta property="twitter:title" content="페이지 제목" th:content="|${SITE_CONTEXT.name}  ${CURRENT_CATEGORY.name}|">
   <meta property="twitter:description" content="페이지 설명"
         th:content="|${SITE_CONTEXT.name} ${CURRENT_CATEGORY.name} ${CURRENT_CATEGORY.description != null ? CURRENT_CATEGORY.description : ''}|">
   <meta property="twitter:image" content="페이지 썸네일 이미지 주소" th:if="${SITE_CONTEXT.profileImage != null}"
-        th:content="@{|${REQUEST_HOST}/api/attachments/${SITE_CONTEXT.profileImage.id}|}">
+        th:content="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/api/attachments/' + SITE_CONTEXT.profileImage.id).replaceQuery(null).toUriString()}">
 
   <title>[[${CURRENT_CATEGORY.name}]] | [[${SITE_CONTEXT.name}]]</title>
   <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
@@ -70,7 +72,7 @@
         <div>
           <a class="btn d-flex align-items-center"
              th:classappend="${#strings.equals(search.viewType, 'TABLE')} ? 'main-color' : ''"
-             th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.pageable.pageNumber).replaceQueryParam('viewType', 'TABLE').build().toUriString()}}"
+             th:href="${REQUEST_URI_BUILDER.cloneBuilder().replaceQueryParam('page', page.pageable.pageNumber).replaceQueryParam('viewType', 'TABLE').build().toUriString()}"
              th:title="#{label.view.list}"
           >
             <i class="bi bi-list"></i><span class="d-none d-sm-inline ms-1" th:text="#{label.view.list}">목록보기</span>
@@ -79,7 +81,7 @@
         <div>
           <a class="btn d-flex align-items-center"
              th:classappend="${#strings.equals(search.viewType, 'CARD')} ? 'main-color' : ''"
-             th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.pageable.pageNumber).replaceQueryParam('viewType', 'CARD').build().toUriString()}}"
+             th:href="${REQUEST_URI_BUILDER.cloneBuilder().replaceQueryParam('page', page.pageable.pageNumber).replaceQueryParam('viewType', 'CARD').build().toUriString()}"
              th:title="#{label.view.card}"
           >
             <i class="bi bi-grid"></i><span class="d-none d-sm-inline ms-1" th:text="#{label.view.card}">카드보기</span>
@@ -100,13 +102,13 @@
       <div class="d-flex gap-2">
         <a class="btn btn-outline-secondary d-flex align-items-center"
            sec:authorize="isAuthenticated()"
-           th:href="@{|/articles${search.getUriComponentsBuilder().replaceQueryParam('page', 0).replaceQueryParam('keyField', 'createdBy').replaceQueryParam('keyWord', #authentication.principal.username).build().toUriString()}|}"
+           th:href="${REQUEST_URI_BUILDER.cloneBuilder().replaceQueryParam('page', 0).replaceQueryParam('keyField', 'createdBy').replaceQueryParam('keyWord', #authentication.principal.username).build().toUriString()}"
            th:title="#{label.my.articles}"
         >
           <i class="bi bi-person"></i><span class="d-none d-sm-inline ms-1" th:text="#{label.my.articles}">내가 쓴 글</span>
         </a>
         <a class="btn btn-primary d-flex align-items-center" sec:authorize="isAuthenticated()"
-           th:href="@{|/articles/new${search.getUriComponentsBuilder().build().toUriString()}|}"
+           th:href="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/articles/new').build().toUriString()}"
            th:title="#{label.write}"
         >
           <i class="bi bi-pencil-square"></i><span class="d-none d-sm-inline ms-1" th:text="#{label.write}">글쓰기</span>
@@ -151,7 +153,7 @@
                th:each="article : ${page.content}"
       >
         <a class="none card h-100"
-           th:href="@{|/articles/${article.id}${search.getUriComponentsBuilder().build().toUriString()}|}"
+           th:href="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/articles/' + article.id).build().toUriString()}"
         >
           <img class="card-img-top img-thumbnail"
                th:alt="${article.inlineImages.get(0).originalName}"
@@ -215,7 +217,7 @@
           <li class="page-item" th:classappend="${page.first} ? 'disabled' : ''">
             <a aria-label="Previous"
                class="page-link"
-               th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.previousOrFirstPageable().pageNumber).build().toUriString()}}"
+               th:href="${REQUEST_URI_BUILDER.cloneBuilder().replaceQueryParam('page', page.previousOrFirstPageable().pageNumber).build().toUriString()}"
                th:title="#{label.page.previous}"
             >
               <i class="bi bi-chevron-left"></i>
@@ -226,7 +228,7 @@
               th:each="pageNumber : ${#numbers.sequence(0, page.totalPages - (page.totalPages > 0 ? 1 : 0))}"
               th:classappend="${pageNumber == page.number} ? 'active' : ''">
             <a class="page-link"
-               th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', pageNumber).build().toUriString()}}"
+               th:href="${REQUEST_URI_BUILDER.cloneBuilder().replaceQueryParam('page', pageNumber).build().toUriString()}"
                th:text="${pageNumber + 1}">
             </a>
           </li>
@@ -240,7 +242,7 @@
           <li class="page-item" th:classappend="${page.last} ? 'disabled' : ''">
             <a aria-label="Next"
                class="page-link"
-               th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.nextOrLastPageable().pageNumber).build().toUriString()}}"
+               th:href="${REQUEST_URI_BUILDER.cloneBuilder().replaceQueryParam('page', page.nextOrLastPageable().pageNumber).build().toUriString()}"
                th:title="#{label.page.next}"
             >
               <i class="bi bi-chevron-right"></i>

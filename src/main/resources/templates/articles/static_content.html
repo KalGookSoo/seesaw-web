@@ -5,7 +5,9 @@
       layout:decorate="~{layout}"
       th:lang="${#locale.language}"
 >
-
+<!--/*@thymesVar id="REQUEST_URI_BUILDER" type="org.springframework.web.util.UriComponentsBuilder"*/-->
+<!--/*@thymesVar id="SITE_CONTEXT" type="kr.me.seesaw.model.SiteModel"*/-->
+<!--/*@thymesVar id="CURRENT_CATEGORY" type="kr.me.seesaw.model.CategoryModel"*/-->
 <head>
 
   <meta name="description"
@@ -17,15 +19,15 @@
   <meta property="og:description" content="페이지 설명"
         th:content="|${SITE_CONTEXT.name} ${CURRENT_CATEGORY.name} ${CURRENT_CATEGORY.description != null ? CURRENT_CATEGORY.description : ''}|">
   <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${SITE_CONTEXT.profileImage != null}"
-        th:content="@{|${REQUEST_HOST}/api/attachments/${SITE_CONTEXT.profileImage.id}|}">
-  <meta property="og:url" content="페이지 주소" th:content="${REQUEST_URL}">
+        th:content="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/api/attachments/' + SITE_CONTEXT.profileImage.id).replaceQuery(null).toUriString()}">
+  <meta property="og:url" content="페이지 주소" th:content="${REQUEST_URI_BUILDER.toUriString()}">
 
   <meta property="twitter:card" content="summary">
   <meta property="twitter:title" content="페이지 제목" th:content="|${SITE_CONTEXT.name}  ${CURRENT_CATEGORY.name}|">
   <meta property="twitter:description" content="페이지 설명"
         th:content="|${SITE_CONTEXT.name} ${CURRENT_CATEGORY.name} ${CURRENT_CATEGORY.description != null ? CURRENT_CATEGORY.description : ''}|">
   <meta property="twitter:image" content="페이지 썸네일 이미지 주소" th:if="${SITE_CONTEXT.profileImage != null}"
-        th:content="@{|${REQUEST_HOST}/api/attachments/${SITE_CONTEXT.profileImage.id}|}">
+        th:content="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/api/attachments/' + SITE_CONTEXT.profileImage.id).replaceQuery(null).toUriString()}">
 
   <title>[[${CURRENT_CATEGORY.name}]] | [[${SITE_CONTEXT.name}]]</title>
   <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">

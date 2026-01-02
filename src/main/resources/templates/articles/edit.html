@@ -6,7 +6,9 @@
       layout:decorate="~{layout}"
       th:lang="${#locale.language}"
 >
-
+<!--/*@thymesVar id="REQUEST_URI_BUILDER" type="org.springframework.web.util.UriComponentsBuilder"*/-->
+<!--/*@thymesVar id="SITE_CONTEXT" type="kr.me.seesaw.model.SiteModel"*/-->
+<!--/*@thymesVar id="CURRENT_CATEGORY" type="kr.me.seesaw.model.CategoryModel"*/-->
 <head>
   <title>[[${ALL_CATEGORIES.get(article.categoryId).name}]] | [[${SITE_CONTEXT.name}]]</title>
   <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
@@ -128,7 +130,7 @@
               e.submitter.nextElementSibling.classList.add('d-none');
               if (response.ok) {
                 alert(/*[[#{command.success.update}]]*/'');
-                location.href = /*[[@{|/articles/${article.id}${search.getUriComponentsBuilder().build().toUriString()}|}]]*/'';
+                location.href = /*[[${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/articles/' + article.id).build().toUriString()}]]*/'';
               } else if (response.status === 422) {
                 const errors = JSON.parse(responseBody).errors;
                 [...errors].forEach(error => {
@@ -309,7 +311,7 @@
         <div class="card-body p-3 d-flex justify-content-end">
           <div class="d-flex gap-3">
             <a class="btn btn-outline-secondary d-flex align-items-center"
-               th:href="@{|/articles/${article.id}${search.getUriComponentsBuilder().build().toUriString()}|}">
+               th:href="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/articles').build().toUriString()}">
               <i class="bi bi-x-lg me-2"></i>
               <span th:text="#{label.cancel}"></span>
             </a>

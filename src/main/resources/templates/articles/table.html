@@ -6,7 +6,20 @@
       layout:decorate="~{layout}"
       th:lang="${#locale.language}"
 >
-
+<!--/*@thymesVar id="REQUEST_URI_BUILDER" type="org.springframework.web.util.UriComponentsBuilder"*/-->
+<!--/*@thymesVar id="SITE_CONTEXT" type="kr.me.seesaw.model.SiteModel"*/-->
+<!--/*@thymesVar id="CURRENT_CATEGORY" type="kr.me.seesaw.model.CategoryModel"*/-->
+<!--/*@thymesVar id="CSRF" type="org.springframework.security.web.csrf.CsrfToken"*/-->
+<!--/*@thymesVar id="_csrf" type="org.springframework.security.web.csrf.CsrfToken"*/-->
+<!--/*@thymesVar id="search" type="kr.me.seesaw.search.ArticleSearch"*/-->
+<!--/*@thymesVar id="page" type="org.springframework.data.domain.Page<kr.me.seesaw.model.ArticleModel>"*/-->
+<!--/*@thymesVar id="article" type="kr.me.seesaw.model.ArticleModel"*/-->
+<!--/*@thymesVar id="fixedArticles" type="java.util.List<kr.me.seesaw.model.ArticleModel>"*/-->
+<!--/*@thymesVar id="keyField" type="java.lang.String"*/-->
+<!--/*@thymesVar id="keyWord" type="java.lang.String"*/-->
+<!--/*@thymesVar id="categoryId" type="java.lang.String"*/-->
+<!--/*@thymesVar id="categoryType" type="kr.me.seesaw.domain.vo.CategoryType"*/-->
+<!--/*@thymesVar id="viewType" type="java.lang.String"*/-->
 <head>
 
   <meta name="description"
@@ -19,15 +32,15 @@
   <meta property="og:description" content="페이지 설명"
         th:content="|${SITE_CONTEXT.name} ${CURRENT_CATEGORY.name} ${CURRENT_CATEGORY.description != null ? CURRENT_CATEGORY.description : ''}|">
   <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${SITE_CONTEXT.profileImage != null}"
-        th:content="@{|${REQUEST_HOST}/api/attachments/${SITE_CONTEXT.profileImage.id}|}">
-  <meta property="og:url" content="페이지 주소" th:content="${REQUEST_URL}">
+        th:content="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/api/attachments/' + SITE_CONTEXT.profileImage.id).replaceQuery(null).build().toUriString()}">
+  <meta property="og:url" content="페이지 주소" th:content="${REQUEST_URI_BUILDER.build().toUriString()}">
 
   <meta property="twitter:card" content="summary">
   <meta property="twitter:title" content="페이지 제목" th:content="|${SITE_CONTEXT.name}  ${CURRENT_CATEGORY.name}|">
   <meta property="twitter:description" content="페이지 설명"
         th:content="|${SITE_CONTEXT.name} ${CURRENT_CATEGORY.name} ${CURRENT_CATEGORY.description != null ? CURRENT_CATEGORY.description : ''}|">
   <meta property="twitter:image" content="페이지 썸네일 이미지 주소" th:if="${SITE_CONTEXT.profileImage != null}"
-        th:content="@{|${REQUEST_HOST}/api/attachments/${SITE_CONTEXT.profileImage.id}|}">
+        th:content="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/api/attachments/' + SITE_CONTEXT.profileImage.id).replaceQuery(null).build().toUriString()}">
 
   <title>[[${CURRENT_CATEGORY.name}]] | [[${SITE_CONTEXT.name}]]</title>
   <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
@@ -78,7 +91,7 @@
         <div>
           <a class="btn d-flex align-items-center"
              th:classappend="${#strings.equals(search.viewType, 'TABLE')} ? 'main-color' : ''"
-             th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.pageable.pageNumber).replaceQueryParam('viewType', 'TABLE').build().toUriString()}}"
+             th:href="${REQUEST_URI_BUILDER.cloneBuilder().replaceQueryParam('page', page.pageable.pageNumber).replaceQueryParam('viewType', 'TABLE').build().toUriString()}"
              th:title="#{label.view.list}"
           >
             <i class="bi bi-list"></i><span class="d-none d-sm-inline ms-1" th:text="#{label.view.list}">목록보기</span>
@@ -87,7 +100,7 @@
         <div>
           <a class="btn d-flex align-items-center"
              th:classappend="${#strings.equals(search.viewType, 'CARD')} ? 'main-color' : ''"
-             th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.pageable.pageNumber).replaceQueryParam('viewType', 'CARD').build().toUriString()}}"
+             th:href="${REQUEST_URI_BUILDER.cloneBuilder().replaceQueryParam('page', page.pageable.pageNumber).replaceQueryParam('viewType', 'CARD').build().toUriString()}"
              th:title="#{label.view.card}"
           >
             <i class="bi bi-grid"></i><span class="d-none d-sm-inline ms-1" th:text="#{label.view.card}">카드보기</span>
@@ -115,16 +128,16 @@
       </thead>
       <tbody>
       <!--/* 공지 */-->
-      <tr th:each="article : ${fixedArticles}" th:if="${!fixedArticles.isEmpty()}">
+      <tr th:each="article, articleStat : ${fixedArticles}" th:if="${!fixedArticles.isEmpty()}">
         <td class="py-3 text-center align-middle" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
           <input th:aria-label="#{label.select}" name="selected" type="checkbox" th:data-id="${article.id}">
         </td>
         <td class="py-3 text-center align-middle">📣</td>
         <td class="py-3 text-start">
           <div>
-            <a class="none" th:href="@{|/articles/${article.id}${search.getUriComponentsBuilder().build().toUriString()}|}">
+            <a class="none" th:href="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/articles/' + article.id).build().toUriString()}">
               [[${article.title}]]
-              <span class="badge bg-primary ms-1" th:if="${article.isRecentlyGenerated()}" th:text="#{label.new}">New</span>
+              <span class="badge bg-primary ms-1" th:if="${article.isRecentlyGenerated()}" th:text="#{label.detail}">Detail</span>
             </a>
           </div>
           <div class="small text-muted mt-1">
@@ -139,15 +152,14 @@
         </td>
       </tr>
       <!--/* 비공지 */-->
-      <tr th:each="article : ${page.content}" th:if="${page.hasContent() and !article.isFixed}">
-        <!--/*@thymesVar id="page" type="org.springframework.data.domain.Page<kr.me.seesaw.domain.Article>"*/-->
+      <tr th:each="article, articleStat : ${page.content}" th:if="${page.hasContent() and !article.isFixed}">
         <td class="py-3 text-center align-middle" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')">
           <input th:aria-label="#{label.select}" name="selected" type="checkbox" th:data-id="${article.id}">
         </td>
         <td class="py-3 text-center align-middle" th:text="${page.totalElements - page.pageable.offset - articleStat.index}"></td>
         <td class="py-3 text-start">
           <div>
-            <a class="none" th:href="@{|/articles/${article.id}${search.getUriComponentsBuilder().build().toUriString()}|}">
+            <a class="none" th:href="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/articles/' + article.id).build().toUriString()}">
               [[${article.title}]]
               <span class="badge bg-primary ms-1" th:if="${article.isRecentlyGenerated()}" th:text="#{label.new}">New</span>
             </a>
@@ -185,13 +197,19 @@
       <div class="d-flex gap-2">
         <a class="btn btn-outline-secondary d-flex align-items-center"
            sec:authorize="isAuthenticated()"
-           th:href="@{|/articles${search.getUriComponentsBuilder().replaceQueryParam('page', 0).replaceQueryParam('keyField', 'createdBy').replaceQueryParam('keyWord', #authentication.principal.username).build().toUriString()}|}"
+           th:href="${REQUEST_URI_BUILDER.cloneBuilder()
+           .replacePath('/articles')
+           .replaceQueryParam('page', 0)
+           .replaceQueryParam('keyField', 'createdBy')
+           .replaceQueryParam('keyWord', #authentication.principal.username)
+           .build()
+           .toUriString()}"
            th:title="#{label.my.articles}"
         >
           <i class="bi bi-person"></i><span class="d-none d-sm-inline ms-1" th:text="#{label.my.articles}">내가 쓴 글</span>
         </a>
         <a class="btn btn-primary d-flex align-items-center" sec:authorize="isAuthenticated()"
-           th:href="@{|/articles/new${search.getUriComponentsBuilder().build().toUriString()}|}"
+           th:href="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/articles/new').build().toUriString()}"
            th:title="#{label.write}"
         >
           <i class="bi bi-pencil-square"></i><span class="d-none d-sm-inline ms-1" th:text="#{label.write}">글쓰기</span>
@@ -214,7 +232,7 @@
           <li class="page-item" th:classappend="${page.first} ? 'disabled' : ''">
             <a th:aria-label="#{label.page.previous}"
                class="page-link"
-               th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.previousOrFirstPageable().pageNumber).build().toUriString()}}"
+               th:href="${REQUEST_URI_BUILDER.cloneBuilder().replaceQueryParam('page', page.previousOrFirstPageable().pageNumber).build().toUriString()}"
                th:title="#{label.page.previous}"
             >
               <i class="bi bi-chevron-left"></i>
@@ -225,7 +243,7 @@
               th:each="pageNumber : ${#numbers.sequence(0, page.totalPages - (page.totalPages > 0 ? 1 : 0))}"
               th:classappend="${pageNumber == page.number} ? 'active' : ''">
             <a class="page-link"
-               th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', pageNumber).build().toUriString()}}"
+               th:href="${REQUEST_URI_BUILDER.cloneBuilder().replaceQueryParam('page', pageNumber).build().toUriString()}"
                th:text="${pageNumber + 1}">
             </a>
           </li>
@@ -239,7 +257,7 @@
           <li class="page-item" th:classappend="${page.last} ? 'disabled' : ''">
             <a th:aria-label="#{label.page.next}"
                class="page-link"
-               th:href="@{'/articles' + ${search.getUriComponentsBuilder().queryParam('page', page.nextOrLastPageable().pageNumber).build().toUriString()}}"
+               th:href="${REQUEST_URI_BUILDER.cloneBuilder().replaceQueryParam('page', page.nextOrLastPageable().pageNumber).build().toUriString()}"
                th:title="#{label.page.next}"
             >
               <i class="bi bi-chevron-right"></i>

@@ -43,9 +43,9 @@
     </div>
     <div class="banner-section d-flex align-items-center justify-content-center">
         <div>
-            <a class="none" role="button" target="_blank" th:href="|https://validator.w3.org/check?uri=${REQUEST_HOST}|">© 2025 NXCOA</a>
+            <a class="none" role="button" target="_blank" th:href="|https://validator.w3.org/check?uri=${REQUEST_URI_BUILDER.cloneBuilder().replacePath('').replaceQuery(null).toUriString()}|">© 2025 NXCOA</a>
             &nbsp;/&nbsp;
-            <a class="none" role="button" target="_blank" th:href="|https://jigsaw.w3.org/css-validator/validator?uri=${REQUEST_HOST}|">SEESAW. All Rights Reserved.</a>
+            <a class="none" role="button" target="_blank" th:href="|https://jigsaw.w3.org/css-validator/validator?uri=${REQUEST_URI_BUILDER.cloneBuilder().replacePath('').replaceQuery(null).toUriString()}|">SEESAW. All Rights Reserved.</a>
         </div>
     </div>
 

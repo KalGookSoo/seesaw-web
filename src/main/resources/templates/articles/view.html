@@ -6,7 +6,9 @@
       layout:decorate="~{layout}"
       th:lang="${#locale.language}"
 >
-
+<!--/*@thymesVar id="REQUEST_URI_BUILDER" type="org.springframework.web.util.UriComponentsBuilder"*/-->
+<!--/*@thymesVar id="SITE_CONTEXT" type="kr.me.seesaw.model.SiteModel"*/-->
+<!--/*@thymesVar id="CURRENT_CATEGORY" type="kr.me.seesaw.model.CategoryModel"*/-->
 <head>
   <meta name="description" th:content="${article.plainContent}">
   <meta name="keywords" th:content="${CURRENT_CATEGORY.name}">
@@ -15,16 +17,16 @@
   <meta property="og:title" content="페이지 제목" th:content="${article.title}">
   <meta property="og:description" content="페이지 설명" th:content="${article.plainContent}">
   <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${!article.inlineImages.isEmpty()}"
-        th:content="@{|${REQUEST_HOST}/api/attachments/${article.inlineImages.get(0).id}|}">
+        th:content="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/api/attachments/' + article.inlineImages.get(0).id).replaceQuery(null).toUriString()}">
   <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${article.inlineImages.isEmpty() and SITE_CONTEXT.profileImage != null}"
-        th:content="@{|${REQUEST_HOST}/api/attachments/${SITE_CONTEXT.profileImage.id}|}">
-  <meta property="og:url" content="페이지 주소" th:content="${REQUEST_URL}">
+        th:content="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/api/attachments/' + SITE_CONTEXT.profileImage.id).replaceQuery(null).toUriString()}">
+  <meta property="og:url" content="페이지 주소" th:content="${REQUEST_URI_BUILDER.toUriString()}">
 
   <meta property="twitter:card" content="summary">
   <meta property="twitter:title" content="페이지 제목" th:content="${article.title}">
   <meta property="twitter:description" content="페이지 설명" th:content="${article.plainContent}">
   <meta property="twitter:image" content="페이지 썸네일 이미지 주소" th:if="${!article.inlineImages.isEmpty()}"
-        th:content="@{|${REQUEST_HOST}/api/attachments/${article.inlineImages.get(0).id}|}">
+        th:content="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/api/attachments/' + article.inlineImages.get(0).id).replaceQuery(null).toUriString()}">
 
 
   <title>[[${article.title}]]</title>
@@ -378,20 +380,20 @@
         <div class="d-flex justify-content-between align-items-center">
           <div class="d-flex gap-2">
             <a class="btn btn-outline-secondary d-flex align-items-center"
-               th:href="@{|/articles/${previousArticle.id}${search.getUriComponentsBuilder().build().toUriString()}|}"
+               th:href="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/articles/' + previousArticle.id).build().toUriString()}"
                th:if="${previousArticle != null}"
                th:title="#{label.previous.article}">
               <i class="bi bi-chevron-left"></i>
               <span class="d-none d-sm-inline ms-1" th:text="#{label.previous.article}">[[#{label.previous.article}]]</span>
             </a>
             <a class="btn btn-outline-secondary d-flex align-items-center"
-               th:href="@{|/articles${search.getUriComponentsBuilder().queryParam('page', 0).build().toUriString()}|}"
+               th:href="${REQUEST_URI_BUILDER.replacePath('/articles').cloneBuilder().replaceQueryParam('page', 0).build().toUriString()}"
                th:title="#{label.list}">
               <i class="bi bi-list"></i>
               <span class="d-none d-sm-inline ms-1" th:text="#{label.list}"></span>
             </a>
             <a class="btn btn-outline-secondary d-flex align-items-center"
-               th:href="@{|/articles/${nextArticle.id}${search.getUriComponentsBuilder().build().toUriString()}|}"
+               th:href="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/articles/' + nextArticle.id).build().toUriString()}"
                th:if="${nextArticle != null}"
                th:title="#{label.next.article}">
               <i class="bi bi-chevron-right"></i>
@@ -400,7 +402,7 @@
           </div>
           <div class="d-flex gap-2" sec:authorize="isAuthenticated()">
             <a class="btn btn-outline-primary d-flex align-items-center"
-               th:href="@{|/articles/${article.id}/edit${search.getUriComponentsBuilder().build().toUriString()}|}"
+               th:href="${REQUEST_URI_BUILDER.replacePath('/articles/' + article.id + '/edit').build().toUriString()}"
                th:if="${#strings.equals(#authentication.principal.username, article.createdBy)}"
                th:title="#{label.update}">
               <i class="bi bi-pencil-square"></i>
