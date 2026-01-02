@@ -29,10 +29,8 @@ spring:
     properties:
       hibernate:
         highlight_sql: true
-    hibernate:
-      ddl-auto: update
     open-in-view: false
-  
+
   # Lazy initialization
   main:
     lazy-initialization: true
