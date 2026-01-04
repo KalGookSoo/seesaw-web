@@ -22,6 +22,7 @@ public class I18nConfig {
         messageSource.setBasename("classpath:messages");
         messageSource.setDefaultEncoding(CharEncoding.UTF_8);
         messageSource.setCacheSeconds(Integer.parseInt(cacheSeconds));
+        messageSource.setFallbackToSystemLocale(false);
         return messageSource;
     }
 
