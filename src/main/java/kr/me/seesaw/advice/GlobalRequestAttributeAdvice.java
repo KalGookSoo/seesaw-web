@@ -8,6 +8,9 @@ import kr.me.seesaw.model.SiteModel;
 import kr.me.seesaw.service.SiteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -19,7 +22,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-@ControllerAdvice
+@ControllerAdvice(annotations = Controller.class)
 public class GlobalRequestAttributeAdvice {
 
     private static final String REQUEST_URI_BUILDER = "REQUEST_URI_BUILDER";
@@ -30,6 +33,11 @@ public class GlobalRequestAttributeAdvice {
 
     @ModelAttribute
     public void addAttributes(HttpServletRequest request, Model model) {
+        String accept = request.getHeader(HttpHeaders.ACCEPT);
+        if (accept != null && !accept.contains(MediaType.TEXT_HTML_VALUE)) {
+            return;
+        }
+
         UriComponentsBuilder uriBuilder = ServletUriComponentsBuilder.fromRequest(request);
         model.addAttribute(REQUEST_URI_BUILDER, uriBuilder);
 
