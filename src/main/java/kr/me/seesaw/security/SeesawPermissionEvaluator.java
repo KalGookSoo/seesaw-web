@@ -1,6 +1,5 @@
 package kr.me.seesaw.security;
 
-import kr.me.seesaw.domain.vo.BasePermission;
 import kr.me.seesaw.model.PermissionModel;
 import kr.me.seesaw.model.RoleModel;
 import kr.me.seesaw.service.RoleService;
@@ -8,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.PermissionEvaluator;
+import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
