@@ -1,7 +1,9 @@
-package kr.me.seesaw.model;
+package kr.me.seesaw.dto.model;
 
 import kr.me.seesaw.domain.User;
 import kr.me.seesaw.domain.vo.RoleName;
+import kr.me.seesaw.model.RoleModel;
+import kr.me.seesaw.model.UserModel;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
