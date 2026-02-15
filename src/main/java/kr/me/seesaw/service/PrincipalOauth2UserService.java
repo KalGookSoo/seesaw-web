@@ -6,9 +6,9 @@ import kr.me.seesaw.domain.Site;
 import kr.me.seesaw.domain.User;
 import kr.me.seesaw.domain.vo.Email;
 import kr.me.seesaw.domain.vo.RoleName;
+import kr.me.seesaw.dto.model.UserPrincipal;
 import kr.me.seesaw.model.RoleModel;
 import kr.me.seesaw.model.UserModel;
-import kr.me.seesaw.model.UserPrincipal;
 import kr.me.seesaw.oauth2.provider.NaverUserDetail;
 import kr.me.seesaw.oauth2.provider.OAuth2UserDetail;
 import kr.me.seesaw.repository.RoleRepository;
@@ -77,7 +77,10 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                         Role roleUser = roleRepository.findByName(RoleName.ROLE_USER.name())
                                 .orElseThrow(() -> new NoSuchElementException("일반사용자 역할이 없습니다."));
 
-                        RoleMapping roleMapping = RoleMapping.create(roleUser, user, site);
+                        RoleMapping roleMapping = new RoleMapping();
+                        roleMapping.setRole(roleUser);
+                        roleMapping.setUser(user);
+                        roleMapping.setSite(site);
                         user.addRole(roleMapping);
                         userRepository.save(user);
                     }
@@ -91,12 +94,19 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                 })
                 .orElseGet(() -> {
                     // 계정 생성
-                    User user = User.create(username, new Email(email.split("@")[0], email.split("@")[1]));
+                    User user = new User();
+                    user.setUsername(username);
+                    user.setEmail(new Email(email.split("@")[0], email.split("@")[1]));
 
                     // 현재 인증한 계정, 현재 접속한 사이트에 일반사용자 역할을 부여
                     Role role = roleRepository.findByName(RoleName.ROLE_USER.name())
                             .orElseThrow(NoSuchElementException::new);
-                    RoleMapping roleMapping = RoleMapping.create(role, user, site);
+
+                    RoleMapping roleMapping = new RoleMapping();
+                    roleMapping.setRole(role);
+                    roleMapping.setUser(user);
+                    roleMapping.setSite(site);
+
                     user.addRole(roleMapping);
                     userRepository.save(user);
 
