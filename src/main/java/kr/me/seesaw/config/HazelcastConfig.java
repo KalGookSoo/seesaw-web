@@ -15,7 +15,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @EnableCaching
 @Configuration
@@ -35,17 +38,17 @@ public class HazelcastConfig {
             "127.0.0.1:5703"
     );
 
+    public HazelcastConfig(@Value("${spring.profiles.active:default}") String profiles) {
+        this.profiles = profiles;
+        map();
+    }
+
     private void map() {
         profilesMapper.put("prod", productionMembers);
     }
 
     private List<String> getMembers() {
         return profilesMapper.getOrDefault(profiles, Collections.emptyList());
-    }
-
-    public HazelcastConfig(@Value("${spring.profiles.active:default}") String profiles) {
-        this.profiles = profiles;
-        map();
     }
 
     @Bean
@@ -92,6 +95,5 @@ public class HazelcastConfig {
     public CacheManager cacheManager(@Qualifier("hazelcastInstance") HazelcastInstance hazelcastInstance) {
         return new HazelcastCacheManager(hazelcastInstance);
     }
-
 
 }
