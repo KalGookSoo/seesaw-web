@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      layout:decorate="~{layout}"
+      th:lang="${#locale.language}"
+>
+<head>
+  <title>[[${CURRENT_CATEGORY.name}]] | [[${SITE_CONTEXT.name}]]</title>
+  <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
+  <!-- TUI Calendar CSS -->
+  <link rel="stylesheet" href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css">
+  <!-- TUI Editor CSS -->
+  <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css">
+  <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor-viewer.min.css">
+  
+  <style>
+    #calendar {
+      height: 800px;
+      max-width: 1100px;
+      margin: 40px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .calendar-controls {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+    }
+    #eventModal .modal-body {
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+    .attachment-dropzone {
+      border: 2px dashed #dee2e6;
+      border-radius: 0.5rem;
+      padding: 2rem;
+      text-align: center;
+      background-color: #f8f9fa;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+    }
+    .attachment-dropzone:hover {
+      background-color: #e9ecef;
+      border-color: #adb5bd;
+    }
+    .attachment-dropzone.ring-2 {
+      border-color: #0d6efd;
+      background-color: #f0f7ff;
+    }
+    .attachment-list .list-group-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+
+<div layout:fragment="content">
+  <section th:replace="~{components/breadcrumb :: breadcrumbs}"></section>
+  <section class="container-sm title-section">
+    <div class="d-flex justify-content-between">
+      <h5 class="title" th:text="${CURRENT_CATEGORY.name}"></h5>
+      <button sec:authorize="isAuthenticated()" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#eventModal" onclick="prepareCreate()">
+        <i class="bi bi-calendar-plus"></i> 일정 등록
+      </button>
+    </div>
+  </section>
+  <section class="container-sm">
+    <div class="calendar-controls">
+      <div>
+        <button class="btn btn-sm btn-outline-secondary" onclick="movePrev()"><i class="bi bi-chevron-left"></i></button>
+        <button class="btn btn-sm btn-outline-secondary" onclick="moveNext()"><i class="bi bi-chevron-right"></i></button>
+        <button class="btn btn-sm btn-outline-secondary" onclick="moveToday()">오늘</button>
+      </div>
+      <h4 id="renderRange" class="mb-0"></h4>
+      <div>
+        <select class="form-select form-select-sm" onchange="changeView(this.value)">
+          <option value="month" selected>월간</option>
+          <option value="week">주간</option>
+          <option value="day">일간</option>
+        </select>
+      </div>
+    </div>
+    <div id="calendar"></div>
+  </section>
+
+  <!-- Event Detail/Form Modal -->
+  <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="eventModalLabel">일정 정보</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="eventForm">
+            <input type="hidden" id="eventId">
+            <div class="mb-3">
+              <label for="summary" class="form-label">일정 제목</label>
+              <input type="text" class="form-control" id="summary" required>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="dtStart" class="form-label">시작 일시</label>
+                <input type="datetime-local" class="form-control" id="dtStart" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="dtEnd" class="form-label">종료 일시</label>
+                <input type="datetime-local" class="form-control" id="dtEnd">
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="location" class="form-label">장소</label>
+              <input type="text" class="form-control" id="location">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">상세 내용 (위지윅)</label>
+              <div id="editor"></div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">첨부파일</label>
+              <div id="attachment-container">
+                <input id="attachment-input" type="file" multiple class="hidden">
+              </div>
+              <div id="existingFiles" class="mt-2 list-group"></div>
+            </div>
+          </form>
+          <div id="eventDetail" style="display: none;">
+            <div class="d-flex justify-content-between">
+              <h4 id="viewSummary"></h4>
+              <span id="viewStatus" class="badge bg-info text-dark"></span>
+            </div>
+            <p class="text-muted"><i class="bi bi-clock"></i> <span id="viewPeriod"></span></p>
+            <p id="viewLocationContainer" class="text-muted" style="display:none;"><i class="bi bi-geo-alt"></i> <span id="viewLocation"></span></p>
+            <hr>
+            <div id="viewer"></div>
+            <hr>
+            <h6><i class="bi bi-paperclip"></i> 첨부파일</h6>
+            <div id="viewFiles" class="list-group mb-3"></div>
+            <hr>
+            <h6><i class="bi bi-chat-dots"></i> 댓글</h6>
+            <div id="replies" class="mb-3"></div>
+            <div sec:authorize="isAuthenticated()" class="input-group">
+              <input type="text" id="replyContent" class="form-control" placeholder="댓글을 입력하세요...">
+              <button class="btn btn-outline-secondary" type="button" onclick="submitReply()">등록</button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div id="formFooter">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+            <button type="button" class="btn btn-primary" onclick="saveEvent()">저장</button>
+          </div>
+          <div id="viewFooter" style="display: none;">
+            <button sec:authorize="isAuthenticated()" type="button" class="btn btn-danger me-auto" onclick="deleteEvent()">삭제</button>
+            <button sec:authorize="isAuthenticated()" type="button" class="btn btn-warning" onclick="editEvent()">수정</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TUI Calendar JS -->
+  <script src="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.js"></script>
+  <!-- TUI Editor JS -->
+  <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+
+  <script type="module" th:inline="javascript">
+    import { AttachmentManager } from /*[[@{/scripts/attachment-manager.js}]]*/'/static/scripts/attachment-manager.js';
+
+    /*<![CDATA[*/
+    const categoryId = /*[[${CURRENT_CATEGORY.id}]]*/ 'default-category-id';
+    const contextPath = /*[[@{/}]]*/ '/';
+    /*]]>*/
+    let calendar;
+    let editor;
+    let viewer;
+    let currentEvent;
+    let attachmentManager;
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Attachment Manager Initialize
+      attachmentManager = new AttachmentManager({
+        container: '#attachment-container',
+        input: '#attachment-input',
+        title: '파일을 드래그하거나 클릭하여 첨부하세요',
+        helperText: '여러 파일을 한 번에 추가할 수 있습니다.'
+      });
+
+      // TUI Editor Initialize
+      editor = new toastui.Editor({
+        el: document.querySelector('#editor'),
+        height: '300px',
+        initialEditType: 'wysiwyg',
+        previewStyle: 'vertical'
+      });
+
+      viewer = toastui.Editor.factory({
+        el: document.querySelector('#viewer'),
+        viewer: true
+      });
+
+      // TUI Calendar Initialize
+      const calendarEl = document.getElementById('calendar');
+      calendar = new tui.Calendar(calendarEl, {
+        defaultView: 'month',
+        useFormPopup: false,
+        useDetailPopup: false,
+        isReadOnly: true,
+        usageStatistics: false,
+        timezone: {
+          zones: [
+            {
+              timezoneName: 'Asia/Seoul',
+              displayLabel: 'Seoul',
+            },
+          ],
+        },
+        template: {
+          allday(event) {
+            return `<span style="color: gray;">${event.title}</span>`;
+          },
+        },
+      });
+
+      calendar.on('clickEvent', ({ event }) => {
+        showDetail(event.raw);
+      });
+
+      updateRenderRange();
+      fetchEvents();
+    });
+
+    function fetchEvents() {
+      const viewName = calendar.getViewName();
+      const rangeStart = calendar.getDateRangeStart().d.toISOString();
+      const rangeEnd = calendar.getDateRangeEnd().d.toISOString();
+
+      fetch(`/api/events?categoryId=${categoryId}&start=${rangeStart}&end=${rangeEnd}`)
+        .then(res => res.json())
+        .then(data => {
+          calendar.clear();
+          const events = data.map(item => ({
+            id: item.articleId,
+            calendarId: '1',
+            title: item.summary,
+            start: item.dtStart,
+            end: item.dtEnd || item.dtStart,
+            category: 'time',
+            raw: item
+          }));
+          calendar.createEvents(events);
+        });
+    }
+
+    function updateRenderRange() {
+      const renderRange = document.getElementById('renderRange');
+      const start = calendar.getDateRangeStart().d;
+      const end = calendar.getDateRangeEnd().d;
+      const viewName = calendar.getViewName();
+
+      if (viewName === 'month') {
+        renderRange.innerText = `${start.getFullYear()}.${start.getMonth() + 1}`;
+      } else {
+        renderRange.innerText = `${start.getFullYear()}.${start.getMonth() + 1}.${start.getDate()} ~ ${end.getFullYear()}.${end.getMonth() + 1}.${end.getDate()}`;
+      }
+    }
+
+    function movePrev() {
+      calendar.prev();
+      updateRenderRange();
+      fetchEvents();
+    }
+
+    function moveNext() {
+      calendar.next();
+      updateRenderRange();
+      fetchEvents();
+    }
+
+    function moveToday() {
+      calendar.today();
+      updateRenderRange();
+      fetchEvents();
+    }
+
+    function changeView(viewName) {
+      calendar.changeView(viewName);
+      updateRenderRange();
+      fetchEvents();
+    }
+
+    function prepareCreate() {
+      document.getElementById('eventForm').style.display = 'block';
+      document.getElementById('eventDetail').style.display = 'none';
+      document.getElementById('formFooter').style.display = 'block';
+      document.getElementById('viewFooter').style.display = 'none';
+      document.getElementById('eventId').value = '';
+      document.getElementById('eventForm').reset();
+      editor.setMarkdown('');
+      document.getElementById('existingFiles').innerHTML = '';
+      if(attachmentManager) {
+        attachmentManager.files = [];
+        attachmentManager.syncInputFiles();
+        attachmentManager.renderList();
+      }
+    }
+
+    function showDetail(item) {
+      currentEvent = item;
+      document.getElementById('eventForm').style.display = 'none';
+      document.getElementById('eventDetail').style.display = 'block';
+      document.getElementById('formFooter').style.display = 'none';
+      document.getElementById('viewFooter').style.display = 'block';
+
+      document.getElementById('viewSummary').innerText = item.summary;
+      document.getElementById('viewStatus').innerText = item.status;
+      document.getElementById('viewPeriod').innerText = `${item.dtStart} ~ ${item.dtEnd || ''}`;
+      
+      if(item.location) {
+        document.getElementById('viewLocation').innerText = item.location;
+        document.getElementById('viewLocationContainer').style.display = 'block';
+      } else {
+        document.getElementById('viewLocationContainer').style.display = 'none';
+      }
+
+      viewer.setMarkdown(item.article.content || '');
+      
+      // Load Files
+      const fileContainer = document.getElementById('viewFiles');
+      fileContainer.innerHTML = '';
+      if(item.article.attachments) {
+        item.article.attachments.forEach(file => {
+          const a = document.createElement('a');
+          a.className = 'list-group-item list-group-item-action';
+          a.href = `/attachments/${file.id}`;
+          a.innerHTML = `<i class="bi bi-file-earmark"></i> ${file.originalName}`;
+          fileContainer.appendChild(a);
+        });
+      }
+
+      // Load Replies
+      loadReplies(item.articleId);
+
+      // Make global functions available outside module
+      window.prepareCreate = prepareCreate;
+      window.showDetail = showDetail;
+      window.saveEvent = saveEvent;
+      window.deleteEvent = deleteEvent;
+      window.editEvent = editEvent;
+      window.submitReply = submitReply;
+      window.movePrev = movePrev;
+      window.moveNext = moveNext;
+      window.moveToday = moveToday;
+      window.changeView = changeView;
+
+      const modal = new bootstrap.Modal(document.getElementById('eventModal'));
+      modal.show();
+    }
+
+    function loadReplies(articleId) {
+      const container = document.getElementById('replies');
+      container.innerHTML = '<p class="text-muted">댓글을 불러오는 중...</p>';
+      
+      fetch(`/api/articles/${articleId}`) // 기존 Article API 활용 가능 여부 확인 필요 (Aggregation 포함 시)
+        .then(res => res.json())
+        .then(data => {
+          container.innerHTML = '';
+          if(data.replies && data.replies.length > 0) {
+            data.replies.forEach(reply => {
+              const div = document.createElement('div');
+              div.className = 'border-bottom py-2';
+              div.innerHTML = `<strong>${reply.createdBy}</strong> <small class="text-muted">${reply.createdDate}</small><br>${reply.content}`;
+              container.appendChild(div);
+            });
+          } else {
+            container.innerHTML = '<p class="text-muted">댓글이 없습니다.</p>';
+          }
+        });
+    }
+
+    async function saveEvent() {
+      const id = document.getElementById('eventId').value;
+      const method = id ? 'PUT' : 'POST';
+      const url = id ? `/api/events/${id}` : '/api/events';
+
+      const formData = new FormData();
+      const command = {
+        article: {
+          categoryId: categoryId,
+          title: document.getElementById('summary').value,
+          content: editor.getMarkdown(),
+          type: 'GENERAL',
+          exposed: true
+        },
+        dtStart: document.getElementById('dtStart').value,
+        dtEnd: document.getElementById('dtEnd').value,
+        summary: document.getElementById('summary').value,
+        description: editor.getMarkdown(),
+        location: document.getElementById('location').value
+      };
+
+      formData.append('command', new Blob([JSON.stringify(command)], {type: 'application/json'}));
+      
+      const files = attachmentManager.getFiles();
+      for(let i=0; i<files.length; i++) {
+        formData.append('files', files[i]);
+      }
+
+      try {
+        const response = await fetch(url, {
+          method: method,
+          body: formData,
+          headers: {
+            [CSRF.headerName]: CSRF.token
+          }
+        });
+
+        if(response.ok) {
+          bootstrap.Modal.getInstance(document.getElementById('eventModal')).hide();
+          fetchEvents();
+        } else {
+          alert('저장에 실패했습니다.');
+        }
+      } catch (e) {
+        console.error(e);
+        alert('에러가 발생했습니다.');
+      }
+    }
+
+    async function deleteEvent() {
+      if(!confirm('정말로 삭제하시겠습니까?')) return;
+      
+      const response = await fetch(`/api/events/${currentEvent.articleId}`, {
+        method: 'DELETE',
+        headers: {
+          [CSRF.headerName]: CSRF.token
+        }
+      });
+
+      if(response.ok) {
+        bootstrap.Modal.getInstance(document.getElementById('eventModal')).hide();
+        calendar.refetchEvents();
+      }
+    }
+
+    function editEvent() {
+      const item = currentEvent;
+      document.getElementById('eventForm').style.display = 'block';
+      document.getElementById('eventDetail').style.display = 'none';
+      document.getElementById('formFooter').style.display = 'block';
+      document.getElementById('viewFooter').style.display = 'none';
+
+      document.getElementById('eventId').value = item.articleId;
+      document.getElementById('summary').value = item.summary;
+      document.getElementById('dtStart').value = item.dtStart;
+      document.getElementById('dtEnd').value = item.dtEnd;
+      document.getElementById('location').value = item.location;
+      editor.setMarkdown(item.article.content || '');
+      if(attachmentManager) {
+        attachmentManager.files = [];
+        attachmentManager.syncInputFiles();
+        attachmentManager.renderList();
+      }
+    }
+
+    async function submitReply() {
+      const content = document.getElementById('replyContent').value;
+      if(!content) return;
+
+      const response = await fetch(`/api/replies`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          [CSRF.headerName]: CSRF.token
+        },
+        body: JSON.stringify({
+          articleId: currentEvent.articleId,
+          content: content,
+          exposed: true
+        })
+      });
+
+      if(response.ok) {
+        document.getElementById('replyContent').value = '';
+        loadReplies(currentEvent.articleId);
+      }
+    }
+  </script>
+</div>
+</html>
