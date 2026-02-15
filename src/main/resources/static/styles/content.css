@@ -5,6 +5,7 @@
 .title-section {
   margin-top: 4rem;
   border-bottom: 1px solid var(--main-color);
+  padding-bottom: 0.25rem;
 }
 .title-section .title {
   color: var(--main-color);
