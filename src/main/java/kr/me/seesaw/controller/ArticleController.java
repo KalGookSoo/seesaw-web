@@ -1,5 +1,6 @@
 package kr.me.seesaw.controller;
 
+import kr.me.seesaw.dto.query.EventQuery;
 import kr.me.seesaw.model.ArticleModel;
 import kr.me.seesaw.search.ArticleSearch;
 import kr.me.seesaw.service.ArticleService;
@@ -52,6 +53,13 @@ public class ArticleController {
         model.addAttribute("page", page);
 
         return "articles/table";
+    }
+
+    @GetMapping(params = "categoryType=SCHEDULE")
+    public String getArticlesInCalendarView(
+            @ModelAttribute("search") EventQuery search
+    ) {
+        return "events/index";
     }
 
     @GetMapping(params = {"categoryType=BOARD", "viewType=CARD"})
