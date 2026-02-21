@@ -10,6 +10,8 @@ import kr.me.seesaw.model.ArticleModel;
 import kr.me.seesaw.repository.ArticleRepository;
 import kr.me.seesaw.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,6 +26,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DefaultEventWebService implements EventWebService {
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     private final EventRepository eventRepository;
 
     private final ArticleService articleService;
@@ -33,6 +37,7 @@ public class DefaultEventWebService implements EventWebService {
     @Override
     @Transactional(readOnly = true)
     public List<VEventModel> findAll(EventQuery search) {
+        logger.debug("이벤트 목록 조회: search={}", search);
         return eventRepository.findAll(search).stream()
                 .map(VEventModel::new)
                 .collect(Collectors.toList());
@@ -41,6 +46,7 @@ public class DefaultEventWebService implements EventWebService {
     @Override
     @Transactional(readOnly = true)
     public VEventModel find(String id) {
+        logger.debug("이벤트 상세 조회: id={}", id);
         VEvent event = eventRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Event not found with id: " + id));
         VEventModel model = new VEventModel(event);
@@ -55,6 +61,7 @@ public class DefaultEventWebService implements EventWebService {
     @Override
     @Transactional
     public VEventModel create(CreateEventCommand command, List<MultipartFile> files) throws IOException {
+        logger.info("이벤트 생성: command={}", command);
         // 1. Article 생성 (이미 첨부파일 및 위지윅 본문 처리가 포함된 articleService 활용)
         ArticleModel articleModel = articleService.create(command.getArticle());
         Article article = articleRepository.findById(articleModel.getId())
@@ -85,6 +92,7 @@ public class DefaultEventWebService implements EventWebService {
     @Override
     @Transactional
     public VEventModel update(String id, UpdateEventCommand command, List<MultipartFile> files) throws IOException {
+        logger.info("이벤트 수정: id={}, command={}", id, command);
         VEvent event = eventRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Event not found with id: " + id));
 
@@ -107,6 +115,7 @@ public class DefaultEventWebService implements EventWebService {
     @Override
     @Transactional
     public void delete(String id) {
+        logger.info("이벤트 삭제: id={}", id);
         VEvent event = eventRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Event not found with id: " + id));
 

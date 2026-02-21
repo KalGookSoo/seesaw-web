@@ -7,6 +7,8 @@ import kr.me.seesaw.model.CategoryModel;
 import kr.me.seesaw.model.SiteModel;
 import kr.me.seesaw.service.SiteService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -27,12 +29,15 @@ public class GlobalRequestAttributeAdvice {
 
     private static final String REQUEST_URI_BUILDER = "REQUEST_URI_BUILDER";
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     private final Environment environment;
 
     private final SiteService siteService;
 
     @ModelAttribute
     public void addAttributes(HttpServletRequest request, Model model) {
+        logger.debug("요청 경로={}", request.getRequestURI());
         String accept = request.getHeader(HttpHeaders.ACCEPT);
         if (accept != null && !accept.contains(MediaType.TEXT_HTML_VALUE)) {
             return;
@@ -60,7 +65,11 @@ public class GlobalRequestAttributeAdvice {
         // 요청 파라미터에 카테고리 식별자가 있을 경우 현재 카테고리 정보를 속성에 할당
         Optional.ofNullable(request.getParameter("categoryId"))
                 .map(Objects::toString)
-                .ifPresent(categoryId -> model.addAttribute(ContextEnvironment.CURRENT_CATEGORY, allCategories.get(categoryId)));
+                .ifPresent(categoryId -> {
+                    CategoryModel category = allCategories.get(categoryId);
+                    model.addAttribute(ContextEnvironment.CURRENT_CATEGORY, category);
+                    logger.debug("현재 카테고리 속성 추가: categoryId={}, categoryName={}", categoryId, category != null ? category.getName() : "null");
+                });
     }
 
 }
