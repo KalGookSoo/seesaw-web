@@ -27,6 +27,8 @@
 
     <title>[[#{label.home}]] | [[${SITE_CONTEXT.name}]]</title>
     <link rel="stylesheet" href="/static/styles/index.css" th:href="@{/styles/index.css}">
+    <!-- TUI Calendar CSS -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css">
 
     <style>
         #header.scrolled {
@@ -34,6 +36,13 @@
         }
         #header:not(.scrolled) {
             background-color: transparent;
+        }
+        .calendar-container {
+            height: 600px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
         }
     </style>
 
@@ -60,9 +69,9 @@
     <h6 class="mb-3" th:text="${SITE_CONTEXT.intro}"></h6>
     <span class="text-center px-3 mb-3" th:text="${SITE_CONTEXT.content}"></span>
 </section>
-<section class="board-section container-fluid container-lg px-3" th:each="page : ${siteExposedPages}">
+<section class="board-section container-fluid container-lg px-3" th:each="page : ${siteExposedBoardPages}">
     <header class="d-flex justify-content-between align-items-center">
-        <h5 class="h5 main-color" th:text="${ALL_CATEGORIES.get(page.getKey()).parent.name}"></h5>
+        <h5 class="h5 main-color" th:text="${ALL_CATEGORIES.get(page.getKey()).name}"></h5>
         <p><a class="none d-flex align-items-center" th:href="@{/articles(categoryId=${page.getKey()}, categoryType=${ALL_CATEGORIES.get(page.getKey()).type})}" th:title="#{label.more}"><span th:text="#{label.more}">더보기</span> <i class="bi bi-arrow-right ms-1"></i></a></p>
     </header>
     <div class="container-fluid px-0">
@@ -80,7 +89,7 @@
                         </div>
                     </div>
                     <div class="content d-flex flex-column flex-md-row align-items-start justify-content-between mb-2 gap-3">
-                        <div class="small text-muted flex-grow-1" th:text="${article.plainContent}"></div>
+                        <div class="small text-muted grow" th:text="${article.plainContent}"></div>
                         <div class="thumbnail mt-2 mt-md-0" th:if="${!article.inlineImages.isEmpty()}">
                             <img class="img-fluid rounded" th:src="@{|/api/attachments/${article.inlineImages.get(0).id}|}" th:alt="${article.inlineImages.get(0).originalName}">
                         </div>
@@ -95,5 +104,50 @@
         </div>
     </div>
 </section>
+<section class="schedule-section container-fluid container-lg px-3 mb-5" th:each="schedule : ${siteExposedScheduleEvents}">
+    <header class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="h5 main-color mb-0" th:text="${ALL_CATEGORIES.get(schedule.getKey()).name}"></h5>
+        <p class="mb-0"><a class="none d-flex align-items-center" th:href="@{/articles(categoryId=${schedule.getKey()}, categoryType=SCHEDULE)}" th:title="#{label.more}"><span th:text="#{label.more}">더보기</span> <i class="bi bi-arrow-right ms-1"></i></a></p>
+    </header>
+    <div class="calendar-container" th:id="|calendar-${schedule.getKey()}|"></div>
+</section>
+
+<!-- TUI Calendar JS -->
+<script src="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.js"></script>
+<script th:inline="javascript">
+  document.addEventListener('DOMContentLoaded', () => {
+    const events = /*[[${siteExposedScheduleEvents}]]*/ {};
+
+    Object.entries(events).forEach(([categoryId, events]) => {
+      const calendarEl = document.getElementById(`calendar-${categoryId}`);
+      if (calendarEl) {
+        const calendar = new tui.Calendar(calendarEl, {
+          defaultView: 'month',
+          isReadOnly: true,
+          usageStatistics: false,
+          timezone: {
+            zones: [
+              {
+                timezoneName: 'Asia/Seoul',
+                displayLabel: 'Seoul',
+              },
+            ],
+          },
+        });
+
+        const calendarEvents = events.map(item => ({
+          id: item.articleId,
+          calendarId: '1',
+          title: item.summary,
+          start: item.dtStart,
+          end: item.dtEnd || item.dtStart,
+          category: 'time',
+        }));
+
+        calendar.createEvents(calendarEvents);
+      }
+    });
+  });
+</script>
 </div>
 </html>
