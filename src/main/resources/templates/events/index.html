@@ -70,7 +70,7 @@
   <section class="container-sm title-section">
     <div class="d-flex justify-content-between">
       <h5 class="title" th:text="${CURRENT_CATEGORY.name}"></h5>
-      <button sec:authorize="isAuthenticated()" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#eventModal" onclick="prepareCreate()">
+      <button sec:authorize="isAuthenticated()" class="btn btn-sm btn-primary" id="btnPrepareCreate" data-bs-toggle="modal" data-bs-target="#eventModal">
         <i class="bi bi-calendar-plus"></i> 일정 등록
       </button>
     </div>
@@ -78,13 +78,13 @@
   <section class="container-sm">
     <div class="calendar-controls">
       <div>
-        <button class="btn btn-sm btn-outline-secondary" onclick="movePrev()"><i class="bi bi-chevron-left"></i></button>
-        <button class="btn btn-sm btn-outline-secondary" onclick="moveNext()"><i class="bi bi-chevron-right"></i></button>
-        <button class="btn btn-sm btn-outline-secondary" onclick="moveToday()">오늘</button>
+        <button class="btn btn-sm btn-outline-secondary" id="btnPrev"><i class="bi bi-chevron-left"></i></button>
+        <button class="btn btn-sm btn-outline-secondary" id="btnNext"><i class="bi bi-chevron-right"></i></button>
+        <button class="btn btn-sm btn-outline-secondary" id="btnToday">오늘</button>
       </div>
       <h4 id="renderRange" class="mb-0"></h4>
       <div>
-        <select class="form-select form-select-sm" onchange="changeView(this.value)">
+        <select class="form-select form-select-sm" id="selectView">
           <option value="month" selected>월간</option>
           <option value="week">주간</option>
           <option value="day">일간</option>
@@ -152,18 +152,18 @@
             <div id="replies" class="mb-3"></div>
             <div sec:authorize="isAuthenticated()" class="input-group">
               <input type="text" id="replyContent" class="form-control" placeholder="댓글을 입력하세요...">
-              <button class="btn btn-outline-secondary" type="button" onclick="submitReply()">등록</button>
+              <button class="btn btn-outline-secondary" type="button" id="btnSubmitReply">등록</button>
             </div>
           </div>
         </div>
         <div class="modal-footer">
           <div id="formFooter">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-            <button type="button" class="btn btn-primary" onclick="saveEvent()">저장</button>
+            <button type="button" class="btn btn-primary" id="btnSaveEvent">저장</button>
           </div>
           <div id="viewFooter" style="display: none;">
-            <button sec:authorize="isAuthenticated()" type="button" class="btn btn-danger me-auto" onclick="deleteEvent()">삭제</button>
-            <button sec:authorize="isAuthenticated()" type="button" class="btn btn-warning" onclick="editEvent()">수정</button>
+            <button sec:authorize="isAuthenticated()" type="button" class="btn btn-danger me-auto" id="btnDeleteEvent">삭제</button>
+            <button sec:authorize="isAuthenticated()" type="button" class="btn btn-warning" id="btnEditEvent">수정</button>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
           </div>
         </div>
@@ -189,7 +189,7 @@
     let currentEvent;
     let attachmentManager;
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', () => {
       // Attachment Manager Initialize
       attachmentManager = new AttachmentManager({
         container: '#attachment-container',
@@ -238,14 +238,33 @@
         showDetail(event.raw);
       });
 
+      // Event Listeners
+      const btnPrepareCreate = document.getElementById('btnPrepareCreate');
+      if (btnPrepareCreate) btnPrepareCreate.addEventListener('click', prepareCreate);
+
+      document.getElementById('btnPrev').addEventListener('click', movePrev);
+      document.getElementById('btnNext').addEventListener('click', moveNext);
+      document.getElementById('btnToday').addEventListener('click', moveToday);
+      document.getElementById('selectView').addEventListener('change', (e) => changeView(e.target.value));
+
+      document.getElementById('btnSaveEvent').addEventListener('click', saveEvent);
+
+      const btnSubmitReply = document.getElementById('btnSubmitReply');
+      if (btnSubmitReply) btnSubmitReply.addEventListener('click', submitReply);
+
+      const btnDeleteEvent = document.getElementById('btnDeleteEvent');
+      if (btnDeleteEvent) btnDeleteEvent.addEventListener('click', deleteEvent);
+
+      const btnEditEvent = document.getElementById('btnEditEvent');
+      if (btnEditEvent) btnEditEvent.addEventListener('click', editEvent);
+
       updateRenderRange();
       fetchEvents();
     });
 
-    function fetchEvents() {
-      const viewName = calendar.getViewName();
-      const rangeStart = calendar.getDateRangeStart().d.toISOString();
-      const rangeEnd = calendar.getDateRangeEnd().d.toISOString();
+    const fetchEvents = () => {
+      const rangeStart = calendar.getDateRangeStart().toDate().toISOString();
+      const rangeEnd = calendar.getDateRangeEnd().toDate().toISOString();
 
       fetch(`/api/events?categoryId=${categoryId}&start=${rangeStart}&end=${rangeEnd}`)
         .then(res => res.json())
@@ -262,12 +281,14 @@
           }));
           calendar.createEvents(events);
         });
-    }
+    };
 
-    function updateRenderRange() {
+    const updateRenderRange = () => {
       const renderRange = document.getElementById('renderRange');
-      const start = calendar.getDateRangeStart().d;
-      const end = calendar.getDateRangeEnd().d;
+      const startObj = calendar.getDateRangeStart();
+      const endObj = calendar.getDateRangeEnd();
+      const start = new Date(startObj.d.d);
+      const end = new Date(endObj.d.d);
       const viewName = calendar.getViewName();
 
       if (viewName === 'month') {
@@ -275,33 +296,33 @@
       } else {
         renderRange.innerText = `${start.getFullYear()}.${start.getMonth() + 1}.${start.getDate()} ~ ${end.getFullYear()}.${end.getMonth() + 1}.${end.getDate()}`;
       }
-    }
+    };
 
-    function movePrev() {
+    const movePrev = () => {
       calendar.prev();
       updateRenderRange();
       fetchEvents();
-    }
+    };
 
-    function moveNext() {
+    const moveNext = () => {
       calendar.next();
       updateRenderRange();
       fetchEvents();
-    }
+    };
 
-    function moveToday() {
+    const moveToday = () => {
       calendar.today();
       updateRenderRange();
       fetchEvents();
-    }
+    };
 
-    function changeView(viewName) {
+    const changeView = (viewName) => {
       calendar.changeView(viewName);
       updateRenderRange();
       fetchEvents();
-    }
+    };
 
-    function prepareCreate() {
+    const prepareCreate = () => {
       document.getElementById('eventForm').style.display = 'block';
       document.getElementById('eventDetail').style.display = 'none';
       document.getElementById('formFooter').style.display = 'block';
@@ -315,9 +336,9 @@
         attachmentManager.syncInputFiles();
         attachmentManager.renderList();
       }
-    }
+    };
 
-    function showDetail(item) {
+    const showDetail = (item) => {
       currentEvent = item;
       document.getElementById('eventForm').style.display = 'none';
       document.getElementById('eventDetail').style.display = 'block';
@@ -353,23 +374,11 @@
       // Load Replies
       loadReplies(item.articleId);
 
-      // Make global functions available outside module
-      window.prepareCreate = prepareCreate;
-      window.showDetail = showDetail;
-      window.saveEvent = saveEvent;
-      window.deleteEvent = deleteEvent;
-      window.editEvent = editEvent;
-      window.submitReply = submitReply;
-      window.movePrev = movePrev;
-      window.moveNext = moveNext;
-      window.moveToday = moveToday;
-      window.changeView = changeView;
-
       const modal = new bootstrap.Modal(document.getElementById('eventModal'));
       modal.show();
-    }
+    };
 
-    function loadReplies(articleId) {
+    const loadReplies = (articleId) => {
       const container = document.getElementById('replies');
       container.innerHTML = '<p class="text-muted">댓글을 불러오는 중...</p>';
       
@@ -388,9 +397,9 @@
             container.innerHTML = '<p class="text-muted">댓글이 없습니다.</p>';
           }
         });
-    }
+    };
 
-    async function saveEvent() {
+    const saveEvent = async () => {
       const id = document.getElementById('eventId').value;
       const method = id ? 'PUT' : 'POST';
       const url = id ? `/api/events/${id}` : '/api/events';
@@ -437,9 +446,9 @@
         console.error(e);
         alert('에러가 발생했습니다.');
       }
-    }
+    };
 
-    async function deleteEvent() {
+    const deleteEvent = async () => {
       if(!confirm('정말로 삭제하시겠습니까?')) return;
       
       const response = await fetch(`/api/events/${currentEvent.articleId}`, {
@@ -451,11 +460,11 @@
 
       if(response.ok) {
         bootstrap.Modal.getInstance(document.getElementById('eventModal')).hide();
-        calendar.refetchEvents();
+        fetchEvents();
       }
-    }
+    };
 
-    function editEvent() {
+    const editEvent = () => {
       const item = currentEvent;
       document.getElementById('eventForm').style.display = 'block';
       document.getElementById('eventDetail').style.display = 'none';
@@ -473,9 +482,9 @@
         attachmentManager.syncInputFiles();
         attachmentManager.renderList();
       }
-    }
+    };
 
-    async function submitReply() {
+    const submitReply = async () => {
       const content = document.getElementById('replyContent').value;
       if(!content) return;
 
@@ -496,7 +505,7 @@
         document.getElementById('replyContent').value = '';
         loadReplies(currentEvent.articleId);
       }
-    }
+    };
   </script>
 </div>
 </html>
