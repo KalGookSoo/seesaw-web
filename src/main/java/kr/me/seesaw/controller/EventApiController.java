@@ -50,7 +50,7 @@ public class EventApiController {
         return ResponseEntity.ok(eventWebService.update(id, command));
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() or hasAnyRole('ADMIN', 'MANAGER') or @defaultEventWebService.isOwner(#id)")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable String id) {
         eventWebService.delete(id);
