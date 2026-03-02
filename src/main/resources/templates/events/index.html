@@ -104,33 +104,41 @@
         </div>
         <div class="modal-body">
           <form id="eventForm">
-            <input type="hidden" id="eventId">
+            <input type="hidden" name="id">
             <div class="mb-3">
-              <label for="summary" class="form-label">일정 제목</label>
-              <input type="text" class="form-control" id="summary" required>
+              <label class="form-label required">일정 제목</label>
+              <input type="text" class="form-control" name="title" required>
             </div>
             <div class="row">
               <div class="col-md-6 mb-3">
-                <label for="dtStart" class="form-label">시작 일시</label>
-                <input type="datetime-local" class="form-control" id="dtStart" required>
+                <label class="form-label required" for="dtStart">시작 일시</label>
+                <input class="form-control" data-max-ref="dtEnd" id="dtStart" name="dtStart" required type="datetime-local">
               </div>
               <div class="col-md-6 mb-3">
-                <label for="dtEnd" class="form-label">종료 일시</label>
-                <input type="datetime-local" class="form-control" id="dtEnd">
+                <label class="form-label required" for="dtEnd">종료 일시</label>
+                <input class="form-control" data-min-ref="dtStart" id="dtEnd" name="dtEnd" required type="datetime-local">
               </div>
             </div>
             <div class="mb-3">
-              <label for="location" class="form-label">장소</label>
-              <input type="text" class="form-control" id="location">
+              <label class="form-label">장소</label>
+              <input type="text" class="form-control" name="location">
             </div>
             <div class="mb-3">
-              <label class="form-label">상세 내용 (위지윅)</label>
+              <label class="form-label">상태</label>
+              <select class="form-select" name="status">
+                <option value="TENTATIVE">잠정적</option>
+                <option value="CONFIRMED" selected>확정됨</option>
+                <option value="CANCELLED">취소됨</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">상세 내용</label>
               <div id="editor"></div>
             </div>
             <div class="mb-3">
               <label class="form-label">첨부파일</label>
               <div id="attachment-container">
-                <input id="attachment-input" type="file" multiple class="hidden">
+                <input id="attachment-input" name="multipartFiles" type="file" multiple class="hidden">
               </div>
               <div id="existingFiles" class="mt-2 list-group"></div>
             </div>
@@ -159,9 +167,9 @@
         <div class="modal-footer">
           <div id="formFooter">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-            <button type="button" class="btn btn-primary" id="btnSaveEvent">저장</button>
+            <button class="btn btn-primary" form="eventForm" id="btnSaveEvent" type="submit">저장</button>
           </div>
-          <div id="viewFooter" style="display: none;">
+          <div id="viewFooter" class="d-none">
             <button sec:authorize="isAuthenticated()" type="button" class="btn btn-danger me-auto" id="btnDeleteEvent">삭제</button>
             <button sec:authorize="isAuthenticated()" type="button" class="btn btn-warning" id="btnEditEvent">수정</button>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
@@ -178,18 +186,237 @@
 
   <script type="module" th:inline="javascript">
     import { AttachmentManager } from /*[[@{/scripts/attachment-manager.js}]]*/'/static/scripts/attachment-manager.js';
+    import { calculateRenderRange, calendarActions, fetchEvents } from /*[[@{/scripts/event-calendar.js}]]*/'/static/scripts/event-calendar.js';
 
     /*<![CDATA[*/
     const categoryId = /*[[${CURRENT_CATEGORY.id}]]*/ 'default-category-id';
     const contextPath = /*[[@{/}]]*/ '/';
     /*]]>*/
-    let calendar;
-    let editor;
-    let viewer;
-    let currentEvent;
-    let attachmentManager;
+    const $ = (selector) => {
+      const el = document.querySelector(selector);
+      if (!el) throw new Error(`Element not found: ${selector}`);
+      return el;
+    };
 
     document.addEventListener('DOMContentLoaded', () => {
+      let calendar;
+      let editor;
+      let viewer;
+      let currentEvent;
+      let attachmentManager;
+      let actions;
+      const blobs = new Map();
+
+      const updateRenderRange = () => {
+        const renderRange = $('#renderRange');
+        const start = calendar.getDateRangeStart().toDate();
+        const end = calendar.getDateRangeEnd().toDate();
+        const viewDate = calendar.getDate().toDate();
+        const viewName = calendar.getViewName();
+
+        renderRange.innerText = calculateRenderRange({ start, end, viewName, viewDate });
+      };
+
+      const loadReplies = (articleId) => {
+        const container = $('#replies');
+        container.innerHTML = '<p class="text-muted">댓글을 불러오는 중...</p>';
+
+        fetch(`/api/articles/${articleId}`)
+          .then(res => res.json())
+          .then(data => {
+            container.innerHTML = '';
+            if (data.replies && data.replies.length > 0) {
+              data.replies.forEach(reply => {
+                const div = document.createElement('div');
+                div.className = 'border-bottom py-2';
+                div.innerHTML = `<strong>${reply.createdBy}</strong> <small class="text-muted">${reply.createdDate}</small><br>${reply.content}`;
+                container.appendChild(div);
+              });
+            } else {
+              container.innerHTML = '<p class="text-muted">댓글이 없습니다.</p>';
+            }
+          });
+      };
+
+      const showDetail = (item) => {
+        currentEvent = item;
+        $('#eventForm').style.display = 'none';
+        $('#eventDetail').style.display = 'block';
+        $('#formFooter').style.display = 'none';
+        $('#viewFooter').style.display = 'block';
+
+        $('#viewSummary').innerText = item.title;
+        $('#viewStatus').innerText = item.status;
+        $('#viewPeriod').innerText = `${item.dtStart} ~ ${item.dtEnd || ''}`;
+
+        if (item.location) {
+          $('#viewLocation').innerText = item.location;
+          $('#viewLocationContainer').style.display = 'block';
+        } else {
+          $('#viewLocationContainer').style.display = 'none';
+        }
+
+        viewer.setMarkdown(item.article.content || '');
+
+        const fileContainer = $('#viewFiles');
+        fileContainer.innerHTML = '';
+        if (item.article.attachments) {
+          item.article.attachments.forEach(file => {
+            const a = document.createElement('a');
+            a.className = 'list-group-item list-group-item-action';
+            a.href = `/attachments/${file.id}`;
+            a.innerHTML = `<i class="bi bi-file-earmark"></i> ${file.originalName}`;
+            fileContainer.appendChild(a);
+          });
+        }
+
+        loadReplies(item.articleId);
+
+        const modal = new bootstrap.Modal($('#eventModal'));
+        modal.show();
+      };
+
+      const prepareCreate = () => {
+        const form = $('#eventForm');
+        form.style.display = 'block';
+        $('#eventDetail').style.display = 'none';
+        $('#formFooter').style.display = 'block';
+        $('#viewFooter').style.display = 'none';
+        form.elements['id'].value = '';
+        form.reset();
+        editor.setMarkdown('');
+        $('#existingFiles').innerHTML = '';
+        if (attachmentManager) {
+          attachmentManager.files = [];
+          attachmentManager.syncInputFiles();
+          attachmentManager.renderList();
+        }
+      };
+
+      const saveEvent = async (e) => {
+        e.preventDefault();
+        const form = $('#eventForm');
+        const id = form.elements['id'].value;
+        const method = 'POST';
+        const url = id ? `/api/events/${id}` : '/api/events';
+
+        const formData = new FormData();
+
+        formData.append('categoryId', categoryId);
+        formData.append('dtStart', form.elements['dtStart'].value);
+        formData.append('dtEnd', form.elements['dtEnd'].value);
+        formData.append('title', form.elements['title'].value);
+        formData.append('content', editor.getHTML());
+        formData.append('location', form.elements['location'].value);
+        formData.append('status', form.elements['status'].value);
+        formData.append('tzid', 'Asia/Seoul');
+
+        const files = attachmentManager.getFiles();
+        for (let i = 0; i < files.length; i++) {
+          formData.append('multipartFiles', files[i]);
+        }
+
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(editor.getHTML(), 'text/html');
+        const urls = [...doc.querySelectorAll('img[src*="blob:"]')].map(img => img.src);
+
+        const dataTransfer = new DataTransfer();
+        urls.filter(url => blobs.has(url))
+          .forEach(url => {
+            const blob = blobs.get(url);
+            const file = new File([blob], blob.name, { type: blob.type });
+            dataTransfer.items.add(file);
+          });
+        [...dataTransfer.files].forEach(file => formData.append('inlineImages', file));
+
+        try {
+          const response = await fetch(url, {
+            method: method,
+            body: formData,
+            headers: {
+              [CSRF.headerName]: CSRF.token
+            }
+          });
+
+          if (response.ok) {
+            bootstrap.Modal.getInstance($('#eventModal')).hide();
+            fetchEvents(calendar, categoryId);
+          } else {
+            const responseBody = await response.text();
+            const errors = JSON.parse(responseBody).errors;
+            [...errors].forEach(error => {
+              const field = form.elements[error.field];
+              field.setCustomValidity(error.message);
+              field.reportValidity();
+            });
+          }
+        } catch (e) {
+          console.error(e);
+          alert('에러가 발생했습니다.');
+        }
+      };
+
+      const deleteEvent = async () => {
+        if (!confirm('정말로 삭제하시겠습니까?')) return;
+
+        const response = await fetch(`/api/events/${currentEvent.articleId}`, {
+          method: 'DELETE',
+          headers: {
+            [CSRF.headerName]: CSRF.token
+          }
+        });
+
+        if (response.ok) {
+          bootstrap.Modal.getInstance($('#eventModal')).hide();
+          fetchEvents(calendar, categoryId);
+        }
+      };
+
+      const editEvent = () => {
+        const item = currentEvent;
+        const form = $('#eventForm');
+        form.style.display = 'block';
+        $('#eventDetail').style.display = 'none';
+        $('#formFooter').style.display = 'block';
+        $('#viewFooter').style.display = 'none';
+
+        form.elements['id'].value = item.articleId;
+        form.elements['title'].value = item.title;
+        form.elements['dtStart'].value = item.dtStart;
+        form.elements['dtEnd'].value = item.dtEnd;
+        form.elements['location'].value = item.location;
+        form.elements['status'].value = item.status;
+        editor.setHTML(item.article.content || '');
+        if (attachmentManager) {
+          attachmentManager.files = [];
+          attachmentManager.syncInputFiles();
+          attachmentManager.renderList();
+        }
+      };
+
+      const submitReply = async () => {
+        const content = $('#replyContent').value;
+        if (!content) return;
+
+        const response = await fetch(`/api/replies?articleId=${currentEvent.articleId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            [CSRF.headerName]: CSRF.token
+          },
+          body: JSON.stringify({
+            articleId: currentEvent.articleId,
+            content: content,
+            exposed: true
+          })
+        });
+
+        if (response.ok) {
+          $('#replyContent').value = '';
+          loadReplies(currentEvent.articleId);
+        }
+      };
+
       // Attachment Manager Initialize
       attachmentManager = new AttachmentManager({
         container: '#attachment-container',
@@ -198,314 +425,6 @@
         helperText: '여러 파일을 한 번에 추가할 수 있습니다.'
       });
 
-      // TUI Editor Initialize
-      editor = new toastui.Editor({
-        el: document.querySelector('#editor'),
-        height: '300px',
-        initialEditType: 'wysiwyg',
-        previewStyle: 'vertical'
-      });
-
-      viewer = toastui.Editor.factory({
-        el: document.querySelector('#viewer'),
-        viewer: true
-      });
-
-      // TUI Calendar Initialize
-      const calendarEl = document.getElementById('calendar');
-      calendar = new tui.Calendar(calendarEl, {
-        defaultView: 'month',
-        useFormPopup: false,
-        useDetailPopup: false,
-        isReadOnly: true,
-        usageStatistics: false,
-        timezone: {
-          zones: [
-            {
-              timezoneName: 'Asia/Seoul',
-              displayLabel: 'Seoul',
-            },
-          ],
-        },
-        template: {
-          allday(event) {
-            return `<span style="color: gray;">${event.title}</span>`;
-          },
-        },
-      });
-
-      calendar.on('clickEvent', ({ event }) => {
-        showDetail(event.raw);
-      });
-
-      // Event Listeners
-      const btnPrepareCreate = document.getElementById('btnPrepareCreate');
-      if (btnPrepareCreate) btnPrepareCreate.addEventListener('click', prepareCreate);
-
-      document.getElementById('btnPrev').addEventListener('click', movePrev);
-      document.getElementById('btnNext').addEventListener('click', moveNext);
-      document.getElementById('btnToday').addEventListener('click', moveToday);
-      document.getElementById('selectView').addEventListener('change', (e) => changeView(e.target.value));
-
-      document.getElementById('btnSaveEvent').addEventListener('click', saveEvent);
-
-      const btnSubmitReply = document.getElementById('btnSubmitReply');
-      if (btnSubmitReply) btnSubmitReply.addEventListener('click', submitReply);
-
-      const btnDeleteEvent = document.getElementById('btnDeleteEvent');
-      if (btnDeleteEvent) btnDeleteEvent.addEventListener('click', deleteEvent);
-
-      const btnEditEvent = document.getElementById('btnEditEvent');
-      if (btnEditEvent) btnEditEvent.addEventListener('click', editEvent);
-
-      updateRenderRange();
-      fetchEvents();
-    });
-
-    const fetchEvents = () => {
-      const rangeStart = calendar.getDateRangeStart().toDate().toISOString();
-      const rangeEnd = calendar.getDateRangeEnd().toDate().toISOString();
-
-      fetch(`/api/events?categoryId=${categoryId}&start=${rangeStart}&end=${rangeEnd}`)
-        .then(res => res.json())
-        .then(data => {
-          calendar.clear();
-          const events = data.map(item => ({
-            id: item.articleId,
-            calendarId: '1',
-            title: item.summary,
-            start: item.dtStart,
-            end: item.dtEnd || item.dtStart,
-            category: 'time',
-            raw: item
-          }));
-          calendar.createEvents(events);
-        });
-    };
-
-    const updateRenderRange = () => {
-      const renderRange = document.getElementById('renderRange');
-      const startObj = calendar.getDateRangeStart();
-      const endObj = calendar.getDateRangeEnd();
-      const start = new Date(startObj.d.d);
-      const end = new Date(endObj.d.d);
-      const viewName = calendar.getViewName();
-
-      if (viewName === 'month') {
-        renderRange.innerText = `${start.getFullYear()}.${start.getMonth() + 1}`;
-      } else {
-        renderRange.innerText = `${start.getFullYear()}.${start.getMonth() + 1}.${start.getDate()} ~ ${end.getFullYear()}.${end.getMonth() + 1}.${end.getDate()}`;
-      }
-    };
-
-    const movePrev = () => {
-      calendar.prev();
-      updateRenderRange();
-      fetchEvents();
-    };
-
-    const moveNext = () => {
-      calendar.next();
-      updateRenderRange();
-      fetchEvents();
-    };
-
-    const moveToday = () => {
-      calendar.today();
-      updateRenderRange();
-      fetchEvents();
-    };
-
-    const changeView = (viewName) => {
-      calendar.changeView(viewName);
-      updateRenderRange();
-      fetchEvents();
-    };
-
-    const prepareCreate = () => {
-      document.getElementById('eventForm').style.display = 'block';
-      document.getElementById('eventDetail').style.display = 'none';
-      document.getElementById('formFooter').style.display = 'block';
-      document.getElementById('viewFooter').style.display = 'none';
-      document.getElementById('eventId').value = '';
-      document.getElementById('eventForm').reset();
-      editor.setMarkdown('');
-      document.getElementById('existingFiles').innerHTML = '';
-      if(attachmentManager) {
-        attachmentManager.files = [];
-        attachmentManager.syncInputFiles();
-        attachmentManager.renderList();
-      }
-    };
-
-    const showDetail = (item) => {
-      currentEvent = item;
-      document.getElementById('eventForm').style.display = 'none';
-      document.getElementById('eventDetail').style.display = 'block';
-      document.getElementById('formFooter').style.display = 'none';
-      document.getElementById('viewFooter').style.display = 'block';
-
-      document.getElementById('viewSummary').innerText = item.summary;
-      document.getElementById('viewStatus').innerText = item.status;
-      document.getElementById('viewPeriod').innerText = `${item.dtStart} ~ ${item.dtEnd || ''}`;
-      
-      if(item.location) {
-        document.getElementById('viewLocation').innerText = item.location;
-        document.getElementById('viewLocationContainer').style.display = 'block';
-      } else {
-        document.getElementById('viewLocationContainer').style.display = 'none';
-      }
-
-      viewer.setMarkdown(item.article.content || '');
-      
-      // Load Files
-      const fileContainer = document.getElementById('viewFiles');
-      fileContainer.innerHTML = '';
-      if(item.article.attachments) {
-        item.article.attachments.forEach(file => {
-          const a = document.createElement('a');
-          a.className = 'list-group-item list-group-item-action';
-          a.href = `/attachments/${file.id}`;
-          a.innerHTML = `<i class="bi bi-file-earmark"></i> ${file.originalName}`;
-          fileContainer.appendChild(a);
-        });
-      }
-
-      // Load Replies
-      loadReplies(item.articleId);
-
-      const modal = new bootstrap.Modal(document.getElementById('eventModal'));
-      modal.show();
-    };
-
-    const loadReplies = (articleId) => {
-      const container = document.getElementById('replies');
-      container.innerHTML = '<p class="text-muted">댓글을 불러오는 중...</p>';
-      
-      fetch(`/api/articles/${articleId}`) // 기존 Article API 활용 가능 여부 확인 필요 (Aggregation 포함 시)
-        .then(res => res.json())
-        .then(data => {
-          container.innerHTML = '';
-          if(data.replies && data.replies.length > 0) {
-            data.replies.forEach(reply => {
-              const div = document.createElement('div');
-              div.className = 'border-bottom py-2';
-              div.innerHTML = `<strong>${reply.createdBy}</strong> <small class="text-muted">${reply.createdDate}</small><br>${reply.content}`;
-              container.appendChild(div);
-            });
-          } else {
-            container.innerHTML = '<p class="text-muted">댓글이 없습니다.</p>';
-          }
-        });
-    };
-
-    const saveEvent = async () => {
-      const id = document.getElementById('eventId').value;
-      const method = id ? 'PUT' : 'POST';
-      const url = id ? `/api/events/${id}` : '/api/events';
-
-      const formData = new FormData();
-      const command = {
-        article: {
-          categoryId: categoryId,
-          title: document.getElementById('summary').value,
-          content: editor.getMarkdown(),
-          type: 'GENERAL',
-          exposed: true
-        },
-        dtStart: document.getElementById('dtStart').value,
-        dtEnd: document.getElementById('dtEnd').value,
-        summary: document.getElementById('summary').value,
-        description: editor.getMarkdown(),
-        location: document.getElementById('location').value
-      };
-
-      formData.append('command', new Blob([JSON.stringify(command)], {type: 'application/json'}));
-      
-      const files = attachmentManager.getFiles();
-      for(let i=0; i<files.length; i++) {
-        formData.append('files', files[i]);
-      }
-
-      try {
-        const response = await fetch(url, {
-          method: method,
-          body: formData,
-          headers: {
-            [CSRF.headerName]: CSRF.token
-          }
-        });
-
-        if(response.ok) {
-          bootstrap.Modal.getInstance(document.getElementById('eventModal')).hide();
-          fetchEvents();
-        } else {
-          alert('저장에 실패했습니다.');
-        }
-      } catch (e) {
-        console.error(e);
-        alert('에러가 발생했습니다.');
-      }
-    };
-
-    const deleteEvent = async () => {
-      if(!confirm('정말로 삭제하시겠습니까?')) return;
-      
-      const response = await fetch(`/api/events/${currentEvent.articleId}`, {
-        method: 'DELETE',
-        headers: {
-          [CSRF.headerName]: CSRF.token
-        }
-      });
-
-      if(response.ok) {
-        bootstrap.Modal.getInstance(document.getElementById('eventModal')).hide();
-        fetchEvents();
-      }
-    };
-
-    const editEvent = () => {
-      const item = currentEvent;
-      document.getElementById('eventForm').style.display = 'block';
-      document.getElementById('eventDetail').style.display = 'none';
-      document.getElementById('formFooter').style.display = 'block';
-      document.getElementById('viewFooter').style.display = 'none';
-
-      document.getElementById('eventId').value = item.articleId;
-      document.getElementById('summary').value = item.summary;
-      document.getElementById('dtStart').value = item.dtStart;
-      document.getElementById('dtEnd').value = item.dtEnd;
-      document.getElementById('location').value = item.location;
-      editor.setMarkdown(item.article.content || '');
-      if(attachmentManager) {
-        attachmentManager.files = [];
-        attachmentManager.syncInputFiles();
-        attachmentManager.renderList();
-      }
-    };
-
-    const submitReply = async () => {
-      const content = document.getElementById('replyContent').value;
-      if(!content) return;
-
-      const response = await fetch(`/api/replies`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          [CSRF.headerName]: CSRF.token
-        },
-        body: JSON.stringify({
-          articleId: currentEvent.articleId,
-          content: content,
-          exposed: true
-        })
-      });
-
-      if(response.ok) {
-        document.getElementById('replyContent').value = '';
-        loadReplies(currentEvent.articleId);
-      }
-    };
   </script>
 </div>
 </html>

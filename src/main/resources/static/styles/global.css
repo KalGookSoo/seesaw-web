@@ -41,6 +41,11 @@ html body .table th {
 html body .border-bottom {
   border-bottom: 1px solid var(--bs-gray-400);
 }
+html body .required::after {
+  content: "*";
+  color: red;
+  margin-left: 0.25rem;
+}
 
 :root {
   --main-color: #cc4202;

@@ -56,6 +56,12 @@ html {
     .border-bottom {
       border-bottom: 1px solid var(--bs-gray-400);
     }
+
+    .required::after {
+      content: '*';
+      color: red;
+      margin-left: 0.25rem;
+    }
   }
 }
 
