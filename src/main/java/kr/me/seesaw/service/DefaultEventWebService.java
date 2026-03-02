@@ -143,12 +143,10 @@ public class DefaultEventWebService implements EventWebService {
     @Transactional
     public void delete(String id) {
         logger.info("이벤트 삭제: id={}", id);
-        VEvent event = eventRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Event not found with id: " + id));
-
-        // Article 삭제 시 연관된 VEvent도 연쇄 삭제되도록 구성되어 있거나 수동 삭제
-        articleService.delete(event.getArticleId());
+        VEvent event = eventRepository.getReferenceById(id);
         eventRepository.delete(event);
+        articleService.delete(event.getArticleId());
+    }
     }
 
 }
