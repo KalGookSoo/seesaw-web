@@ -50,8 +50,19 @@
   <!--/* UML */-->
   <script th:src="@{/scripts/toastui-editor-plugin-uml.min.js}"></script>
 
-  <script th:inline="javascript">
+  <script type="module" th:inline="javascript">
+    import { AttachmentManager } from /*[[@{/scripts/attachment-manager.js}]]*/'/static/scripts/attachment-manager.js';
+
     document.addEventListener('DOMContentLoaded', e => {
+      let attachmentManager;
+
+      // Attachment Manager Initialize
+      attachmentManager = new AttachmentManager({
+        container: '#attachment-container',
+        input: '#attachment-input',
+        title: '파일을 드래그하거나 클릭하여 첨부하세요',
+        helperText: '여러 파일을 한 번에 추가할 수 있습니다.'
+      });
 
       // 에디터에 첨부하는 이미지가 담길 것. 최종 제출하는 에디터 본문에서 참조됨
       const blobs = new Map();
@@ -145,22 +156,32 @@
         }
 
       };
+
+      const clickHandlers = {
+        '[name="deleteAttachment"]': async e => {
+          if (!confirm(/*[[#{message.confirm.delete.attachment}]]*/'첨부파일을 삭제하시겠습니까?')) return;
+          const button = e.target.closest('[name="deleteAttachment"]');
+          const response = await fetch(`/api/attachments/${button.dataset.id}`, {
+            method: 'DELETE',
+            headers: {
+              [CSRF.headerName]: CSRF.token
+            }
+          });
+          if (response.ok) {
+            button.closest('li').remove();
+          } else {
+            alert(/*[[#{command.failure.delete}]]*/'삭제에 실패했습니다.');
+          }
+        }
+      };
+
+      document.body.addEventListener('click', e => {
+        const selector = Object.keys(clickHandlers).find(selector => e.target.closest(selector));
+        clickHandlers[selector]?.(e);
+      });
     });
   </script>
 
-  <style>
-    #editor img:not([class*="ProseMirror"]) {
-      border-radius: 8px;
-      padding: 0.25rem;
-      margin: 0.25rem;
-      background-color: #29e;
-
-      touch-action: none;
-
-      /* This makes things *much* easier */
-      box-sizing: border-box;
-    }
-  </style>
 
   <script type="module">
     import 'https://cdn.interactjs.io/v1.9.20/auto-start/index.js';
@@ -241,15 +262,14 @@
 </head>
 <div layout:fragment="content">
   <section th:replace="~{components/breadcrumb :: breadcrumbs}"></section>
-  <header class="container-sm title-section">
-    <div class="d-flex">
-      <h5 class="title pb-1" th:text="${ALL_CATEGORIES.get(article.categoryId).name}"></h5>
-    </div>
-  </header>
-  <form name="updateArticleForm" enctype="multipart/form-data" th:action="@{'/api/articles/' + ${article.id}}" th:method="post">
-    <input name="categoryId" th:value="${article.categoryId}" type="hidden">
-    <input class="d-none" multiple name="multipartFiles" type="file">
-    <section class="container-sm py-4 mb-4">
+    <header class="container-sm title-section">
+      <div class="d-flex">
+        <h5 class="title pb-1" th:text="${ALL_CATEGORIES.get(article.categoryId).name}"></h5>
+      </div>
+    </header>
+    <form name="updateArticleForm" enctype="multipart/form-data" th:action="@{'/api/articles/' + ${article.id}}" th:method="post">
+      <input name="categoryId" th:value="${article.categoryId}" type="hidden">
+      <section class="container-sm py-4 mb-4">
       <div class="card shadow-sm border-0">
         <div class="card-header bg-white py-3">
           <h5 class="card-title mb-0">
@@ -300,6 +320,39 @@
               </div>
               <div class="col-md-10 col-lg-11">
                 <div id="editor" class="border rounded"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <div class="row align-items-start">
+              <div class="col-md-2 col-lg-1">
+                <label class="form-label fw-medium" th:text="#{entity.attachment}">첨부파일</label>
+              </div>
+              <div class="col-md-10 col-lg-11">
+                <div id="attachment-container">
+                  <input id="attachment-input" name="multipartFiles" type="file" multiple class="d-none">
+                </div>
+                <div th:if="${!article.attachments.isEmpty()}" class="mt-4">
+                  <h6 class="small fw-bold mb-3">
+                    <i class="bi bi-files me-1"></i>기존 첨부파일
+                  </h6>
+                  <ul class="list-group list-group-flush border rounded">
+                    <li th:each="attachment : ${article.attachments}" class="list-group-item d-flex justify-content-between align-items-center py-3">
+                      <div class="d-flex align-items-center overflow-hidden" style="max-width: 80%;">
+                        <i class="bi bi-file-earmark-text fs-5 me-3 text-primary"></i>
+                        <div class="text-truncate">
+                          <div class="text-dark fw-medium text-truncate" th:text="${attachment.originalName}">파일명.ext</div>
+                          <small class="text-muted" th:text="${attachment.size}">0 KB</small>
+                        </div>
+                      </div>
+                      <button type="button" class="btn btn-sm btn-outline-danger d-flex align-items-center" name="deleteAttachment" th:data-id="${attachment.id}">
+                        <i class="bi bi-trash me-1"></i>
+                        <span th:text="#{label.delete}">삭제</span>
+                      </button>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>

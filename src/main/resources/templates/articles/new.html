@@ -48,8 +48,19 @@
   <!--/* UML */-->
   <script th:src="@{/scripts/toastui-editor-plugin-uml.min.js}"></script>
 
-  <script th:inline="javascript">
+  <script type="module" th:inline="javascript">
+    import { AttachmentManager } from /*[[@{/scripts/attachment-manager.js}]]*/'/static/scripts/attachment-manager.js';
+
     document.addEventListener('DOMContentLoaded', e => {
+      let attachmentManager;
+
+      // Attachment Manager Initialize
+      attachmentManager = new AttachmentManager({
+        container: '#attachment-container',
+        input: '#multipartFiles',
+        title: '파일을 드래그하거나 클릭하여 첨부하세요',
+        helperText: '여러 파일을 한 번에 추가할 수 있습니다.'
+      });
 
       // 에디터에 첨부하는 이미지가 담길 것. 최종 제출하는 에디터 본문에서 참조됨
       const blobs = new Map();
@@ -145,20 +156,6 @@
     });
   </script>
 
-  <style>
-    #editor img:not([class*="ProseMirror"]) {
-      border-radius: 8px;
-      padding: 0.25rem;
-      margin: 0.25rem;
-      background-color: #29e;
-
-      touch-action: none;
-
-      /* This makes things *much* easier */
-      box-sizing: border-box;
-    }
-  </style>
-
   <script type="module">
     import 'https://cdn.interactjs.io/v1.9.20/auto-start/index.js';
     import 'https://cdn.interactjs.io/v1.9.20/actions/drag/index.js';
@@ -238,15 +235,14 @@
 </head>
 <div layout:fragment="content">
   <section th:replace="~{components/breadcrumb :: breadcrumbs}"></section>
-  <header class="container-sm title-section">
-    <div class="d-flex">
-      <h5 class="title pb-1" th:text="${ALL_CATEGORIES.get(search.categoryId).name}"></h5>
-    </div>
-  </header>
-  <form name="createArticleForm" enctype="multipart/form-data" th:action="@{/api/articles}" th:method="post">
-    <input name="categoryId" th:value="${search.categoryId}" type="hidden">
-    <input class="d-none" multiple name="multipartFiles" type="file">
-    <section class="container-sm py-4 mb-4">
+    <header class="container-sm title-section">
+      <div class="d-flex">
+        <h5 class="title pb-1" th:text="${ALL_CATEGORIES.get(search.categoryId).name}"></h5>
+      </div>
+    </header>
+    <form name="createArticleForm" enctype="multipart/form-data" th:action="@{/api/articles}" th:method="post">
+      <input name="categoryId" th:value="${search.categoryId}" type="hidden">
+      <section class="container-sm py-4 mb-4">
       <div class="card shadow-sm border-0">
         <div class="card-header bg-white py-3">
           <h5 class="card-title mb-0">
@@ -301,6 +297,19 @@
               <div class="col-md-10 col-lg-11">
                 <div id="editor" class="border rounded"></div>
               </div>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <div class="row align-items-start">
+              <div class="col-md-2 col-lg-1">
+                <label class="form-label fw-medium" th:text="#{entity.attachment}">첨부파일</label>
+              </div>
+            <div class="col-md-10 col-lg-11">
+              <div id="attachment-container">
+                <input id="multipartFiles" name="multipartFiles" type="file" multiple class="d-none">
+              </div>
+            </div>
             </div>
           </div>
         </div>

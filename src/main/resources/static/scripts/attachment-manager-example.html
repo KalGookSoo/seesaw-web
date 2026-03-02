@@ -1,0 +1,158 @@
+<!doctype html>
+<html
+  lang="ko"
+  layout:decorate="~{|_layout/${layoutName}|}"
+  th:lang="${#locale.language}"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  xmlns:th="http://www.thymeleaf.org">
+>
+<head>
+  <meta charset="UTF-8"/>
+  <title>스타일 가이드</title>
+</head>
+<!--/*@thymesVar id="REQUEST_URI_BUILDER" type="org.springframework.web.util.UriComponentsBuilder"*/-->
+<body>
+<main layout:fragment="content">
+  <div class="container mx-auto py-8 px-4">
+    <h1 class="text-3xl font-bold mb-8 text-green-900 border-b-2 border-green-200 pb-2">L-Platform Grid Style Guide</h1>
+
+    <!--/* Table of Contents */-->
+    <div class="bg-white rounded-lg shadow-sm border border-green-100 p-6 mb-10">
+      <h2 class="text-xl font-semibold mb-4 text-green-800">목차 (Table of Contents)</h2>
+      <ul class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <li>
+          <a class="flex items-center gap-2 p-3 rounded-md hover:bg-green-50 text-gray-700 transition-colors border border-transparent hover:border-green-200"
+             href="#section-dialog-attachment">
+            <span class="w-8 h-8 flex items-center justify-center bg-green-100 text-green-700 rounded-full text-sm font-bold">1</span>
+            <span>모달 안에 존재하는 첨부파일 핸들러</span>
+          </a>
+        </li>
+        <li>
+          <a class="flex items-center gap-2 p-3 rounded-md hover:bg-green-50 text-gray-700 transition-colors border border-transparent hover:border-green-200"
+             href="#section-inline-attachment">
+            <span class="w-8 h-8 flex items-center justify-center bg-green-100 text-green-700 rounded-full text-sm font-bold">2</span>
+            <span>모달 밖에 존재하는 첨부파일 핸들러</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="space-y-16">
+      <!--/* 1. 모달 안에 존재하는 첨부파일 핸들러 */-->
+      <section class="scroll-mt-20" id="section-dialog-attachment">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-2xl font-bold text-gray-800">1. 모달 안에 존재하는 첨부파일 핸들러</h2>
+          <button class="btn btn-sm btn-primary bg-green-600 text-white px-4 py-2 rounded shadow-sm hover:bg-green-700"
+                  name="openAttachmentDialog">다이얼로그 열기
+          </button>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-sm border border-green-100">
+          <h3 class="text-lg font-semibold text-gray-800 mb-2">다이얼로그 첨부</h3>
+          <p class="text-sm text-gray-600 mb-4">다이얼로그에서 첨부 후 확인 버튼을 누르면 파일 목록을 가져옵니다.</p>
+          <div class="rounded-lg border border-green-100 bg-green-50 px-4 py-3">
+            <p class="text-xs font-semibold text-green-800 mb-2">다이얼로그 확인 결과</p>
+            <ul class="text-sm text-gray-600 space-y-1" id="attachment-dialog-output"></ul>
+          </div>
+        </div>
+
+        <dialog class="border border-gray-300 rounded-lg p-4 w-[60vw] max-h-[90vh] m-auto shadow-2xl overflow-hidden" id="modal-attachment">
+          <form method="dialog">
+            <div class="flex flex-col gap-4">
+              <div class="flex justify-between items-center">
+                <div>
+                  <h3 class="text-xl font-bold">첨부파일 등록</h3>
+                  <span class="text-gray-500 text-xs">Attachment Manager</span>
+                </div>
+              </div>
+              <div id="attachment-dialog-container">
+                <input id="attachment-dialog-input" multiple type="file">
+              </div>
+              <div class="footer flex justify-end items-center gap-2">
+                <button class="btn btn-sm btn-outline-secondary" formnovalidate name="role" title="취소" type="submit" value="cancel">취소
+                </button>
+                <button class="btn btn-sm btn-primary bg-green-600 text-white px-4 py-1 rounded" name="role" title="제출" type="submit"
+                        value="confirm">확인
+                </button>
+              </div>
+            </div>
+          </form>
+        </dialog>
+      </section>
+
+      <!--/* 2. 모달 밖에 존재하는 첨부파일 핸들러 */-->
+      <section class="scroll-mt-20" id="section-inline-attachment">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">2. 모달 밖에 존재하는 첨부파일 핸들러</h2>
+        <div class="bg-white p-6 rounded-lg shadow-sm border border-green-100">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">인라인 첨부</h3>
+          <div id="attachment-inline">
+            <input id="attachment-inline-input" multiple type="file">
+          </div>
+          <div class="mt-4 flex justify-end">
+            <button class="btn btn-sm btn-primary bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700" id="attachment-inline-submit"
+                    type="button">첨부 확인
+            </button>
+          </div>
+          <div class="mt-4 rounded-lg border border-green-100 bg-green-50 px-4 py-3">
+            <p class="text-xs font-semibold text-green-800 mb-2">현재 선택된 파일</p>
+            <ul class="text-sm text-gray-600 space-y-1" id="attachment-inline-output"></ul>
+          </div>
+        </div>
+
+        <script th:inline="javascript" type="module">
+          import { AttachmentManager } from /*[[@{/scripts/attachment-manager.js}]]*/'/static/scripts/attachment-manager.js';
+
+          document.addEventListener('DOMContentLoaded', () => {
+            const inlineOutput = document.getElementById('attachment-inline-output');
+            const dialogOutput = document.getElementById('attachment-dialog-output');
+            const openDialogButton = document.querySelector('button[name="openAttachmentDialog"]');
+            const dialog = document.getElementById('modal-attachment');
+            const inlineSubmit = document.getElementById('attachment-inline-submit');
+
+            const renderOutput = (target, files) => {
+              if (!target) return;
+              if (!files || files.length === 0) {
+                target.innerHTML = '<li class="text-gray-500 text-sm">첨부된 파일이 없습니다.</li>';
+                return;
+              }
+              target.innerHTML = files.map((file) => `<li>${file.name}</li>`).join('');
+            };
+
+            const inlineManager = new AttachmentManager({
+              container: '#attachment-inline',
+              input: '#attachment-inline-input',
+              title: '인라인 영역에 파일을 첨부하세요',
+              helperText: '첨부 후 [첨부 확인] 버튼으로 목록을 확인합니다.'
+            });
+
+            const dialogManager = new AttachmentManager({
+              container: '#attachment-dialog-container',
+              input: '#attachment-dialog-input',
+              title: '다이얼로그에 파일을 첨부하세요',
+              helperText: '확인 버튼을 누르면 파일 목록을 반환합니다.'
+            });
+
+            inlineSubmit.addEventListener('click', () => {
+              renderOutput(inlineOutput, inlineManager.getFiles());
+            });
+
+            openDialogButton.addEventListener('click', () => {
+              dialog.showModal();
+            });
+
+            dialog.addEventListener('submit', (e) => {
+              const submitter = e.submitter;
+              if (submitter && submitter.value === 'confirm') {
+                renderOutput(dialogOutput, dialogManager.getFiles());
+              }
+            });
+
+            renderOutput(inlineOutput, inlineManager.getFiles());
+            renderOutput(dialogOutput, dialogManager.getFiles());
+          });
+        </script>
+      </section>
+    </div>
+  </div>
+</main>
+</body>
+</html>
