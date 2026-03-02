@@ -273,6 +273,7 @@
   <script type="module" th:inline="javascript">
     import { AttachmentManager } from /*[[@{/scripts/attachment-manager.js}]]*/'/static/scripts/attachment-manager.js';
     import { calculateRenderRange, calendarActions, fetchEvents } from /*[[@{/scripts/event-calendar.js}]]*/'/static/scripts/event-calendar.js';
+    import { formatFileSize } from /*[[@{/scripts/file-util.js}]]*/'/static/scripts/file-util.js';
 
     /*<![CDATA[*/
     const categoryId = /*[[${CURRENT_CATEGORY.id}]]*/ 'default-category-id';
@@ -351,7 +352,7 @@
             const a = document.createElement('a');
             a.className = 'list-group-item list-group-item-action';
             a.href = `/attachments/${file.id}`;
-            a.innerHTML = `<i class="bi bi-file-earmark"></i> ${file.originalName}`;
+            a.innerHTML = `<i class="bi bi-file-earmark"></i> ${file.originalName} <small class="text-muted">(${formatFileSize(file.size)})</small>`;
             fileContainer.appendChild(a);
           });
         }

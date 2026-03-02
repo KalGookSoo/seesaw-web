@@ -52,10 +52,14 @@
 
   <script type="module" th:inline="javascript">
     import { AttachmentManager } from /*[[@{/scripts/attachment-manager.js}]]*/'/static/scripts/attachment-manager.js';
+    import { formatFileSize } from /*[[@{/scripts/file-util.js}]]*/'/static/scripts/file-util.js';
+
 
     document.addEventListener('DOMContentLoaded', e => {
       let attachmentManager;
 
+                  <div class="text-dark fw-medium text-truncate">${attachment.originalName}</div>
+                  <small class="text-muted">${formatFileSize(attachment.size)}</small>
       // Attachment Manager Initialize
       attachmentManager = new AttachmentManager({
         container: '#attachment-container',

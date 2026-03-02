@@ -1,3 +1,5 @@
+import { formatFileSize } from './file-util.js';
+
 /**
  * @class AttachmentManager
  */
@@ -166,7 +168,7 @@ export class AttachmentManager {
         <li class="list-group-item d-flex justify-content-between align-items-center">
           <div class="text-truncate" style="max-width: 80%;">
             <div class="fw-bold text-truncate">${file.name}</div>
-            <small class="text-muted">${this.formatFileSize(file.size)}</small>
+            <small class="text-muted">${formatFileSize(file.size)}</small>
           </div>
           <button type="button" class="btn btn-sm btn-outline-danger" data-action="remove" data-index="${index}">
             <i class="bi bi-trash"></i>
@@ -174,17 +176,6 @@ export class AttachmentManager {
         </li>
       `)
       .join('');
-  }
-
-  /**
-   * 파일 사이즈를 사람이 읽기 쉬운 형식으로 변환합니다.
-   * @param {number} size
-   * @returns {string}
-   */
-  formatFileSize(size) {
-    if (size < 1024) return `${size} B`;
-    if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
-    return `${(size / (1024 * 1024)).toFixed(1)} MB`;
   }
 
   /**
