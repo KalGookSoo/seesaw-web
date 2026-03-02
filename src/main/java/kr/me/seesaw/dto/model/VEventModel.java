@@ -69,4 +69,9 @@ public final class VEventModel extends BaseModel {
         }
     }
 
+    @Schema(description = "상태 설명")
+    public String getStatusDescription() {
+        return status != null ? status.getDescription() : null;
+    }
+
 }
