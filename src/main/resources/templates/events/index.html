@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="ko"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
       layout:decorate="~{layout}"
       th:lang="${#locale.language}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      xmlns:th="http://www.thymeleaf.org"
 >
 <head>
   <title>[[${CURRENT_CATEGORY.name}]] | [[${SITE_CONTEXT.name}]]</title>
-  <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
+  <link href="/static/styles/content.css" rel="stylesheet" th:href="@{/styles/content.css}">
 
   <!--/* Editor */-->
   <link rel="stylesheet" th:href="@{/styles/toastui-editor.min.css}">
@@ -48,8 +48,8 @@
   <script th:src="@{/scripts/toastui-editor-plugin-uml.min.js}"></script>
 
   <!-- TUI Calendar CSS -->
-  <link rel="stylesheet" href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css">
-  
+  <link href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css" rel="stylesheet">
+
   <style>
     #calendar {
       height: 800px;
@@ -58,8 +58,9 @@
       background: white;
       padding: 20px;
       border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     }
+
     .calendar-controls {
       max-width: 1100px;
       margin: 0 auto;
@@ -72,6 +73,12 @@
       max-height: 70vh;
       overflow-y: auto;
     }
+
+    #eventModal .modal-header,
+    #eventModal .modal-footer {
+      flex: 0 0 auto;
+    }
+
     .hidden {
       display: none !important;
     }
@@ -158,7 +165,8 @@
   <section class="container-sm title-section">
     <div class="d-flex justify-content-between">
       <h5 class="title" th:text="${CURRENT_CATEGORY.name}"></h5>
-      <button sec:authorize="isAuthenticated()" class="btn btn-sm btn-primary" id="btnPrepareCreate" data-bs-toggle="modal" data-bs-target="#eventModal">
+      <button class="btn btn-sm btn-primary" data-bs-target="#eventModal" data-bs-toggle="modal" id="btnPrepareCreate"
+              sec:authorize="isAuthenticated()">
         <i class="bi bi-calendar-plus"></i> 일정 등록
       </button>
     </div>
@@ -170,10 +178,10 @@
         <button class="btn btn-sm btn-outline-secondary" id="btnNext"><i class="bi bi-chevron-right"></i></button>
         <button class="btn btn-sm btn-outline-secondary" id="btnToday">오늘</button>
       </div>
-      <h4 id="renderRange" class="mb-0"></h4>
+      <h4 class="mb-0" id="renderRange"></h4>
       <div>
         <select class="form-select form-select-sm" id="selectView">
-          <option value="month" selected>월간</option>
+          <option selected value="month">월간</option>
           <option value="week">주간</option>
           <option value="day">일간</option>
         </select>
@@ -183,19 +191,19 @@
   </section>
 
   <!-- Event Detail/Form Modal -->
-  <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+  <div aria-hidden="true" aria-labelledby="eventModalLabel" class="modal fade" id="eventModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="eventModalLabel">일정 정보</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
         </div>
         <div class="modal-body">
           <form id="eventForm">
-            <input type="hidden" name="id">
+            <input name="id" type="hidden">
             <div class="mb-3">
               <label class="form-label required">일정 제목</label>
-              <input type="text" class="form-control" name="title" required>
+              <input class="form-control" name="title" required type="text">
             </div>
             <div class="row">
               <div class="col-md-6 mb-3">
@@ -209,13 +217,13 @@
             </div>
             <div class="mb-3">
               <label class="form-label">장소</label>
-              <input type="text" class="form-control" name="location">
+              <input class="form-control" name="location" type="text">
             </div>
             <div class="mb-3">
               <label class="form-label">상태</label>
               <select class="form-select" name="status">
                 <option value="TENTATIVE">잠정적</option>
-                <option value="CONFIRMED" selected>확정됨</option>
+                <option selected value="CONFIRMED">확정됨</option>
                 <option value="CANCELLED">취소됨</option>
               </select>
             </div>
