@@ -55,11 +55,18 @@ public class AttachmentController {
             @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
             HttpServletResponse response
     ) throws IOException {
-        List<AttachmentModel> attachments = articleQueryService.getAttachments(articleId);
+        List<AttachmentModel> attachments = articleQueryService.getAttachments(articleId)
+                .stream()
+                .filter(AttachmentModel::isAttachment)
+                .toList();
         if (attachments.isEmpty()) {
             throw new NoSuchElementException();
         }
-        String title = attachments.get(0).getOriginalName() + (attachments.size() > 1 ? " (외 " + (attachments.size() - 1) + "개)" : "");
+        if (attachments.size() == 1) {
+            getAttachment(attachments.get(0).getId(), userAgent, response);
+            return;
+        }
+        String title = attachments.get(0).getOriginalName() + " (외 " + (attachments.size() - 1) + "개)";
         String fileName = URLEncoder.encode(title, StandardCharsets.UTF_8);
 
         response.setStatus(HttpServletResponse.SC_OK);
