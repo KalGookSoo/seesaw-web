@@ -2,9 +2,8 @@ package kr.me.seesaw.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
 import kr.me.seesaw.core.file.FileIOService;
-import kr.me.seesaw.model.ArticleModel;
 import kr.me.seesaw.model.AttachmentModel;
-import kr.me.seesaw.service.ArticleService;
+import kr.me.seesaw.service.ArticleQueryService;
 import kr.me.seesaw.service.AttachmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -31,7 +30,7 @@ public class AttachmentController {
 
     private final AttachmentService attachmentService;
 
-    private final ArticleService articleService;
+    private final ArticleQueryService articleQueryService;
 
     @GetMapping("/{id}/download")
     public void getAttachment(
@@ -56,12 +55,12 @@ public class AttachmentController {
             @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
             HttpServletResponse response
     ) throws IOException {
-        ArticleModel article = articleService.find(articleId);
-        List<AttachmentModel> attachments = article.getAttachments();
+        List<AttachmentModel> attachments = articleQueryService.getAttachments(articleId);
         if (attachments.isEmpty()) {
             throw new NoSuchElementException();
         }
-        String fileName = URLEncoder.encode(article.getTitle(), StandardCharsets.UTF_8);
+        String title = attachments.get(0).getOriginalName() + (attachments.size() > 1 ? " (외 " + (attachments.size() - 1) + "개)" : "");
+        String fileName = URLEncoder.encode(title, StandardCharsets.UTF_8);
 
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("application/zip");
