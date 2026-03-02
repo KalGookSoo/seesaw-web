@@ -9,11 +9,46 @@
 <head>
   <title>[[${CURRENT_CATEGORY.name}]] | [[${SITE_CONTEXT.name}]]</title>
   <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
+
+  <!--/* Editor */-->
+  <link rel="stylesheet" th:href="@{/styles/toastui-editor.min.css}">
+
+  <!--/* Color picker */-->
+  <link rel="stylesheet" th:href="@{/styles/tui-color-picker.min.css}">
+  <link rel="stylesheet" th:href="@{/styles/toastui-editor-plugin-color-syntax.min.css}">
+
+  <!--/* Code syntax highlight */-->
+  <link rel="stylesheet" th:href="@{/styles/prism.min.css}">
+  <link rel="stylesheet" th:href="@{/styles/toastui-editor-plugin-code-syntax-highlight.min.css}">
+
+  <!--/* Chart */-->
+  <link rel="stylesheet" th:href="@{/styles/toastui-chart.min.css}">
+
+  <!--/* Table merged cell */-->
+  <link rel="stylesheet" th:href="@{/styles/toastui-editor-plugin-table-merged-cell.min.css}">
+
+  <!--/* Editor */-->
+  <script th:src="@{/scripts/toastui-editor-all.min.js}"></script>
+
+  <!--/* Color picker */-->
+  <script th:src="@{/scripts/tui-color-picker.min.js}"></script>
+  <script th:src="@{/scripts/toastui-editor-plugin-color-syntax.min.js}"></script>
+
+  <!--/* Code syntax highlight */-->
+  <script th:src="@{/scripts/toastui-editor-plugin-code-syntax-highlight-all.min.js}"></script>
+
+  <!--/* Chart */-->
+  <script th:src="@{/scripts/toastui-chart.min.js}"></script>
+  <script th:src="@{/scripts/toastui-editor-plugin-chart.min.js}"></script>
+
+  <!--/* Table merged cell */-->
+  <script th:src="@{/scripts/toastui-editor-plugin-table-merged-cell.min.js}"></script>
+
+  <!--/* UML */-->
+  <script th:src="@{/scripts/toastui-editor-plugin-uml.min.js}"></script>
+
   <!-- TUI Calendar CSS -->
   <link rel="stylesheet" href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css">
-  <!-- TUI Editor CSS -->
-  <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css">
-  <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor-viewer.min.css">
   
   <style>
     #calendar {
@@ -62,7 +97,94 @@
     .hidden {
       display: none !important;
     }
+
+    #editor img:not([class*="ProseMirror"]) {
+      border-radius: 8px;
+      padding: 0.25rem;
+      margin: 0.25rem;
+      background-color: #29e;
+
+      touch-action: none;
+
+      /* This makes things *much* easier */
+      box-sizing: border-box;
+    }
   </style>
+
+  <script type="module">
+    import 'https://cdn.interactjs.io/v1.9.20/auto-start/index.js';
+    import 'https://cdn.interactjs.io/v1.9.20/actions/drag/index.js';
+    import 'https://cdn.interactjs.io/v1.9.20/actions/resize/index.js';
+    import 'https://cdn.interactjs.io/v1.9.20/modifiers/index.js';
+    import 'https://cdn.interactjs.io/v1.9.20/dev-tools/index.js';
+    import interact from 'https://cdn.interactjs.io/v1.9.20/interactjs/index.js';
+
+    document.addEventListener('DOMContentLoaded', e => {
+      // Prevent default dragstart behavior on images in the editor
+      document.querySelector('#editor').addEventListener('dragstart', (event) => {
+        if (event.target.tagName === 'IMG') {
+          event.preventDefault();
+        }
+      }, true);
+
+      interact(`#editor img:not([class*="ProseMirror"])`)
+        .resizable({
+          // resize from all edges and corners
+          edges: { left: true, right: true, bottom: true, top: true },
+
+          listeners: {
+            start(event) {
+              // Prevent default behavior at the start of resize
+              event.preventDefault();
+            },
+            move(event) {
+              // Prevent default behavior during resize
+              event.preventDefault();
+
+              let target = event.target;
+              let x = (parseFloat(target.dataset.x) || 0);
+              let y = (parseFloat(target.dataset.y) || 0);
+
+              // update the element's width and height attributes
+              target.width = event.rect.width;
+              target.height = event.rect.height;
+
+              // translate when resizing from top or left edges
+              x += event.deltaRect.left;
+              y += event.deltaRect.top;
+
+              // target.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+
+              target.dataset.x = x;
+              target.dataset.y = y;
+            }
+          },
+          modifiers: [
+            // keep the edges inside the parent
+            interact.modifiers.restrictEdges({
+              outer: 'parent'
+            }),
+
+            // minimum size
+            interact.modifiers.restrictSize({
+              min: { width: 100, height: 50 }
+            })
+          ],
+
+          inertia: true
+        })
+        .draggable({
+          listeners: { move: window.dragMoveListener },
+          inertia: true,
+          modifiers: [
+            interact.modifiers.restrictRect({
+              restriction: 'parent',
+              endOnly: true
+            })
+          ]
+        });
+    });
+  </script>
 </head>
 
 <div layout:fragment="content">
@@ -181,8 +303,6 @@
 
   <!-- TUI Calendar JS -->
   <script src="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.js"></script>
-  <!-- TUI Editor JS -->
-  <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 
   <script type="module" th:inline="javascript">
     import { AttachmentManager } from /*[[@{/scripts/attachment-manager.js}]]*/'/static/scripts/attachment-manager.js';
@@ -425,6 +545,93 @@
         helperText: '여러 파일을 한 번에 추가할 수 있습니다.'
       });
 
+      // TUI Editor Initialize
+      const { Editor } = toastui;
+      const { chart, codeSyntaxHighlight, colorSyntax, tableMergedCell, uml } = Editor.plugin;
+      const chartOptions = {
+        minWidth: 100,
+        maxWidth: 600,
+        minHeight: 100,
+        maxHeight: 300
+      };
+
+      editor = new Editor({
+        el: $('#editor'),
+        height: '300px',
+        initialEditType: 'wysiwyg',
+        hideModeSwitch: true,
+        previewStyle: 'vertical',
+        usageStatistics: false,
+        hooks: {
+          addImageBlobHook(blob, callback) {
+            const url = URL.createObjectURL(blob);
+            blobs.set(url, blob);
+            callback(url, blob.name);
+          }
+        },
+        plugins: [[chart, chartOptions], [codeSyntaxHighlight, { highlighter: Prism }], colorSyntax, tableMergedCell, uml]
+      });
+
+      viewer = toastui.Editor.factory({
+        el: $('#viewer'),
+        viewer: true
+      });
+
+      // TUI Calendar Initialize
+      const calendarEl = $('#calendar');
+      calendar = new tui.Calendar(calendarEl, {
+        defaultView: 'month',
+        useFormPopup: false,
+        useDetailPopup: false,
+        isReadOnly: true,
+        usageStatistics: false,
+        timezone: {
+          zones: [
+            {
+              timezoneName: 'Asia/Seoul',
+              displayLabel: 'Seoul',
+            },
+          ],
+        },
+        template: {
+          allday(event) {
+            return `<span style="color: gray;">${event.title}</span>`;
+          },
+        },
+      });
+
+      calendar.on('clickEvent', ({ event }) => {
+        showDetail(event.raw);
+      });
+
+      // Initialize Calendar Actions
+      const handleUpdate = () => {
+        updateRenderRange();
+        fetchEvents(calendar, categoryId);
+      };
+      actions = calendarActions(calendar, handleUpdate);
+
+      // Event Listeners (Event Delegation)
+      document.body.addEventListener('click', (e) => {
+        const target = e.target.closest('button, select, a');
+        if (!target) return;
+
+        // Calendar Controls
+        if (target.id === 'btnPrev') actions.movePrev();
+        if (target.id === 'btnNext') actions.moveNext();
+        if (target.id === 'btnToday') actions.moveToday();
+        if (target.id === 'btnPrepareCreate') prepareCreate();
+        if (target.id === 'btnSubmitReply') submitReply();
+        if (target.id === 'btnDeleteEvent') deleteEvent();
+        if (target.id === 'btnEditEvent') editEvent();
+      });
+
+      $('#selectView').addEventListener('change', (e) => actions.changeView(e.target.value));
+      $('#eventForm').addEventListener('submit', saveEvent);
+
+      updateRenderRange();
+      fetchEvents(calendar, categoryId);
+    });
   </script>
 </div>
 </html>
