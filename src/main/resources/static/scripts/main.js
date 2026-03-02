@@ -6,37 +6,36 @@ document.addEventListener('DOMContentLoaded', /** @param {Event} e */ e => {
   const DATE_TYPES = ['datetime-local', 'date', 'time'];
 
   /**
+   * input 이벤트를 통해 날짜/시간 입력 값을 동기화합니다.
+   * target 요소가 minRef 또는 maxRef dataset 속성을 가지고 있다면
+   * 해당 id를 가진 요소의 min 또는 max 속성을 target.value로 업데이트합니다.
+   * 
+   * @param {HTMLInputElement} target - 이벤트가 발생한 입력 요소
+   */
+  const syncMinMax = target => {
+    const { minRef, maxRef } = target.dataset;
+    const value = target.value;
+
+    const updateRef = (refId, attr) => {
+      const $el = document.getElementById(refId);
+      $el && ($el[attr] = value);
+      $el?.value && !$el.validity.valid && $el.reportValidity();
+    };
+
+    minRef && updateRef(minRef, 'max');
+    maxRef && updateRef(maxRef, 'min');
+
+    !target.validity.valid && target.reportValidity();
+  };
+
+  /**
    * 날짜, 시간 및 datetime-local 입력 요소의 입력 이벤트를 처리합니다.
    * 현재 값을 기반으로 참조된 입력의 최소 및 최대 값을 업데이트합니다.
    * 입력이 유효하지 않은 경우 유효성 검사 결과를 보고합니다.
    *
    * @param {InputEvent} e - 문서에서 발생한 입력 이벤트.
    */
-  const handleDateInput = e => {
-    /** @type {HTMLInputElement} */
-    const target = e.target;
-    if (!DATE_TYPES.includes(target.type)) {
-      return;
-    }
-
-    const { minRef, maxRef } = target.dataset;
-
-    if (minRef) {
-      /** @type {HTMLInputElement | null} */
-      const $start = document.getElementById(minRef);
-      if ($start) $start.max = target.value;
-    }
-
-    if (maxRef) {
-      /** @type {HTMLInputElement | null} */
-      const $end = document.getElementById(maxRef);
-      if ($end) $end.min = target.value;
-    }
-
-    if (!target.validity.valid) {
-      target.reportValidity();
-    }
-  };
+  const handleDateInput = e => DATE_TYPES.includes(e.target.type) && syncMinMax(e.target);
 
   /**
    * 대상 요소 내의 모든 <details> 요소를 열거나 닫습니다.
@@ -44,17 +43,9 @@ document.addEventListener('DOMContentLoaded', /** @param {Event} e */ e => {
    * @param {string} targetId - 대상 요소의 ID.
    * @param {boolean} isOpen - 열기 여부.
    */
-  const toggleDetails = (targetId, isOpen) => {
-    const $target = document.getElementById(targetId);
-    if ($target) {
-      /** @type {HTMLCollectionOf<HTMLDetailsElement>} */
-      const $details = $target.getElementsByTagName('details');
-      // getElementsByTagName은 Live Collection을 반환하므로 순회 시 주의가 필요하지만,
-      // 여기서는 단순히 속성만 변경하므로 안전하게 사용할 수 있습니다.
-      // Array.from()을 사용하여 정적 배열로 변환 후 순회합니다.
-      Array.from($details).forEach(detail => detail.open = isOpen);
-    }
-  };
+  const toggleDetails = (targetId, isOpen) => 
+    Array.from(document.getElementById(targetId)?.getElementsByTagName('details') || [])
+      .forEach(detail => detail.open = isOpen);
 
   /**
    * 확장 및 축소 버튼의 클릭 이벤트를 처리합니다.
@@ -62,28 +53,19 @@ document.addEventListener('DOMContentLoaded', /** @param {Event} e */ e => {
    * @param {MouseEvent} e - 문서에서 발생한 클릭 이벤트.
    */
   const handleDetailsClick = e => {
-    /** @type {HTMLElement} */
     const target = e.target;
-
-    /** @type {HTMLButtonElement | null} */
-    const $expandButton = target.closest('button[name="expand"]');
-    if ($expandButton && $expandButton.dataset.targetRef) {
-      toggleDetails($expandButton.dataset.targetRef, true);
-      return;
-    }
-
-    /** @type {HTMLButtonElement | null} */
-    const $collapseButton = target.closest('button[name="collapse"]');
-    if ($collapseButton && $collapseButton.dataset.targetRef) {
-      toggleDetails($collapseButton.dataset.targetRef, false);
-    }
+    const $btn = target.closest('button[name="expand"], button[name="collapse"]');
+    const { targetRef } = $btn?.dataset || {};
+    
+    $btn && targetRef && toggleDetails(targetRef, $btn.name === 'expand');
   };
 
-  _document.addEventListener('input', /** @param {InputEvent} e */ e => {
-    handleDateInput(e);
-  });
+  _document.addEventListener('input', e => handleDateInput(e));
 
-  _document.addEventListener('click', /** @param {MouseEvent} e */ e => {
-    handleDetailsClick(e);
-  });
+  _document.addEventListener('change', e => handleDateInput(e));
+
+  // 초기 로드 시 모든 날짜/시간 관련 입력 요소에 대해 동기화를 수행합니다.
+  _document.querySelectorAll('input').forEach(input => DATE_TYPES.includes(input.type) && syncMinMax(input));
+
+  _document.addEventListener('click', e => handleDetailsClick(e));
 });
