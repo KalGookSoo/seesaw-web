@@ -62,6 +62,15 @@ html {
       color: red;
       margin-left: 0.25rem;
     }
+
+    #editor img:not([class*="ProseMirror"]) {
+      border-radius: 8px;
+      padding: 0.25rem;
+      margin: 0.25rem;
+      background-color: #29e;
+      touch-action: none;
+      box-sizing: border-box;
+    }
   }
 }
 

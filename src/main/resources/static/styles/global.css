@@ -46,6 +46,14 @@ html body .required::after {
   color: red;
   margin-left: 0.25rem;
 }
+html body #editor img:not([class*=ProseMirror]) {
+  border-radius: 8px;
+  padding: 0.25rem;
+  margin: 0.25rem;
+  background-color: #29e;
+  touch-action: none;
+  box-sizing: border-box;
+}
 
 :root {
   --main-color: #cc4202;
