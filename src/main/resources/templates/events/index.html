@@ -69,9 +69,23 @@
       align-items: center;
       padding: 10px 20px;
     }
+
+    #eventModal .modal-dialog {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+    }
+
+    #eventModal .modal-content {
+      height: 80vh;
+      display: flex;
+      flex-direction: column;
+    }
+
     #eventModal .modal-body {
-      max-height: 70vh;
+      flex: 1 1 auto;
       overflow-y: auto;
+      min-height: 400px;
     }
 
     #eventModal .modal-header,
@@ -81,6 +95,21 @@
 
     .hidden {
       display: none !important;
+    }
+
+    .status-badge-tentative {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+
+    .status-badge-confirmed {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .status-badge-cancelled {
+      background-color: #f8d7da;
+      color: #721c24;
     }
   </style>
 
@@ -232,43 +261,92 @@
               <div id="editor"></div>
             </div>
             <div class="mb-3">
-              <label class="form-label">첨부파일</label>
+              <label class="form-label fw-medium" th:text="#{entity.attachment}">첨부파일</label>
               <div id="attachment-container">
-                <input id="attachment-input" name="multipartFiles" type="file" multiple class="hidden">
+                <input class="hidden" id="attachment-input" multiple name="multipartFiles" type="file">
               </div>
-              <div id="existingFiles" class="mt-2 list-group"></div>
+              <div class="mt-4 d-none" id="existing-attachments-container">
+                <h6 class="small fw-bold mb-3">
+                  <i class="bi bi-files me-1"></i>기존 첨부파일
+                </h6>
+                <ul class="list-group list-group-flush border rounded" id="existingFiles"></ul>
+              </div>
             </div>
           </form>
-          <div id="eventDetail" style="display: none;">
-            <div class="d-flex justify-content-between">
-              <h4 id="viewSummary"></h4>
-              <span id="viewStatus" class="badge bg-info text-dark"></span>
+          <div class="d-none" id="eventDetail">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h4 class="mb-0" id="viewSummary"></h4>
+              <span class="badge rounded-pill px-3" id="viewStatus"></span>
             </div>
-            <p class="text-muted"><i class="bi bi-clock"></i> <span id="viewPeriod"></span></p>
-            <p id="viewLocationContainer" class="text-muted" style="display:none;"><i class="bi bi-geo-alt"></i> <span id="viewLocation"></span></p>
+            <p class="text-muted"><i class="bi bi-clock me-1"></i> <span id="viewPeriod"></span></p>
+            <p class="text-muted d-none" id="viewLocationContainer">
+              <i class="bi bi-geo-alt me-1"></i>
+              <span id="viewLocation"></span>
+            </p>
             <hr>
             <div id="viewer"></div>
-            <hr>
-            <h6><i class="bi bi-paperclip"></i> 첨부파일</h6>
-            <div id="viewFiles" class="list-group mb-3"></div>
-            <hr>
-            <h6><i class="bi bi-chat-dots"></i> 댓글</h6>
-            <div id="replies" class="mb-3"></div>
-            <div sec:authorize="isAuthenticated()" class="input-group">
-              <input type="text" id="replyContent" class="form-control" placeholder="댓글을 입력하세요...">
-              <button class="btn btn-outline-secondary" type="button" id="btnSubmitReply">등록</button>
+            <div class="d-none" id="viewFilesContainer">
+              <hr class="my-4">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="mb-0">
+                  <i class="bi bi-paperclip me-2"></i>
+                  <span th:text="#{entity.attachment}">첨부파일</span>
+                </h6>
+                <a class="btn btn-sm btn-outline-primary d-flex align-items-center d-none"
+                   id="btnDownloadZip" target="_blank">
+                  <i class="bi bi-file-earmark-zip me-1"></i>
+                  <span th:text="#{label.download}">다운로드</span> (.zip)
+                </a>
+              </div>
+              <div class="list-group list-group-flush border rounded mb-3" id="viewFiles"></div>
+            </div>
+            <div class="d-none" id="viewRepliesContainer">
+              <hr>
+              <h6><i class="bi bi-chat-dots me-2"></i>댓글</h6>
+              <div class="mb-3" id="replies"></div>
+            </div>
+            <div class="mt-3" sec:authorize="isAuthenticated()">
+              <form id="replyForm">
+                <div class="input-group">
+                  <textarea class="form-control" id="replyContent" name="content" placeholder="댓글을 입력하세요..." required rows="3"></textarea>
+                  <button class="btn btn-primary d-flex align-items-center" id="btnSubmitReply" type="submit">
+                    <i class="bi bi-send me-1"></i>등록
+                  </button>
+                </div>
+              </form>
+            </div>
+            <div class="mt-3" sec:authorize="isAnonymous()">
+              <div class="input-group">
+                <textarea class="form-control" placeholder="로그인 후 댓글을 작성할 수 있습니다." readonly rows="3"></textarea>
+                <a class="btn btn-primary d-flex align-items-center" th:href="@{/oauth2/authorization/naver}">
+                  <i class="bi bi-box-arrow-in-right me-1"></i>로그인
+                </a>
+              </div>
             </div>
           </div>
         </div>
-        <div class="modal-footer">
-          <div id="formFooter">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-            <button class="btn btn-primary" form="eventForm" id="btnSaveEvent" type="submit">저장</button>
-          </div>
-          <div id="viewFooter" class="d-none">
-            <button sec:authorize="isAuthenticated()" type="button" class="btn btn-danger me-auto" id="btnDeleteEvent">삭제</button>
-            <button sec:authorize="isAuthenticated()" type="button" class="btn btn-warning" id="btnEditEvent">수정</button>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+        <div class="modal-footer p-3">
+          <div class="d-flex gap-3 justify-content-end w-100">
+            <div class="d-none d-flex gap-3" id="formFooter">
+              <button class="btn btn-primary d-flex align-items-center" form="eventForm" id="btnSaveEvent" type="submit">
+                <i class="bi bi-check-lg me-2"></i>
+                <span th:text="#{label.save}">저장</span>
+              </button>
+              <button class="btn btn-primary d-flex align-items-center d-none" disabled type="button">
+                <i aria-hidden="true" class="bi me-2 spinner-border spinner-border-sm" role="status"></i>
+                <span th:text="#{label.save}">저장</span>
+              </button>
+            </div>
+            <div class="d-none d-flex gap-2" id="viewFooter">
+              <button class="btn btn-outline-danger d-flex align-items-center d-none" id="btnDeleteEvent" type="button">
+                <i class="bi bi-trash me-2"></i>
+                <span th:text="#{label.delete}">삭제</span>
+              </button>
+              <button class="btn btn-outline-primary d-flex align-items-center d-none" id="btnEditEvent" type="button">
+                <i class="bi bi-pencil-square me-2"></i>
+                <span th:text="#{label.update}">수정</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -278,19 +356,35 @@
   <!-- TUI Calendar JS -->
   <script src="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.js"></script>
 
-  <script type="module" th:inline="javascript">
+  <script th:inline="javascript" type="module">
     import { AttachmentManager } from /*[[@{/scripts/attachment-manager.js}]]*/'/static/scripts/attachment-manager.js';
-    import { calculateRenderRange, calendarActions, fetchEvents } from /*[[@{/scripts/event-calendar.js}]]*/'/static/scripts/event-calendar.js';
-    import { formatFileSize } from /*[[@{/scripts/file-util.js}]]*/'/static/scripts/file-util.js';
+    import {
+      calculateRenderRange,
+      calendarActions,
+      fetchEvents
+    } from /*[[@{/scripts/event-calendar.js}]]*/'/static/scripts/event-calendar.js';
 
-    /*<![CDATA[*/
     const categoryId = /*[[${CURRENT_CATEGORY.id}]]*/ 'default-category-id';
     const contextPath = /*[[@{/}]]*/ '/';
-    /*]]>*/
+    const CSRF = {
+      headerName: /*[[${_csrf.headerName}]]*/ 'X-CSRF-TOKEN',
+      token: /*[[${_csrf.token}]]*/ ''
+    };
     const $ = (selector) => {
       const el = document.querySelector(selector);
       if (!el) throw new Error(`Element not found: ${selector}`);
       return el;
+    };
+
+    const formatDate = (dateString) => {
+      if (!dateString) return '';
+      const date = new Date(dateString);
+      const yyyy = date.getFullYear();
+      const MM = String(date.getMonth() + 1).padStart(2, '0');
+      const dd = String(date.getDate()).padStart(2, '0');
+      const HH = String(date.getHours()).padStart(2, '0');
+      const mm = String(date.getMinutes()).padStart(2, '0');
+      return `${yyyy}-${MM}-${dd} ${HH}:${mm}`;
     };
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -314,58 +408,161 @@
 
       const loadReplies = (articleId) => {
         const container = $('#replies');
-        container.innerHTML = '<p class="text-muted">댓글을 불러오는 중...</p>';
+        const viewRepliesContainer = $('#viewRepliesContainer');
+        container.innerHTML = '<p class="text-muted text-center py-3"><i class="bi bi-arrow-repeat spin me-2"></i>댓글을 불러오는 중...</p>';
 
-        fetch(`/api/articles/${articleId}`)
+    /*[# sec:authorize="isAuthenticated()"]*/
+    const currentUsername = /*[[${#authentication.name}]]*/ 'anonymousUser';
+    const isAdminOrManager = /*[[${#authorization.expression('hasAnyRole(''ADMIN'', ''MANAGER'')')}]]*/ false;
+    /*[/]*/
+    /*[# sec:authorize="isAnonymous()"]*/
+    const currentUsername = null;
+    const isAdminOrManager = false;
+    /*[/]*/
+
+        fetch(`/api/replies?articleId=${articleId}`)
           .then(res => res.json())
           .then(data => {
-            container.innerHTML = '';
-            if (data.replies && data.replies.length > 0) {
-              data.replies.forEach(reply => {
+            const { replies } = data;
+            container.innerHTML = ''; // 로딩 메시지 제거
+
+            if (replies && replies.length > 0) {
+              viewRepliesContainer.classList.remove('d-none');
+              replies.forEach(reply => {
+                const isOwner = currentUsername && currentUsername === reply.createdBy;
+                const canDelete = isOwner || isAdminOrManager;
+
                 const div = document.createElement('div');
-                div.className = 'border-bottom py-2';
-                div.innerHTML = `<strong>${reply.createdBy}</strong> <small class="text-muted">${reply.createdDate}</small><br>${reply.content}`;
+                div.className = 'reply-item p-3 border-bottom';
+                div.innerHTML = `
+                  <div class="d-flex justify-content-between mb-2">
+                    <div class="d-flex align-items-center">
+                      <i class="bi bi-person-circle me-2 text-secondary"></i>
+                      <span class="fw-medium">${reply.maskedAuthor}</span>
+                      <span class="text-muted mx-2">|</span>
+                      <div class="d-flex align-items-center text-muted small">
+                        <i class="bi bi-calendar3"></i>
+                        <span class="ms-1">${formatDate(reply.createdDate)}</span>
+                      </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                      ${isOwner ? `
+                        <button class="btn btn-sm btn-outline-secondary d-flex align-items-center me-2" data-action="edit-reply" data-id="${reply.id}">
+                          <i class="bi bi-pencil"></i>
+                          <span class="d-none d-sm-inline ms-1">수정</span>
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary d-flex align-items-center d-none me-2" data-action="cancel-reply-edit" data-id="${reply.id}">
+                          <i class="bi bi-x-lg"></i>
+                          <span class="d-none d-sm-inline ms-1">취소</span>
+                        </button>
+                      ` : ''}
+                      ${canDelete ? `
+                        <button class="btn btn-sm btn-outline-danger d-flex align-items-center" data-action="delete-reply" data-id="${reply.id}">
+                          <i class="bi bi-trash"></i>
+                          <span class="d-none d-sm-inline ms-1">삭제</span>
+                        </button>
+                      ` : ''}
+                    </div>
+                  </div>
+                  <div class="reply-content bg-light p-3 rounded">
+                    <pre class="mb-0" style="white-space: pre-wrap;">${reply.content}</pre>
+                  </div>
+                  <form class="d-none mt-3" data-action="update-reply-form" data-id="${reply.id}">
+                    <div class="input-group">
+                      <textarea class="form-control" name="content" rows="3">${reply.content}</textarea>
+                      <button class="btn btn-primary d-flex align-items-center" type="submit">
+                        <i class="bi bi-check-lg"></i>
+                        <span class="d-none d-sm-inline ms-1">저장</span>
+                      </button>
+                    </div>
+                  </form>
+                `;
                 container.appendChild(div);
               });
             } else {
-              container.innerHTML = '<p class="text-muted">댓글이 없습니다.</p>';
+              viewRepliesContainer.classList.add('d-none');
             }
           });
       };
 
-      const showDetail = (item) => {
+      const showDetail = async (item) => {
         currentEvent = item;
-        $('#eventForm').style.display = 'none';
-        $('#eventDetail').style.display = 'block';
-        $('#formFooter').style.display = 'none';
-        $('#viewFooter').style.display = 'block';
+        $('#eventForm').classList.add('d-none');
+        $('#eventDetail').classList.remove('d-none');
+        $('#formFooter').classList.add('d-none');
+        $('#viewFooter').classList.remove('d-none');
 
         $('#viewSummary').innerText = item.title;
-        $('#viewStatus').innerText = item.status;
-        $('#viewPeriod').innerText = `${item.dtStart} ~ ${item.dtEnd || ''}`;
 
+        const statusEl = $('#viewStatus');
+        statusEl.innerText = item.statusDescription || item.status;
+        statusEl.className = 'badge rounded-pill px-3 ' + {
+          'TENTATIVE': 'status-badge-tentative',
+          'CONFIRMED': 'status-badge-confirmed',
+          'CANCELLED': 'status-badge-cancelled'
+        }[item.status];
+
+        $('#viewPeriod').innerText = `${formatDate(item.dtStart)} ~ ${formatDate(item.dtEnd)}`;
+
+        const locationContainer = $('#viewLocationContainer');
         if (item.location) {
           $('#viewLocation').innerText = item.location;
-          $('#viewLocationContainer').style.display = 'block';
+          locationContainer.classList.remove('d-none');
         } else {
-          $('#viewLocationContainer').style.display = 'none';
+          locationContainer.classList.add('d-none');
         }
 
         viewer.setMarkdown(item.article.content || '');
 
         const fileContainer = $('#viewFiles');
+        const viewFilesContainer = $('#viewFilesContainer');
+        const btnDownloadZip = $('#btnDownloadZip');
         fileContainer.innerHTML = '';
-        if (item.article.attachments) {
-          item.article.attachments.forEach(file => {
+
+        const response = await fetch(`/api/attachments?referenceId=${item.articleId}`);
+        const data = await response.json();
+        const attachments = (data.attachments || []).filter(attachment => attachment.pathName === '/attachments');
+
+        if (attachments.length > 0) {
+          viewFilesContainer.classList.remove('d-none');
+
+          // ZIP 다운로드 버튼 설정
+          btnDownloadZip.href = `/attachments/download-zip?articleId=${item.articleId}`;
+          btnDownloadZip.classList.remove('d-none');
+
+          attachments.forEach(file => {
             const a = document.createElement('a');
-            a.className = 'list-group-item list-group-item-action';
-            a.href = `/attachments/${file.id}`;
-            a.innerHTML = `<i class="bi bi-file-earmark"></i> ${file.originalName} <small class="text-muted">(${formatFileSize(file.size)})</small>`;
+            a.className = 'list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3';
+            a.href = `/attachments/${file.id}/download`;
+            a.target = '_blank';
+            a.innerHTML = `
+              <div class="d-flex align-items-center overflow-hidden">
+                <i class="bi bi-file-earmark-text fs-5 me-3 text-primary"></i>
+                <div class="text-truncate">
+                  <div class="text-dark fw-medium text-truncate">${file.originalName}</div>
+                  <small class="text-muted">${file.formattedSize}</small>
+                </div>
+              </div>
+              <i class="bi bi-download text-secondary"></i>
+            `;
             fileContainer.appendChild(a);
           });
+        } else {
+          viewFilesContainer.classList.add('d-none');
         }
 
         loadReplies(item.articleId);
+
+        // Show/Hide Edit and Delete buttons based on ownership
+        /*[# sec:authorize="isAuthenticated()"]*/
+        const currentUsername = /*[[${#authentication.name}]]*/ null;
+        /*[/]*/
+        /*[# sec:authorize="isAnonymous()"]*/
+        const currentUsername = null;
+        /*[/]*/
+        const canEdit = currentUsername && currentUsername === item.createdBy;
+        $('#btnEditEvent').classList.toggle('d-none', !canEdit);
+        $('#btnDeleteEvent').classList.toggle('d-none', !canEdit);
 
         const modal = new bootstrap.Modal($('#eventModal'));
         modal.show();
@@ -373,10 +570,10 @@
 
       const prepareCreate = () => {
         const form = $('#eventForm');
-        form.style.display = 'block';
-        $('#eventDetail').style.display = 'none';
-        $('#formFooter').style.display = 'block';
-        $('#viewFooter').style.display = 'none';
+        form.classList.remove('d-none');
+        $('#eventDetail').classList.add('d-none');
+        $('#formFooter').classList.remove('d-none');
+        $('#viewFooter').classList.add('d-none');
         form.elements['id'].value = '';
         form.reset();
         editor.setMarkdown('');
@@ -390,9 +587,14 @@
 
       const saveEvent = async (e) => {
         e.preventDefault();
+
+        const submitter = e.submitter || $('#btnSaveEvent');
+        submitter.classList.add('d-none');
+        submitter.nextElementSibling?.classList.remove('d-none');
+
         const form = $('#eventForm');
         const id = form.elements['id'].value;
-        const method = 'POST';
+        const method = id ? 'PUT' : 'POST';
         const url = id ? `/api/events/${id}` : '/api/events';
 
         const formData = new FormData();
@@ -405,6 +607,10 @@
         formData.append('location', form.elements['location'].value);
         formData.append('status', form.elements['status'].value);
         formData.append('tzid', 'Asia/Seoul');
+
+        if (attachmentManager) {
+          attachmentManager.getFiles().forEach(file => formData.append('multipartFiles', file));
+        }
 
         const parser = new DOMParser();
         const doc = parser.parseFromString(editor.getHTML(), 'text/html');
@@ -429,6 +635,7 @@
           });
 
           if (response.ok) {
+            alert(/*[[#{command.success.save}]]*/'');
             bootstrap.Modal.getInstance($('#eventModal')).hide();
             fetchEvents(calendar, categoryId);
           } else {
@@ -443,6 +650,9 @@
         } catch (e) {
           console.error(e);
           alert('에러가 발생했습니다.');
+        } finally {
+          submitter.classList.remove('d-none');
+          submitter.nextElementSibling?.classList.add('d-none');
         }
       };
 
@@ -459,16 +669,17 @@
         if (response.ok) {
           bootstrap.Modal.getInstance($('#eventModal')).hide();
           fetchEvents(calendar, categoryId);
+          alert(/*[[#{command.success.delete}]]*/ '이벤트가 삭제되었습니다.');
         }
       };
 
-      const editEvent = () => {
+      const editEvent = async () => {
         const item = currentEvent;
         const form = $('#eventForm');
-        form.style.display = 'block';
-        $('#eventDetail').style.display = 'none';
-        $('#formFooter').style.display = 'block';
-        $('#viewFooter').style.display = 'none';
+        form.classList.remove('d-none');
+        $('#eventDetail').classList.add('d-none');
+        $('#formFooter').classList.remove('d-none');
+        $('#viewFooter').classList.add('d-none');
 
         form.elements['id'].value = item.articleId;
         form.elements['title'].value = item.title;
@@ -477,35 +688,147 @@
         form.elements['location'].value = item.location;
         form.elements['status'].value = item.status;
         editor.setHTML(item.article.content || '');
+
         if (attachmentManager) {
           attachmentManager.files = [];
           attachmentManager.syncInputFiles();
           attachmentManager.renderList();
         }
+
+        const existingFiles = $('#existingFiles');
+        const existingContainer = $('#existing-attachments-container');
+        existingFiles.innerHTML = '';
+
+        const response = await fetch(`/api/attachments?referenceId=${item.articleId}`);
+        const data = await response.json();
+        const attachments = (data.attachments || []).filter(a => a.pathName === '/attachments');
+
+        if (attachments.length > 0) {
+          existingContainer.classList.remove('d-none');
+          existingFiles.innerHTML = attachments.map(file => `
+            <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+              <div class="d-flex align-items-center overflow-hidden" style="max-width: 80%;">
+                <i class="bi bi-file-earmark-text fs-5 me-3 text-primary"></i>
+                <div class="text-truncate">
+                  <div class="text-dark fw-medium text-truncate">${file.originalName}</div>
+                  <small class="text-muted">${file.formattedSize}</small>
+                </div>
+              </div>
+              <button type="button" class="btn btn-sm btn-outline-danger d-flex align-items-center" data-action="delete-attachment" data-id="${file.id}">
+                <i class="bi bi-trash me-1"></i>
+                <span>${/*[[#{label.delete}]]*/ '삭제'}</span>
+              </button>
+            </li>
+          `).join('');
+        } else {
+          existingContainer.classList.add('d-none');
+        }
       };
 
-      const submitReply = async () => {
+      const clickHandlers = {
+        'delete-attachment': async (e) => {
+          const target = e.target.closest('[data-action="delete-attachment"]');
+          const id = target.dataset.id;
+          if (!confirm(/*[[#{message.confirm.delete.attachment}]]*/ '첨부파일을 삭제하시겠습니까?')) return;
+
+          const response = await fetch(`/api/attachments/${id}`, {
+            method: 'DELETE',
+            headers: { [CSRF.headerName]: CSRF.token }
+          });
+
+          if (response.ok) {
+            target.closest('li').remove();
+            // currentEvent 상태 동기화
+            currentEvent.article.attachments = currentEvent.article.attachments.filter(a => a.id !== id);
+
+            // 남은 파일이 없으면 컨테이너 숨김
+            const list = $('#existingFiles');
+            if (list.children.length === 0) {
+              $('#existing-attachments-container').classList.add('d-none');
+            }
+          } else {
+            alert('삭제에 실패했습니다.');
+          }
+        },
+        'btnPrev': () => actions.movePrev(),
+        'btnNext': () => actions.moveNext(),
+        'btnToday': () => actions.moveToday(),
+        'btnPrepareCreate': () => prepareCreate(),
+        'btnDeleteEvent': () => deleteEvent(),
+        'btnEditEvent': () => editEvent(),
+        /*[# sec:authorize="isAuthenticated()"]*/
+        'edit-reply': (e) => {
+          const btn = e.target.closest('[data-action="edit-reply"]');
+          const replyItem = btn.closest('.reply-item');
+          const cancelBtn = replyItem.querySelector('[data-action="cancel-reply-edit"]');
+          const content = replyItem.querySelector('.reply-content');
+          const form = replyItem.querySelector('[data-action="update-reply-form"]');
+
+          content.classList.add('d-none');
+          btn.classList.add('d-none');
+          cancelBtn.classList.remove('d-none');
+          form.classList.remove('d-none');
+          form.elements.content.focus();
+        },
+        'cancel-reply-edit': (e) => {
+          const btn = e.target.closest('[data-action="cancel-reply-edit"]');
+          const replyItem = btn.closest('.reply-item');
+          const editBtn = replyItem.querySelector('[data-action="edit-reply"]');
+          const content = replyItem.querySelector('.reply-content');
+          const form = replyItem.querySelector('[data-action="update-reply-form"]');
+
+          content.classList.remove('d-none');
+          editBtn.classList.remove('d-none');
+          btn.classList.add('d-none');
+          form.classList.add('d-none');
+        },
+        'delete-reply': async (e) => {
+          const btn = e.target.closest('[data-action="delete-reply"]');
+          if (!confirm('댓글을 삭제하시겠습니까?')) return;
+
+          const response = await fetch(`/api/replies/${btn.dataset.id}`, {
+            method: 'DELETE',
+            headers: { [CSRF.headerName]: CSRF.token }
+          });
+
+          if (response.ok) {
+            loadReplies(currentEvent.articleId);
+          } else {
+            alert('댓글 삭제에 실패했습니다.');
+          }
+        }
+        /*[/]*/
+      };
+
+      /*[# sec:authorize="isAuthenticated()"]*/
+      const submitReply = async (e) => {
+        e.preventDefault();
         const content = $('#replyContent').value;
         if (!content) return;
 
-        const response = await fetch(`/api/replies?articleId=${currentEvent.articleId}`, {
+        const formData = new FormData();
+        formData.append('articleId', currentEvent.articleId);
+        formData.append('categoryId', categoryId);
+        formData.append('content', content);
+        formData.append('exposed', 'true');
+
+        const response = await fetch('/api/replies', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
             [CSRF.headerName]: CSRF.token
           },
-          body: JSON.stringify({
-            articleId: currentEvent.articleId,
-            content: content,
-            exposed: true
-          })
+          body: formData
         });
 
         if (response.ok) {
           $('#replyContent').value = '';
           loadReplies(currentEvent.articleId);
+          alert(/*[[#{command.success.create}]]*/'');
+        } else {
+          alert('댓글 등록에 실패했습니다.');
         }
       };
+      /*[/]*/
 
       // Attachment Manager Initialize
       attachmentManager = new AttachmentManager({
@@ -583,21 +906,48 @@
 
       // Event Listeners (Event Delegation)
       document.body.addEventListener('click', (e) => {
-        const target = e.target.closest('button, select, a');
+        const target = e.target.closest('button, select, a, [data-action]');
         if (!target) return;
 
-        // Calendar Controls
-        if (target.id === 'btnPrev') actions.movePrev();
-        if (target.id === 'btnNext') actions.moveNext();
-        if (target.id === 'btnToday') actions.moveToday();
-        if (target.id === 'btnPrepareCreate') prepareCreate();
-        if (target.id === 'btnSubmitReply') submitReply();
-        if (target.id === 'btnDeleteEvent') deleteEvent();
-        if (target.id === 'btnEditEvent') editEvent();
+        const action = target.dataset.action || target.id;
+        if (clickHandlers[action]) {
+          clickHandlers[action](e);
+        }
       });
 
       $('#selectView').addEventListener('change', (e) => actions.changeView(e.target.value));
+
+      /*[# sec:authorize="isAuthenticated()"]*/
       $('#eventForm').addEventListener('submit', saveEvent);
+
+      const replyForm = $('#replyForm');
+      if (replyForm) {
+        replyForm.addEventListener('submit', submitReply);
+      }
+
+      document.body.addEventListener('submit', async (e) => {
+        const form = e.target.closest('[data-action="update-reply-form"]');
+        if (!form) return;
+
+        e.preventDefault();
+        const replyId = form.dataset.id;
+        const formData = new FormData(form);
+        formData.append('exposed', 'true');
+
+        const response = await fetch(`/api/replies/${replyId}`, {
+          method: 'POST',
+          headers: { [CSRF.headerName]: CSRF.token },
+          body: formData
+        });
+
+        if (response.ok) {
+          loadReplies(currentEvent.articleId);
+          alert(/*[[#{command.success.update}]]*/'');
+        } else {
+          alert('댓글 수정에 실패했습니다.');
+        }
+      });
+      /*[/]*/
 
       updateRenderRange();
       fetchEvents(calendar, categoryId);
