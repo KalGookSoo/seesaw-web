@@ -1,0 +1,25 @@
+.attachment-dropzone {
+  border: 2px dashed #dee2e6;
+  border-radius: 0.5rem;
+  padding: 2rem;
+  text-align: center;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.attachment-dropzone:hover {
+  background-color: #e9ecef;
+  border-color: #adb5bd;
+}
+
+.attachment-dropzone.ring-2 {
+  border-color: #0d6efd;
+  background-color: #f0f7ff;
+}
+
+.attachment-list .list-group-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
