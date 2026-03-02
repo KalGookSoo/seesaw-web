@@ -54,12 +54,61 @@
     import { AttachmentManager } from /*[[@{/scripts/attachment-manager.js}]]*/'/static/scripts/attachment-manager.js';
     import { formatFileSize } from /*[[@{/scripts/file-util.js}]]*/'/static/scripts/file-util.js';
 
+    const $ = (selector) => {
+      const el = document.querySelector(selector);
+      if (!el) throw new Error(`Element not found: ${selector}`);
+      return el;
+    };
 
     document.addEventListener('DOMContentLoaded', e => {
       let attachmentManager;
 
+      const articleId = /*[[${article.id}]]*/ '';
+
+      const fetchAttachments = async () => {
+        const response = await fetch(`/api/attachments?referenceId=${articleId}`);
+        if (response.ok) {
+          const { attachments } = await response.json();
+          renderAttachments(attachments.filter((attachment) => attachment.pathName === '/attachments'));
+        }
+      };
+
+      const renderAttachments = (attachments) => {
+        const container = $('#existing-attachments-container');
+        const list = $('#existing-attachments-list');
+        
+        container.classList.remove('d-none');
+        if (!attachments || attachments.length === 0) {
+          const emptyMessage = /*[[#{message.attachment.empty}]]*/ '첨부된 파일이 없습니다.';
+          list.innerHTML = `
+            <li class="list-group-item text-center text-muted py-4">
+              <i class="bi bi-file-earmark-x fs-4 d-block mb-2"></i>
+              ${emptyMessage}
+            </li>
+          `;
+          return;
+        }
+
+        const deleteButtonLabel = /*[[#{label.delete}]]*/'';
+        list.innerHTML = attachments
+          .map(attachment => `
+            <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+              <div class="d-flex align-items-center overflow-hidden" style="max-width: 80%;">
+                <i class="bi bi-file-earmark-text fs-5 me-3 text-primary"></i>
+                <div class="text-truncate">
                   <div class="text-dark fw-medium text-truncate">${attachment.originalName}</div>
                   <small class="text-muted">${formatFileSize(attachment.size)}</small>
+                </div>
+              </div>
+              <button type="button" class="btn btn-sm btn-outline-danger d-flex align-items-center" data-action="delete-attachment" data-id="${attachment.id}">
+                <i class="bi bi-trash me-1"></i>
+                <span>${deleteButtonLabel}</span>
+              </button>
+            </li>
+          `)
+          .join('');
+      };
+
       // Attachment Manager Initialize
       attachmentManager = new AttachmentManager({
         container: '#attachment-container',
@@ -162,9 +211,9 @@
       };
 
       const clickHandlers = {
-        '[name="deleteAttachment"]': async e => {
+        'delete-attachment': async e => {
           if (!confirm(/*[[#{message.confirm.delete.attachment}]]*/'첨부파일을 삭제하시겠습니까?')) return;
-          const button = e.target.closest('[name="deleteAttachment"]');
+          const button = e.target.closest('[data-action="delete-attachment"]');
           const response = await fetch(`/api/attachments/${button.dataset.id}`, {
             method: 'DELETE',
             headers: {
@@ -173,6 +222,11 @@
           });
           if (response.ok) {
             button.closest('li').remove();
+            const list = $('#existing-attachments-list');
+            if (list.children.length === 0) {
+              renderAttachments([]);
+            }
+            alert(/*[[#{command.success.delete}]]*/'삭제되었습니다.');
           } else {
             alert(/*[[#{command.failure.delete}]]*/'삭제에 실패했습니다.');
           }
@@ -180,9 +234,14 @@
       };
 
       document.body.addEventListener('click', e => {
-        const selector = Object.keys(clickHandlers).find(selector => e.target.closest(selector));
-        clickHandlers[selector]?.(e);
+        const target = e.target.closest('[data-action]');
+        if (target) {
+          const action = target.dataset.action;
+          clickHandlers[action]?.(e);
+        }
       });
+
+      fetchAttachments();
     });
   </script>
 
@@ -337,24 +396,11 @@
                 <div id="attachment-container">
                   <input id="attachment-input" name="multipartFiles" type="file" multiple class="d-none">
                 </div>
-                <div th:if="${!article.attachments.isEmpty()}" class="mt-4">
+                <div id="existing-attachments-container" class="mt-4 d-none">
                   <h6 class="small fw-bold mb-3">
                     <i class="bi bi-files me-1"></i>기존 첨부파일
                   </h6>
-                  <ul class="list-group list-group-flush border rounded">
-                    <li th:each="attachment : ${article.attachments}" class="list-group-item d-flex justify-content-between align-items-center py-3">
-                      <div class="d-flex align-items-center overflow-hidden" style="max-width: 80%;">
-                        <i class="bi bi-file-earmark-text fs-5 me-3 text-primary"></i>
-                        <div class="text-truncate">
-                          <div class="text-dark fw-medium text-truncate" th:text="${attachment.originalName}">파일명.ext</div>
-                          <small class="text-muted" th:text="${attachment.size}">0 KB</small>
-                        </div>
-                      </div>
-                      <button type="button" class="btn btn-sm btn-outline-danger d-flex align-items-center" name="deleteAttachment" th:data-id="${attachment.id}">
-                        <i class="bi bi-trash me-1"></i>
-                        <span th:text="#{label.delete}">삭제</span>
-                      </button>
-                    </li>
+                  <ul id="existing-attachments-list" class="list-group list-group-flush border rounded">
                   </ul>
                 </div>
               </div>
