@@ -9,6 +9,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
@@ -34,6 +35,13 @@ public class AttachmentApiController {
         headers.add(HttpHeaders.CONTENT_TYPE, attachment.getMimeType());
         headers.add(HttpHeaders.CONTENT_DISPOSITION, getContentDisposition(userAgent, fileName));
         return ResponseEntity.status(HttpStatus.OK).headers(headers).body(resource);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or @defaultAttachmentPermissionService.hasPermission(#id, T(org.springframework.security.core.authority.AuthorityUtils).authorityListToSet(authentication.authorities), T(org.springframework.security.acls.domain.BasePermission).DELETE)")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAttachment(@PathVariable("id") String id) {
+        attachmentService.deleteAttachment(id);
+        return ResponseEntity.noContent().build();
     }
 
     private String getContentDisposition(String userAgent, String fileName) {
