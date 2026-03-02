@@ -2,6 +2,7 @@ package kr.me.seesaw.controller;
 
 import kr.me.seesaw.core.file.FileIOService;
 import kr.me.seesaw.model.AttachmentModel;
+import kr.me.seesaw.service.AttachmentQueryService;
 import kr.me.seesaw.service.AttachmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -21,6 +24,14 @@ import java.io.IOException;
 public class AttachmentApiController {
 
     private final AttachmentService attachmentService;
+
+    private final AttachmentQueryService attachmentQueryService;
+
+    @GetMapping
+    public ResponseEntity<Map<String, List<AttachmentModel>>> getAttachments(@RequestParam("referenceId") String referenceId) {
+        List<AttachmentModel> attachments = attachmentQueryService.getAttachments(referenceId);
+        return ResponseEntity.ok(Map.of("attachments", attachments));
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Resource> getAttachment(
