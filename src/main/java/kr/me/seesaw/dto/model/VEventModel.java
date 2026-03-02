@@ -31,8 +31,8 @@ public final class VEventModel extends BaseModel {
     @Schema(description = "종료 일시")
     private LocalDateTime dtEnd;
 
-    @Schema(description = "요약/제목")
-    private String summary;
+    @Schema(description = "제목")
+    private String title;
 
     @Schema(description = "상세 설명")
     private String description;
@@ -57,8 +57,7 @@ public final class VEventModel extends BaseModel {
         this.articleId = event.getArticleId();
         this.dtStart = event.getDtStart();
         this.dtEnd = event.getDtEnd();
-        this.summary = event.getSummary();
-        this.description = event.getDescription();
+        this.title = event.getSummary();
         this.location = event.getLocation();
         this.status = event.getStatus();
         this.rrule = event.getRrule();
@@ -66,6 +65,7 @@ public final class VEventModel extends BaseModel {
         this.duration = event.getDuration();
         if (event.getArticle() != null) {
             this.article = new ArticleModel(event.getArticle());
+            this.description = this.article.getContent();
         }
     }
 
