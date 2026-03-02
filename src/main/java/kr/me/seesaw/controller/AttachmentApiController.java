@@ -48,7 +48,7 @@ public class AttachmentApiController {
         return ResponseEntity.status(HttpStatus.OK).headers(headers).body(resource);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or @defaultAttachmentPermissionService.hasPermission(#id, T(org.springframework.security.core.authority.AuthorityUtils).authorityListToSet(authentication.authorities), T(org.springframework.security.acls.domain.BasePermission).DELETE)")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or @defaultAttachmentPermissionService.hasPermission(#id, T(org.springframework.security.acls.domain.BasePermission).DELETE)")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAttachment(@PathVariable("id") String id) {
         attachmentService.deleteAttachment(id);
