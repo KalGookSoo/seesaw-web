@@ -34,7 +34,7 @@ public class ReplyApiController {
         return ResponseEntity.ok(Map.of("replies", replies));
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or @defaultArticlePermissionService.hasPermission(#command.articleId, T(org.springframework.security.acls.domain.BasePermission).CREATE)")
     @PostMapping(produces = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> create(@Valid CreateReplyCommand command) throws IOException {
         replyService.create(command);
@@ -42,7 +42,7 @@ public class ReplyApiController {
         return ResponseEntity.ok(message);
     }
 
-    @PreAuthorize("@defaultReplyService.isOwner(#id, authentication.name)")
+    @PreAuthorize("@defaultReplyPermissionService.isOwner(#id)")
     @PostMapping(value = "/{id}", produces = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> update(@PathVariable("id") String id, @Valid UpdateReplyCommand command) throws IOException {
         replyService.update(id, command);
@@ -50,7 +50,7 @@ public class ReplyApiController {
         return ResponseEntity.ok(message);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or @defaultReplyService.isOwner(#id, authentication.name)")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or @defaultReplyPermissionService.isOwner(#id)")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable String id) {
         replyService.delete(id);
