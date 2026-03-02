@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import kr.me.seesaw.command.CreateArticleCommand;
 import kr.me.seesaw.command.UpdateArticleCommand;
 import kr.me.seesaw.message.CmsMessageSource;
+import kr.me.seesaw.model.ArticleModel;
+import kr.me.seesaw.service.ArticleQueryService;
 import kr.me.seesaw.service.ArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -21,6 +24,15 @@ public class ArticleApiController {
     private final CmsMessageSource messageSource;
 
     private final ArticleService articleService;
+
+    private final ArticleQueryService articleQueryService;
+
+    @PreAuthorize("isAuthenticated() and (hasAnyRole('ADMIN', 'MANAGER') or hasPermission(#categoryId, 'kr.me.seesaw.domain.Category', T(kr.me.seesaw.domain.vo.BasePermission).READ))")
+    @GetMapping("/{id}")
+    public ResponseEntity<Map<String, ArticleModel>> getArticle(@PathVariable("id") String id, @RequestParam("categoryId") String categoryId) {
+        ArticleModel article = articleQueryService.getArticleAggregation(id);
+        return ResponseEntity.ok(Map.of("article", article));
+    }
 
     @PreAuthorize("isAuthenticated() and (hasAnyRole('ADMIN', 'MANAGER') or hasPermission(#command.categoryId, 'kr.me.seesaw.domain.Category', T(kr.me.seesaw.domain.vo.BasePermission).CREATE))")
     @PostMapping
