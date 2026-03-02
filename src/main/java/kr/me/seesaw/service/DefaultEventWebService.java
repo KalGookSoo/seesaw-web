@@ -1,7 +1,10 @@
 package kr.me.seesaw.service;
 
+import kr.me.seesaw.command.CreateArticleCommand;
+import kr.me.seesaw.command.UpdateArticleCommand;
 import kr.me.seesaw.domain.Article;
 import kr.me.seesaw.domain.VEvent;
+import kr.me.seesaw.domain.vo.ArticleType;
 import kr.me.seesaw.dto.command.CreateEventCommand;
 import kr.me.seesaw.dto.command.UpdateEventCommand;
 import kr.me.seesaw.dto.model.VEventModel;
@@ -14,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -60,56 +62,81 @@ public class DefaultEventWebService implements EventWebService {
 
     @Override
     @Transactional
-    public VEventModel create(CreateEventCommand command, List<MultipartFile> files) throws IOException {
+    public VEventModel create(CreateEventCommand command) throws IOException {
         logger.info("이벤트 생성: command={}", command);
-        // 1. Article 생성 (이미 첨부파일 및 위지윅 본문 처리가 포함된 articleService 활용)
-        ArticleModel articleModel = articleService.create(command.getArticle());
-        Article article = articleRepository.findById(articleModel.getId())
-                .orElseThrow(() -> new IllegalStateException("Article creation failed"));
+
+        // 1. Article 생성
+        CreateArticleCommand articleCommand = new CreateArticleCommand();
+        articleCommand.setCategoryId(command.getCategoryId());
+        articleCommand.setTitle(command.getTitle());
+        articleCommand.setContent(command.getContent());
+        articleCommand.setType(ArticleType.HTML);
+        articleCommand.setFixed(false);
+        articleCommand.setFixedOrder(null);
+        articleCommand.setMultipartFiles(command.getMultipartFiles());
+        articleCommand.setInlineImages(command.getInlineImages());
+
+        ArticleModel articleModel = articleService.create(articleCommand);
+        Article article = articleRepository.getReferenceById(articleModel.getId());
 
         // 2. VEvent 생성 및 Article 연동
         VEvent event = new VEvent();
         event.setArticle(article);
         event.setDtStart(command.getDtStart());
         event.setDtEnd(command.getDtEnd());
-        event.setSummary(command.getSummary());
-        event.setDescription(command.getDescription());
+        event.setSummary(command.getTitle());
         event.setLocation(command.getLocation());
         event.setStatus(command.getStatus());
         event.setTzid(command.getTzid());
         event.setDtStamp(Instant.now());
 
-        // Article 본문과 Event description 동기화 (필요시)
-        if (event.getDescription() == null || event.getDescription().isBlank()) {
-            event.setDescription(article.getContent());
-        }
-
         eventRepository.save(event);
 
-        return find(article.getId());
+        VEventModel model = new VEventModel(event);
+        model.setArticle(articleModel);
+        model.setDescription(articleModel.getContent());
+        return model;
     }
 
     @Override
     @Transactional
-    public VEventModel update(String id, UpdateEventCommand command, List<MultipartFile> files) throws IOException {
+    public VEventModel update(String id, UpdateEventCommand command) throws IOException {
         logger.info("이벤트 수정: id={}, command={}", id, command);
         VEvent event = eventRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Event not found with id: " + id));
 
         // 1. Article 수정
-        articleService.update(event.getArticleId(), command.getArticle());
+        UpdateArticleCommand articleCommand = new UpdateArticleCommand();
+        articleCommand.setCategoryId(command.getCategoryId() != null ? command.getCategoryId() : event.getArticle().getCategory().getId());
+        articleCommand.setTitle(command.getTitle());
+        articleCommand.setContent(command.getContent());
+        articleCommand.setType(ArticleType.HTML);
+        articleCommand.setFixed(false);
+        articleCommand.setFixedOrder(null);
+        articleCommand.setMultipartFiles(command.getMultipartFiles());
+        articleCommand.setInlineImages(command.getInlineImages());
+
+        ArticleModel articleModel = articleService.update(event.getArticleId(), articleCommand);
 
         // 2. VEvent 수정
         event.setDtStart(command.getDtStart());
         event.setDtEnd(command.getDtEnd());
-        event.setSummary(command.getSummary());
-        event.setDescription(command.getDescription());
+        event.setSummary(command.getTitle());
         event.setLocation(command.getLocation());
-        event.setStatus(command.getStatus());
-        event.setTzid(command.getTzid());
+        if (command.getStatus() != null) {
+            event.setStatus(command.getStatus());
+        }
+        if (command.getTzid() != null) {
+            event.setTzid(command.getTzid());
+        }
         event.setDtStamp(Instant.now());
 
-        return find(id);
+        eventRepository.save(event);
+
+        VEventModel model = new VEventModel(event);
+        model.setArticle(articleModel);
+        model.setDescription(articleModel.getContent());
+        return model;
     }
 
     @Override

@@ -15,9 +15,9 @@ public interface EventWebService {
 
     VEventModel find(String id);
 
-    VEventModel create(CreateEventCommand command, List<MultipartFile> files) throws IOException;
+    VEventModel create(CreateEventCommand command) throws IOException;
 
-    VEventModel update(String id, UpdateEventCommand command, List<MultipartFile> files) throws IOException;
+    VEventModel update(String id, UpdateEventCommand command) throws IOException;
 
     void delete(String id);
 
