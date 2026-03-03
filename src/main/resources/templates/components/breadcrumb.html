@@ -25,7 +25,7 @@
                 th:if="${siblingCategory.parentId == null || #strings.equals(siblingCategory.parentId, CURRENT_CATEGORY.parent.parentId)}">
               <a class="dropdown-item"
                  th:classappend="${#strings.equals(siblingCategory.id, CURRENT_CATEGORY.parent.id)} ? 'active' : ''"
-                 th:href="@{/articles(categoryType=${siblingCategory.children.get(0).type}, categoryId=${siblingCategory.children.get(0).id})}"
+                 th:href="${siblingCategory.url}"
                  th:text="${siblingCategory.name}">
               </a>
             </li>
@@ -44,7 +44,7 @@
             <li th:each="siblingCategory : ${CURRENT_CATEGORY.parent.children}">
               <a class="dropdown-item"
                  th:classappend="${#strings.equals(siblingCategory.id, CURRENT_CATEGORY.id)} ? 'active' : ''"
-                 th:href="@{/articles(categoryType=${siblingCategory.type}, categoryId=${siblingCategory.id})}"
+                 th:href="${siblingCategory.url}"
                  th:text="${siblingCategory.name}">
               </a>
             </li>
