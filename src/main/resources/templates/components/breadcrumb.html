@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <body>
+<!--/*@thymesVar id="ALL_CATEGORIES" type="java.util.Map<java.lang.String, java.util.List<kr.me.seesaw.model.CategoryModel>>"*/-->
+<!--/*@thymesVar id="NESTED_CATEGORIES" type="java.util.List<kr.me.seesaw.model.CategoryModel>"*/-->
+<!--/*@thymesVar id="CURRENT_CATEGORY" type="kr.me.seesaw.model.CategoryModel"*/-->
 <section class="container-sm pt-4 mt-4" th:fragment="breadcrumbs">
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb modern-breadcrumb">
@@ -41,13 +44,26 @@
             현재 카테고리
           </a>
           <ul class="dropdown-menu shadow-sm" aria-labelledby="currentDropdown">
-            <li th:each="siblingCategory : ${CURRENT_CATEGORY.parent.children}">
-              <a class="dropdown-item"
-                 th:classappend="${#strings.equals(siblingCategory.id, CURRENT_CATEGORY.id)} ? 'active' : ''"
-                 th:href="${siblingCategory.url}"
-                 th:text="${siblingCategory.name}">
-              </a>
-            </li>
+            <!--/* When parent exists, show parent's children (siblings) */-->
+            <th:block th:if="${CURRENT_CATEGORY.parent != null}">
+              <li th:each="siblingCategory : ${CURRENT_CATEGORY.parent.children}">
+                <a class="dropdown-item"
+                   th:classappend="${#strings.equals(siblingCategory.id, CURRENT_CATEGORY.id)} ? 'active' : ''"
+                   th:href="${siblingCategory.url}"
+                   th:text="${siblingCategory.name}">
+                </a>
+              </li>
+            </th:block>
+            <!--/* When parent is null (root category), show all nested categories (siblings) */-->
+            <th:block th:if="${CURRENT_CATEGORY.parent == null}">
+              <li th:each="siblingCategory : ${NESTED_CATEGORIES}">
+                <a class="dropdown-item"
+                   th:classappend="${#strings.equals(siblingCategory.id, CURRENT_CATEGORY.id)} ? 'active' : ''"
+                   th:href="${siblingCategory.url}"
+                   th:text="${siblingCategory.name}">
+                </a>
+              </li>
+            </th:block>
           </ul>
         </div>
       </li>
