@@ -30,3 +30,8 @@ logging:
         orm:
           jdbc:
             bind: info
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: false
