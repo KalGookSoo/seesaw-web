@@ -6,17 +6,20 @@ import kr.me.seesaw.model.AttachmentModel;
 import kr.me.seesaw.service.ArticleQueryService;
 import kr.me.seesaw.service.AttachmentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.StreamUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -35,16 +38,18 @@ public class AttachmentController {
     @GetMapping("/{id}/download")
     public void getAttachment(
             @PathVariable("id") String id,
-            @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
             HttpServletResponse response
     ) throws IOException {
         AttachmentModel attachment = attachmentService.getAttachmentById(id);
-        String fileName = URLEncoder.encode(attachment.getOriginalName(), StandardCharsets.UTF_8);
+        String fileName = attachment.getOriginalName();
         ByteArrayInputStream inputStream = FileIOService.read(attachmentService.getAbsolutePath(attachment.getPathName(), attachment.getName()));
 
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, getContentDisposition(userAgent, fileName));
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment()
+                .filename(fileName, StandardCharsets.UTF_8)
+                .build()
+                .toString());
         OutputStream outputStream = response.getOutputStream();
         FileCopyUtils.copy(inputStream, outputStream);
     }
@@ -52,7 +57,6 @@ public class AttachmentController {
     @GetMapping("/download-zip")
     public void getAttachments(
             @RequestParam String articleId,
-            @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
             HttpServletResponse response
     ) throws IOException {
         List<AttachmentModel> attachments = articleQueryService.getAttachments(articleId)
@@ -63,15 +67,17 @@ public class AttachmentController {
             throw new NoSuchElementException();
         }
         if (attachments.size() == 1) {
-            getAttachment(attachments.get(0).getId(), userAgent, response);
+            getAttachment(attachments.get(0).getId(), response);
             return;
         }
         String title = attachments.get(0).getOriginalName() + " (외 " + (attachments.size() - 1) + "개)";
-        String fileName = URLEncoder.encode(title, StandardCharsets.UTF_8);
 
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("application/zip");
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, getContentDisposition(userAgent, fileName) + ".zip");
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment()
+                .filename(title + ".zip", StandardCharsets.UTF_8)
+                .build()
+                .toString());
 
         try (ZipOutputStream outputStream = new ZipOutputStream(response.getOutputStream())) {
             for (AttachmentModel attachment : attachments) {
@@ -82,16 +88,6 @@ public class AttachmentController {
                 outputStream.closeEntry();
             }
         }
-    }
-
-    private String getContentDisposition(String userAgent, String fileName) {
-        String disposition = "attachment;filename=";
-        if (userAgent.contains("MSIE")) {
-            int i = userAgent.indexOf('M', 2);
-            String IEV = userAgent.substring(i + 5, i + 8);
-            disposition = IEV.equalsIgnoreCase("5.5") ? "filename=" : disposition;
-        }
-        return disposition + fileName;
     }
 
 }
