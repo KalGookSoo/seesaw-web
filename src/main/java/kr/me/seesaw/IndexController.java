@@ -3,7 +3,7 @@ package kr.me.seesaw;
 import kr.me.seesaw.domain.vo.CategoryType;
 import kr.me.seesaw.dto.model.VEventModel;
 import kr.me.seesaw.dto.query.EventQuery;
-import kr.me.seesaw.interceptor.ContextEnvironment;
+import kr.me.seesaw.context.CurrentSiteContext;
 import kr.me.seesaw.model.ArticleModel;
 import kr.me.seesaw.model.CategoryModel;
 import kr.me.seesaw.service.ArticleService;
@@ -15,9 +15,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,6 +35,7 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 @Controller
+@RequestMapping(produces = MediaType.TEXT_HTML_VALUE)
 public class IndexController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -40,6 +43,8 @@ public class IndexController {
     private final ArticleService articleService;
 
     private final EventWebService eventWebService;
+
+    private final CurrentSiteContext currentSiteContext;
 
     /**
      * 메인 화면을 반환합니다.
@@ -53,8 +58,7 @@ public class IndexController {
     ) {
 
         logger.debug("하위 카테고리 중 사이트 노출 카테고리 목록을 추출");
-        @SuppressWarnings("unchecked")
-        Map<String, CategoryModel> allCategories = ((Map<String, CategoryModel>) model.getAttribute(ContextEnvironment.ALL_CATEGORIES));
+        Map<String, CategoryModel> allCategories = currentSiteContext.getAllCategories();
         List<String> siteExposedBoardCategoryIds = allCategories != null ? allCategories.values()
                 .stream()
                 .filter(Predicate.not(CategoryModel::isRoot))

@@ -3,9 +3,12 @@ package kr.me.seesaw.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import kr.me.seesaw.interceptor.GlobalModelInterceptor;
+import kr.me.seesaw.context.CurrentSiteContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -22,6 +25,10 @@ import java.util.Locale;
 @RequiredArgsConstructor
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
+
+    private final Environment environment;
+
+    private final CurrentSiteContext currentSiteContext;
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
@@ -43,11 +50,20 @@ public class WebMvcConfig implements WebMvcConfigurer {
         return localeChangeInterceptor;
     }
 
+    @Bean
+    public GlobalModelInterceptor globalModelInterceptor() {
+        return new GlobalModelInterceptor(environment, currentSiteContext);
+    }
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(localeChangeInterceptor())
                 .addPathPatterns("/**")
                 .excludePathPatterns("/styles/**", "/scripts/**", "/images/**", "/fonts/**", "/favicon.ico");
+
+        registry.addInterceptor(globalModelInterceptor())
+                .addPathPatterns("/**")
+                .excludePathPatterns("/styles/**", "/scripts/**", "/images/**", "/fonts/**", "/favicon.ico", "/api/**");
     }
 
     @Bean
