@@ -35,7 +35,7 @@ public class EventApiController {
         return ResponseEntity.ok(eventWebService.find(id));
     }
 
-    @PreAuthorize("isAuthenticated() and (hasAnyRole('ADMIN', 'MANAGER') or hasPermission(#command.categoryId, 'kr.me.seesaw.domain.Category', T(kr.me.seesaw.domain.vo.BasePermission).CREATE))")
+    @PreAuthorize("isAuthenticated() and (hasAnyRole('ADMIN', 'MANAGER') or hasPermission(#command.categoryId, 'kr.me.seesaw.domain.Category', T(org.springframework.security.acls.domain.BasePermission).CREATE))")
     @PostMapping
     public ResponseEntity<VEventModel> create(@Valid CreateEventCommand command) throws IOException {
         return ResponseEntity.ok(eventWebService.create(command));

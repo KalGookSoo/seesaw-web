@@ -2,10 +2,8 @@ package kr.me.seesaw.interceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kr.me.seesaw.core.hierarchy.HierarchicalFactory;
+import kr.me.seesaw.context.CurrentSiteContext;
 import kr.me.seesaw.model.CategoryModel;
-import kr.me.seesaw.model.SiteModel;
-import kr.me.seesaw.service.SiteService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +13,11 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
-import kr.me.seesaw.context.CurrentSiteContext;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class GlobalModelInterceptor implements HandlerInterceptor {
@@ -25,6 +25,7 @@ public class GlobalModelInterceptor implements HandlerInterceptor {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final Environment environment;
+
     private final CurrentSiteContext currentSiteContext;
 
     @Override
@@ -40,7 +41,7 @@ public class GlobalModelInterceptor implements HandlerInterceptor {
         modelAndView.addObject("ACTIVE_PROFILES", List.of(environment.getActiveProfiles()));
 
         modelAndView.addObject("SITE_CONTEXT", currentSiteContext.getSite());
-        
+
         Map<String, CategoryModel> allCategories = currentSiteContext.getAllCategories();
         modelAndView.addObject("ALL_CATEGORIES", allCategories);
         modelAndView.addObject("NESTED_CATEGORIES", currentSiteContext.getNestedCategories());

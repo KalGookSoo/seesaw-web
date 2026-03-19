@@ -29,20 +29,21 @@ import java.util.NoSuchElementException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Service
 @RequestScope
+@Transactional
 @RequiredArgsConstructor
+@Service
 public class CurrentSiteContext {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-
-    private final Environment environment;
 
     private final SiteRepository siteRepository;
 
     private final AttachmentRepository attachmentRepository;
 
     private final ArticleQueryRepository articleQueryRepository;
+
+    private final Environment environment;
 
     private SiteModel site;
 
