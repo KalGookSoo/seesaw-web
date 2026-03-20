@@ -19,7 +19,8 @@
     <title>홈 | 대전포스트잇 ♣대전독서모임</title>
 
     <!--/* CSS */-->
-    <link rel="canonical" th:href="${REQUEST_URL}">
+    <!--/*@thymesVar id="REQUEST_URI_BUILDER" type="org.springframework.web.util.UriComponentsBuilder"*/-->
+    <link rel="canonical" th:href="${REQUEST_URI_BUILDER.cloneBuilder().toUriString()}">
     <link rel="stylesheet" th:href="@{/styles/bootstrap.css}">
     <link rel="stylesheet" th:href="@{/styles/bootstrap-icons.min.css}">
     <link rel="stylesheet" th:href="@{/styles/global.css}">
