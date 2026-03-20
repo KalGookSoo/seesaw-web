@@ -35,10 +35,6 @@ spring:
   main:
     lazy-initialization: true
   
-  # Cache
-  cache:
-    type: hazelcast
-  
   # 정적 자원 경로
   web:
     resources:
