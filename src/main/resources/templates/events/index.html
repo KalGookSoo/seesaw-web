@@ -195,7 +195,7 @@
     <div class="d-flex justify-content-between">
       <h5 class="title" th:text="${CURRENT_CATEGORY.name}"></h5>
       <button class="btn btn-sm btn-primary" data-bs-target="#eventModal" data-bs-toggle="modal" id="btnPrepareCreate"
-              th:if="${#authentication.isAuthenticated() and @categoryPermissionEvaluator.hasPermission(CURRENT_CATEGORY.id, T(org.springframework.security.acls.domain.BasePermission).WRITE)}">
+              th:if="${#authentication.isAuthenticated() and (#authorization.expression('hasAnyRole(''ROLE_ADMIN'', ''ROLE_MANAGER'')') or @categoryPermissionEvaluator.hasPermission(CURRENT_CATEGORY.id, T(org.springframework.security.acls.domain.BasePermission).WRITE))}">
         <i class="bi bi-calendar-plus"></i> 일정 등록
       </button>
     </div>
