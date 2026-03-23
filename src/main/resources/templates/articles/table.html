@@ -208,7 +208,7 @@
         >
           <i class="bi bi-person"></i><span class="d-none d-sm-inline ms-1" th:text="#{label.my.articles}">내가 쓴 글</span>
         </a>
-        <a class="btn btn-primary d-flex align-items-center" sec:authorize="isAuthenticated()"
+        <a class="btn btn-primary d-flex align-items-center" th:if="${#authentication.isAuthenticated() and @categoryPermissionEvaluator.hasPermission(CURRENT_CATEGORY.id, T(org.springframework.security.acls.domain.BasePermission).WRITE)}"
            th:href="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/articles/new').build().toUriString()}"
            th:title="#{label.write}"
         >
