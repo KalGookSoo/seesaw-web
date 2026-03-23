@@ -77,23 +77,48 @@ export const calendarActions = (calendar, onUpdate) => {
  * @returns {Promise<void>}
  */
 export const fetchEvents = async (calendar, categoryId) => {
-  const rangeStart = calendar.getDateRangeStart().toDate().toISOString();
-  const rangeEnd = calendar.getDateRangeEnd().toDate().toISOString();
+  const start = calendar.getDateRangeStart().toDate();
+  start.setHours(0, 0, 0, 0);
+
+  const end = calendar.getDateRangeEnd().toDate();
+  end.setDate(end.getDate() + 1);
+  end.setHours(0, 0, 0, 0);
+
+  const toLocalDateTimeString = (date) => {
+    const pad = (n) => n.toString().padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+  };
+
+  const rangeStart = toLocalDateTimeString(start);
+  const rangeEnd = toLocalDateTimeString(end);
 
   try {
     const response = await fetch(`/api/events?categoryId=${categoryId}&start=${rangeStart}&end=${rangeEnd}`);
     const data = await response.json();
     
     calendar.clear();
-    const events = data.map(item => ({
-      id: item.articleId,
-      calendarId: item.id,
-      title: item.title,
-      start: item.dtStart,
-      end: item.dtEnd || item.dtStart,
-      category: 'time',
-      raw: item
-    }));
+    const events = data.map(item => {
+      const start = new Date(item.dtStart);
+      // 종료 시간이 없거나 시작 시간과 같으면 최소 30분으로 설정하여 그리드에서 보이도록 함
+      let end = item.dtEnd ? new Date(item.dtEnd) : new Date(start.getTime() + 30 * 60 * 1000);
+      
+      if (end <= start) {
+        end = new Date(start.getTime() + 30 * 60 * 1000);
+      }
+
+      return {
+        id: item.articleId,
+        calendarId: categoryId,
+        title: item.title,
+        body: item.description || '',
+        start: start,
+        end: end,
+        location: item.location || '',
+        category: 'time',
+        isAllday: false,
+        raw: item
+      };
+    });
     calendar.createEvents(events);
   } catch (error) {
     console.error('Failed to fetch events:', error);

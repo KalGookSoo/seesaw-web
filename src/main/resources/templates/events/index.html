@@ -886,7 +886,19 @@
             },
           ],
         },
+        calendars: [
+          {
+            id: categoryId,
+            name: /*[[${CURRENT_CATEGORY.name}]]*/ '캘린더 이름',
+            backgroundColor: '#03bd9e',
+            borderColor: '#03bd9e',
+            dragBackgroundColor: '#03bd9e',
+          },
+        ],
         template: {
+          time(event) {
+            return `<span>${event.title}</span>`;
+          },
           allday(event) {
             return `<span style="color: gray;">${event.title}</span>`;
           },
