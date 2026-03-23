@@ -68,7 +68,8 @@ public class SeesawPermissionEvaluator implements PermissionEvaluator {
                     }
                 }
             } catch (RuntimeException e) {
-                logger.error("역할 {}에 대한 권한 확인 중 오류 발생", roleName);
+                logger.warn("역할 {}에 대한 권한 확인 중 오류 발생", roleName);
+                return false;
             }
         }
         return false;
@@ -115,7 +116,8 @@ public class SeesawPermissionEvaluator implements PermissionEvaluator {
                     return true;
                 }
             } catch (RuntimeException e) {
-                logger.error("역할 {}에 대한 권한 확인 중 오류 발생", roleName);
+                logger.warn("역할 {}에 대한 권한 확인 중 오류 발생", roleName);
+                return false;
             }
         }
         return false;

@@ -27,14 +27,14 @@ public class ArticleApiController {
 
     private final ArticleQueryService articleQueryService;
 
-    @PreAuthorize("isAuthenticated() and (hasAnyRole('ADMIN', 'MANAGER') or hasPermission(#categoryId, 'kr.me.seesaw.domain.Category', T(org.springframework.security.acls.domain.BasePermission).READ))")
+    @PreAuthorize("isAuthenticated() and (hasAnyRole('ADMIN', 'MANAGER') or @categoryPermissionEvaluator.hasPermission(#categoryId, T(org.springframework.security.acls.domain.BasePermission).READ))")
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, ArticleModel>> getArticle(@PathVariable("id") String id, @RequestParam("categoryId") String categoryId) {
         ArticleModel article = articleQueryService.getArticleAggregation(id);
         return ResponseEntity.ok(Map.of("article", article));
     }
 
-    @PreAuthorize("isAuthenticated() and (hasAnyRole('ADMIN', 'MANAGER') or hasPermission(#command.categoryId, 'kr.me.seesaw.domain.Category', T(org.springframework.security.acls.domain.BasePermission).CREATE))")
+    @PreAuthorize("isAuthenticated() and (hasAnyRole('ADMIN', 'MANAGER') or @categoryPermissionEvaluator.hasPermission(#command.categoryId, T(org.springframework.security.acls.domain.BasePermission).CREATE))")
     @PostMapping
     public ResponseEntity<String> create(@Valid CreateArticleCommand command) throws IOException {
         articleService.create(command);
