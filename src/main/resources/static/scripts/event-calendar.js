@@ -99,8 +99,9 @@ export const fetchEvents = async (calendar, categoryId) => {
     calendar.clear();
     const events = data.map(item => {
       const start = new Date(item.dtStart);
-      // 종료 시간이 없거나 시작 시간과 같으면 최소 30분으로 설정하여 그리드에서 보이도록 함
-      let end = item.dtEnd ? new Date(item.dtEnd) : new Date(start.getTime() + 30 * 60 * 1000);
+      const hasEnd = !!item.dtEnd;
+      // 종료 시간이 없으면 당일 23:59:59로 설정하거나 시작 시간+30분
+      let end = hasEnd ? new Date(item.dtEnd) : new Date(new Date(start).setHours(23, 59, 59));
       
       if (end <= start) {
         end = new Date(start.getTime() + 30 * 60 * 1000);
@@ -114,8 +115,12 @@ export const fetchEvents = async (calendar, categoryId) => {
         start: start,
         end: end,
         location: item.location || '',
-        category: 'time',
-        isAllday: false,
+        // dtEnd가 없으면 종일 일정으로 간주
+        category: hasEnd ? 'time' : 'allday',
+        isAllday: !hasEnd,
+        state: item.status === 'CONFIRMED' ? 'Busy' : 'Free',
+        // 서버에서 온 데이터나 권한에 따라 읽기 전용 여부 결정 가능
+        isReadOnly: false, 
         raw: item
       };
     });

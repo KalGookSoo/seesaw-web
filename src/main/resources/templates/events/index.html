@@ -240,8 +240,9 @@
                 <input class="form-control" data-max-ref="dtEnd" id="dtStart" name="dtStart" required type="datetime-local">
               </div>
               <div class="col-md-6 mb-3">
-                <label class="form-label required" for="dtEnd">종료 일시</label>
-                <input class="form-control" data-min-ref="dtStart" id="dtEnd" name="dtEnd" required type="datetime-local">
+                <label class="form-label" for="dtEnd">종료 일시</label>
+                <input class="form-control" data-min-ref="dtStart" id="dtEnd" name="dtEnd" type="datetime-local">
+                <small class="text-muted">입력하지 않으면 당일 종일 일정으로 설정됩니다.</small>
               </div>
             </div>
             <div class="mb-3">
@@ -274,17 +275,48 @@
             </div>
           </form>
           <div class="d-none" id="eventDetail">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h4 class="mb-0" id="viewSummary"></h4>
-              <span class="badge rounded-pill px-3" id="viewStatus"></span>
+            <div class="mb-4">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <h4 class="mb-0" id="viewSummary"></h4>
+                <span class="badge rounded-pill px-3 py-2" id="viewStatus"></span>
+              </div>
+              <div class="d-flex flex-wrap gap-3 text-muted small mt-2">
+                <div class="d-flex align-items-center">
+                  <i class="bi bi-person-circle me-1"></i>
+                  <span id="viewCreatedBy"></span>
+                </div>
+                <div class="d-flex align-items-center">
+                  <i class="bi bi-calendar-check me-1"></i>
+                  <span id="viewCreatedDate"></span>
+                </div>
+              </div>
             </div>
-            <p class="text-muted"><i class="bi bi-clock me-1"></i> <span id="viewPeriod"></span></p>
-            <p class="text-muted d-none" id="viewLocationContainer">
-              <i class="bi bi-geo-alt me-1"></i>
-              <span id="viewLocation"></span>
-            </p>
-            <hr>
-            <div id="viewer"></div>
+
+            <div class="row g-3 mb-4">
+              <div class="col-lg-6">
+                <div class="p-3 border rounded bg-light h-100">
+                  <label class="small text-uppercase fw-bold text-muted mb-1 d-block">일정 기간</label>
+                  <div class="d-flex align-items-center mt-1">
+                    <i class="bi bi-clock-history me-2 text-primary"></i>
+                    <span class="fw-medium" id="viewPeriod"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6 d-none" id="viewLocationContainer">
+                <div class="p-3 border rounded bg-light h-100">
+                  <label class="small text-uppercase fw-bold text-muted mb-1 d-block">장소</label>
+                  <div class="d-flex align-items-center mt-1">
+                    <i class="bi bi-geo-alt-fill me-2 text-danger"></i>
+                    <span class="fw-medium" id="viewLocation"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="small text-uppercase fw-bold text-muted mb-2 d-block">상세 내용</label>
+              <div class="p-3 border rounded shadow-sm bg-white" style="min-height: 200px;" id="viewer"></div>
+            </div>
             <div class="d-none" id="viewFilesContainer">
               <hr class="my-4">
               <div class="d-flex justify-content-between align-items-center mb-3">
@@ -379,6 +411,8 @@
     const formatDate = (dateString) => {
       if (!dateString) return '';
       const date = new Date(dateString);
+      const days = ['일', '월', '화', '수', '목', '금', '토'];
+      const dayName = days[date.getDay()];
       const yyyy = date.getFullYear();
       const MM = String(date.getMonth() + 1).padStart(2, '0');
       const dd = String(date.getDate()).padStart(2, '0');
@@ -496,13 +530,15 @@
 
         const statusEl = $('#viewStatus');
         statusEl.innerText = item.statusDescription || item.status;
-        statusEl.className = 'badge rounded-pill px-3 ' + {
+        statusEl.className = 'badge rounded-pill px-3 py-2 ' + {
           'TENTATIVE': 'status-badge-tentative',
           'CONFIRMED': 'status-badge-confirmed',
           'CANCELLED': 'status-badge-cancelled'
         }[item.status];
 
-        $('#viewPeriod').innerText = `${formatDate(item.dtStart)} ~ ${formatDate(item.dtEnd)}`;
+        $('#viewPeriod').innerText = item.dtEnd ? `${formatDate(item.dtStart)} ~ ${formatDate(item.dtEnd)}` : `${formatDate(item.dtStart)} (종일)`;
+        $('#viewCreatedBy').innerText = item.createdBy || '알 수 없음';
+        $('#viewCreatedDate').innerText = formatDate(item.createdDate);
 
         const locationContainer = $('#viewLocationContainer');
         if (item.location) {
@@ -599,9 +635,18 @@
 
         const formData = new FormData();
 
+        let dtStart = form.elements['dtStart'].value;
+        let dtEnd = form.elements['dtEnd'].value;
+
+        // dtEnd가 없으면 당일 밤 11시 59분으로 설정 (All-day 처럼 보이도록)
+        if (!dtEnd && dtStart) {
+          const startDay = dtStart.split('T')[0];
+          dtEnd = `${startDay}T23:59`;
+        }
+
         formData.append('categoryId', categoryId);
-        formData.append('dtStart', form.elements['dtStart'].value);
-        formData.append('dtEnd', form.elements['dtEnd'].value);
+        formData.append('dtStart', dtStart);
+        formData.append('dtEnd', dtEnd);
         formData.append('title', form.elements['title'].value);
         formData.append('content', editor.getHTML());
         formData.append('location', form.elements['location'].value);
