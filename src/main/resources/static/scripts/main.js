@@ -19,7 +19,8 @@ document.addEventListener('DOMContentLoaded', /** @param {Event} e */ e => {
     const updateRef = (refId, attr) => {
       const $el = document.getElementById(refId);
       $el && ($el[attr] = value);
-      $el?.value && !$el.validity.valid && $el.reportValidity();
+      // 사용자 편의성을 위해 즉시 검증 기능 해제
+      // $el?.value && !$el.validity.valid && $el.reportValidity();
     };
 
     minRef && updateRef(minRef, 'max');
