@@ -107,23 +107,39 @@
 <section class="schedule-section container-fluid container-lg px-3 mb-5" th:each="schedule : ${siteExposedScheduleEvents}">
     <header class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="h5 main-color mb-0" th:text="${ALL_CATEGORIES.get(schedule.getKey()).name}"></h5>
-        <p class="mb-0"><a class="none d-flex align-items-center" th:href="@{/articles(categoryId=${schedule.getKey()}, categoryType=SCHEDULE)}" th:title="#{label.more}"><span th:text="#{label.more}">더보기</span> <i class="bi bi-arrow-right ms-1"></i></a></p>
+        <p class="mb-0"><a class="none d-flex align-items-center" th:href="@{/articles(categoryId=${schedule.getKey()}, categoryType='SCHEDULE')}" th:title="#{label.more}"><span th:text="#{label.more}">더보기</span> <i class="bi bi-arrow-right ms-1"></i></a></p>
     </header>
     <div class="calendar-container" th:id="|calendar-${schedule.getKey()}|"></div>
 </section>
 
 <!-- TUI Calendar JS -->
 <script src="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.js"></script>
-<script th:inline="javascript">
+<script type="module" th:inline="javascript">
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const days = ['일', '월', '화', '수', '목', '금', '토'];
+    const dayName = days[date.getDay()];
+    const yyyy = date.getFullYear();
+    const MM = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    const HH = String(date.getHours()).padStart(2, '0');
+    const mm = String(date.getMinutes()).padStart(2, '0');
+    return `${yyyy}-${MM}-${dd} ${HH}:${mm}`;
+  };
+
   document.addEventListener('DOMContentLoaded', () => {
     const events = /*[[${siteExposedScheduleEvents}]]*/ {};
+    const allCategories = /*[[${ALL_CATEGORIES}]]*/ {};
 
     Object.entries(events).forEach(([categoryId, events]) => {
       const calendarEl = document.getElementById(`calendar-${categoryId}`);
+      const category = allCategories[categoryId];
       if (calendarEl) {
         const calendar = new tui.Calendar(calendarEl, {
           defaultView: 'month',
           isReadOnly: true,
+          useDetailPopup: true,
           usageStatistics: false,
           timezone: {
             zones: [
@@ -133,16 +149,103 @@
               },
             ],
           },
+          calendars: [
+            {
+              id: categoryId,
+              name: category.name,
+              backgroundColor: '#03bd9e',
+              borderColor: '#03bd9e',
+              dragBackgroundColor: '#03bd9e',
+            },
+          ],
+          template: {
+            time(event) {
+              return event.title;
+            },
+            allday(event) {
+              return event.title;
+            },
+            popupIsAllday: function () {
+              return '종일';
+            },
+            popupStateFree: function () {
+              return '여유';
+            },
+            popupStateBusy: function () {
+              return '긴급';
+            },
+            titlePlaceholder: function () {
+              return '제목';
+            },
+            locationPlaceholder: function () {
+              return '장소';
+            },
+            startDatePlaceholder: function () {
+              return `시작일시`;
+            },
+            endDatePlaceholder: function () {
+              return '종료일시';
+            },
+            popupDetailTitle: function (data) {
+              return data.title;
+            },
+            popupDetailDate: function (data) {
+              const start = new Date(data.start);
+              const end = new Date(data.end);
+              return data.isAllday ? `${formatDate(start)} (종일)` : `${formatDate(start)} ~ ${formatDate(data.end)}`;
+            },
+            popupDetailLocation: function (data) {
+              return data.location;
+            },
+            popupDetailUser: function (data, calendar) {
+              // Attendee 출력 방지
+              return '';
+            },
+            popupDetailState: function (data) {
+              return data.state;
+            },
+            popupDetailBody: function (data) {
+              return data.body;
+            },
+            popupDetailEdit: function () {
+              return '';
+            },
+            popupDetailDelete: function () {
+              return '';
+            }
+          }
         });
 
-        const calendarEvents = events.map(item => ({
-          id: item.articleId,
-          calendarId: '1',
-          title: item.summary,
-          start: item.dtStart,
-          end: item.dtEnd || item.dtStart,
-          category: 'time',
-        }));
+        const eventStatus = /*[[${eventStatus}]]*/{};
+
+        const calendarEvents = events.map(item => {
+          const start = new Date(item.dtStart);
+          const hasEnd = !!item.dtEnd;
+          // 종료 시간이 없으면 당일 23:59:59로 설정하거나 시작 시간+30분
+          let end = hasEnd ? new Date(item.dtEnd) : new Date(new Date(start).setHours(23, 59, 59));
+
+          if (end <= start) {
+            end = new Date(start.getTime() + 30 * 60 * 1000);
+          }
+
+          return {
+            id: item.articleId,
+            calendarId: categoryId,
+            title: item.title,
+            body: item.description || '',
+            start: start,
+            end: end,
+            location: item.location || '',
+            // dtEnd가 없으면 종일 일정으로 간주
+            category: hasEnd ? 'time' : 'allday',
+            isAllday: !hasEnd,
+            state: eventStatus[item.status],
+            // 서버에서 온 데이터나 권한에 따라 읽기 전용 여부 결정 가능
+            isReadOnly: true,
+            attendees: [],
+            raw: item
+          };
+        });
 
         calendar.createEvents(calendarEvents);
       }

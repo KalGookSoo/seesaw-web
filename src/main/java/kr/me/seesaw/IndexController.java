@@ -2,6 +2,7 @@ package kr.me.seesaw;
 
 import kr.me.seesaw.context.CurrentSiteContext;
 import kr.me.seesaw.domain.vo.CategoryType;
+import kr.me.seesaw.domain.vo.EventStatus;
 import kr.me.seesaw.dto.model.VEventModel;
 import kr.me.seesaw.dto.query.EventQuery;
 import kr.me.seesaw.model.ArticleModel;
@@ -105,6 +106,8 @@ public class IndexController {
                         LinkedHashMap::new
                 ));
         model.addAttribute("siteExposedScheduleEvents", siteExposedScheduleEvents);
+
+        model.addAttribute("eventStatus", Arrays.stream(EventStatus.values()).collect(Collectors.toMap(EventStatus::name, EventStatus::getDescription)));
 
         return "index";
     }
