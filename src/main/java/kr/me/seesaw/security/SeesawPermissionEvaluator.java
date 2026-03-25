@@ -1,5 +1,6 @@
 package kr.me.seesaw.security;
 
+import kr.me.seesaw.domain.vo.RoleName;
 import kr.me.seesaw.model.PermissionModel;
 import kr.me.seesaw.model.RoleModel;
 import kr.me.seesaw.service.RoleService;
@@ -10,10 +11,12 @@ import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @RequiredArgsConstructor
 public class SeesawPermissionEvaluator implements PermissionEvaluator {
@@ -37,6 +40,12 @@ public class SeesawPermissionEvaluator implements PermissionEvaluator {
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         if (authorities == null || authorities.isEmpty()) {
             logger.warn("계정에 종속된 권한이 없습니다.");
+            return false;
+        }
+
+        Set<String> authoritySet = AuthorityUtils.authorityListToSet(authorities);
+
+        if (authoritySet.contains(RoleName.ROLE_ANONYMOUS.name())) {
             return false;
         }
 
@@ -76,8 +85,7 @@ public class SeesawPermissionEvaluator implements PermissionEvaluator {
     }
 
     @Override
-    public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType,
-                                 Object permission) {
+    public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType, Object permission) {
         if (authentication == null || targetId == null || targetType == null || permission == null) {
             logger.warn("인증 정보 또는 대상 정보가 없습니다. Authentication: {}, targetId: {}, targetType: {}", authentication,
                     targetId, targetType);
@@ -85,14 +93,19 @@ public class SeesawPermissionEvaluator implements PermissionEvaluator {
         }
 
         if (!(permission instanceof BasePermission basePermission)) {
-            logger.error("hasPermission을 사용할 때 BasePermission 하위타입을 사용하세요. 현재 Permission Type: {}",
-                    permission.getClass().getName());
+            logger.error("hasPermission을 사용할 때 BasePermission 하위타입을 사용하세요. 현재 Permission Type: {}", permission.getClass().getName());
             return false;
         }
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         if (authorities == null || authorities.isEmpty()) {
             logger.warn("계정에 종속된 권한이 없습니다.");
+            return false;
+        }
+
+        Set<String> authoritySet = AuthorityUtils.authorityListToSet(authorities);
+
+        if (authoritySet.contains(RoleName.ROLE_ANONYMOUS.name())) {
             return false;
         }
 
