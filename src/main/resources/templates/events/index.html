@@ -714,7 +714,7 @@
         if (response.ok) {
           bootstrap.Modal.getInstance($('#eventModal')).hide();
           fetchEvents(calendar, categoryId);
-          alert(/*[[#{command.success.delete}]]*/ '이벤트가 삭제되었습니다.');
+          alert(/*[[#{command.success.delete}]]*/'삭제되었습니다.');
         }
       };
 
@@ -791,6 +791,7 @@
             if (list.children.length === 0) {
               $('#existing-attachments-container').classList.add('d-none');
             }
+            alert(/*[[#{command.success.delete}]]*/'삭제되었습니다.');
           } else {
             alert('삭제에 실패했습니다.');
           }
@@ -838,6 +839,7 @@
 
           if (response.ok) {
             loadReplies(currentEvent.articleId);
+            alert(/*[[#{command.success.delete}]]*/'삭제되었습니다.');
           } else {
             alert('댓글 삭제에 실패했습니다.');
           }
