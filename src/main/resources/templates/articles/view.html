@@ -20,7 +20,7 @@
         th:content="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/api/attachments/' + article.inlineImages.get(0).id).replaceQuery(null).toUriString()}">
   <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${article.inlineImages.isEmpty() and SITE_CONTEXT.profileImage != null}"
         th:content="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/api/attachments/' + SITE_CONTEXT.profileImage.id).replaceQuery(null).toUriString()}">
-  <meta property="og:url" content="페이지 주소" th:content="${REQUEST_URI_BUILDER.toUriString()}">
+  <meta property="og:url" content="페이지 주소" th:content="${REQUEST_URI_BUILDER.cloneBuilder().toUriString()}">
 
   <meta property="twitter:card" content="summary">
   <meta property="twitter:title" content="페이지 제목" th:content="${article.title}">
@@ -408,20 +408,20 @@
         <div class="d-flex justify-content-between align-items-center">
           <div class="d-flex gap-2">
             <a class="btn btn-outline-secondary d-flex align-items-center"
-               th:href="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/articles/' + previousArticle.id).build().toUriString()}"
+               th:href="${search.uriComponentsBuilder.replacePath('/articles/' + previousArticle.id).toUriString()}"
                th:if="${previousArticle != null}"
                th:title="#{label.previous.article}">
               <i class="bi bi-chevron-left"></i>
               <span class="d-none d-sm-inline ms-1" th:text="#{label.previous.article}">[[#{label.previous.article}]]</span>
             </a>
             <a class="btn btn-outline-secondary d-flex align-items-center"
-               th:href="${REQUEST_URI_BUILDER.replacePath('/articles').cloneBuilder().replaceQueryParam('page', 0).build().toUriString()}"
+               th:href="${search.uriComponentsBuilder.replacePath('/articles').replaceQueryParam('page', 0).toUriString()}"
                th:title="#{label.list}">
               <i class="bi bi-list"></i>
-              <span class="d-none d-sm-inline ms-1" th:text="#{label.list}"></span>
+              <span class="d-none d-sm-inline ms-1" th:text="#{label.list}">목록</span>
             </a>
             <a class="btn btn-outline-secondary d-flex align-items-center"
-               th:href="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/articles/' + nextArticle.id).build().toUriString()}"
+               th:href="${search.uriComponentsBuilder.replacePath('/articles/' + nextArticle.id).toUriString()}"
                th:if="${nextArticle != null}"
                th:title="#{label.next.article}">
               <i class="bi bi-chevron-right"></i>
@@ -430,7 +430,7 @@
           </div>
           <div class="d-flex gap-2" sec:authorize="isAuthenticated()">
             <a class="btn btn-outline-primary d-flex align-items-center"
-               th:href="${REQUEST_URI_BUILDER.replacePath('/articles/' + article.id + '/edit').build().toUriString()}"
+               th:href="${search.uriComponentsBuilder.replacePath('/articles/' + article.id + '/edit').toUriString()}"
                th:if="${#strings.equals(#authentication.principal.username, article.createdBy)}"
                th:title="#{label.update}">
               <i class="bi bi-pencil-square"></i>

@@ -33,7 +33,7 @@
         th:content="|${SITE_CONTEXT.name} ${CURRENT_CATEGORY.name} ${CURRENT_CATEGORY.description != null ? CURRENT_CATEGORY.description : ''}|">
   <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${SITE_CONTEXT.profileImage != null}"
         th:content="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/api/attachments/' + SITE_CONTEXT.profileImage.id).replaceQuery(null).build().toUriString()}">
-  <meta property="og:url" content="페이지 주소" th:content="${REQUEST_URI_BUILDER.build().toUriString()}">
+  <meta property="og:url" content="페이지 주소" th:content="${REQUEST_URI_BUILDER.cloneBuilder().toUriString()}">
 
   <meta property="twitter:card" content="summary">
   <meta property="twitter:title" content="페이지 제목" th:content="|${SITE_CONTEXT.name}  ${CURRENT_CATEGORY.name}|">

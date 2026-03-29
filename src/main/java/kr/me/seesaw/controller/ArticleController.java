@@ -1,7 +1,9 @@
 package kr.me.seesaw.controller;
 
+import kr.me.seesaw.context.CategoryContext;
 import kr.me.seesaw.dto.query.EventQuery;
 import kr.me.seesaw.model.ArticleModel;
+import kr.me.seesaw.model.CategoryModel;
 import kr.me.seesaw.search.ArticleSearch;
 import kr.me.seesaw.service.ArticleService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,8 @@ import java.util.List;
 @RequestMapping(value = "/articles", produces = MediaType.TEXT_HTML_VALUE)
 public class ArticleController {
 
+    private final CategoryContext categoryContext;
+
     private final ArticleService articleService;
 
     @GetMapping(params = "categoryType=STATIC_CONTENT")
@@ -38,12 +42,16 @@ public class ArticleController {
         return "articles/static_content";
     }
 
-    @GetMapping(params = "categoryType=BOARD")
+    @GetMapping
     public String getArticlesInListView(
             @PageableDefault(size = 8, sort = "article.createdDate", direction = Sort.Direction.DESC) Pageable pageable,
             @ModelAttribute("search") ArticleSearch search,
             Model model
     ) {
+        if (search.getCategoryType() == null) {
+            CategoryModel category = categoryContext.getCategory(search.getCategoryId());
+            search.setCategoryType(category.getType());
+        }
         // 공지는 오름차순 후 createdDate로 내림차순
         Sort sort = Sort.by(Sort.Order.asc("fixedOrder"), Sort.Order.desc("createdDate"));
         List<ArticleModel> fixedArticles = articleService.getFixedArticles(search.getCategoryId(), true, sort);
@@ -63,7 +71,7 @@ public class ArticleController {
         return "events/index";
     }
 
-    @GetMapping(params = {"categoryType=BOARD", "viewType=CARD"})
+    @GetMapping(params = {"viewType=CARD"})
     public String getArticlesInCardView(
             @PageableDefault(size = 9, sort = "article.createdDate", direction = Sort.Direction.DESC) Pageable pageable,
             @ModelAttribute("search") ArticleSearch search,
