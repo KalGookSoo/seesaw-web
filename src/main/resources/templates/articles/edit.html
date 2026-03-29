@@ -195,6 +195,10 @@
               if (response.ok) {
                 alert(/*[[#{command.success.update}]]*/'');
                 location.href = /*[[${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/articles/' + article.id).build().toUriString()}]]*/'';
+              } else if (response.status === 401) {
+                alert(/*[[#{command.failure.unauthorized}]]*/'');
+              } else if (response.status === 403) {
+                alert(/*[[#{command.failure.forbidden}]]*/'');
               } else if (response.status === 422) {
                 const errors = JSON.parse(responseBody).errors;
                 [...errors].forEach(error => {
