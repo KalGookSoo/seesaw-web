@@ -1,7 +1,7 @@
 package kr.me.seesaw.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
-import kr.me.seesaw.core.file.FileIOService;
+import kr.me.seesaw.core.file.FileManager;
 import kr.me.seesaw.model.AttachmentModel;
 import kr.me.seesaw.service.ArticleQueryService;
 import kr.me.seesaw.service.AttachmentService;
@@ -35,6 +35,8 @@ public class AttachmentController {
 
     private final ArticleQueryService articleQueryService;
 
+    private final FileManager fileManager;
+
     @GetMapping("/{id}/download")
     public void getAttachment(
             @PathVariable("id") String id,
@@ -42,7 +44,7 @@ public class AttachmentController {
     ) throws IOException {
         AttachmentModel attachment = attachmentService.getAttachmentById(id);
         String fileName = attachment.getOriginalName();
-        ByteArrayInputStream inputStream = FileIOService.read(attachmentService.getAbsolutePath(attachment.getPathName(), attachment.getName()));
+        ByteArrayInputStream inputStream = fileManager.read(attachmentService.getAbsolutePath(attachment.getPathName(), attachment.getName()));
 
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
@@ -83,7 +85,7 @@ public class AttachmentController {
             for (AttachmentModel attachment : attachments) {
                 ZipEntry entry = new ZipEntry(attachment.getOriginalName());
                 outputStream.putNextEntry(entry);
-                ByteArrayInputStream inputStream = FileIOService.read(attachmentService.getAbsolutePath(attachment.getPathName(), attachment.getName()));
+                ByteArrayInputStream inputStream = fileManager.read(attachmentService.getAbsolutePath(attachment.getPathName(), attachment.getName()));
                 StreamUtils.copy(inputStream, outputStream);
                 outputStream.closeEntry();
             }
