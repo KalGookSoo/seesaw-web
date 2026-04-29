@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import kr.me.seesaw.interceptor.GlobalModelInterceptor;
-import kr.me.seesaw.context.CurrentSiteContext;
+import kr.me.seesaw.context.SiteContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +28,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     private final Environment environment;
 
-    private final CurrentSiteContext currentSiteContext;
+    private final SiteContext siteContext;
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
@@ -52,7 +52,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Bean
     public GlobalModelInterceptor globalModelInterceptor() {
-        return new GlobalModelInterceptor(environment, currentSiteContext);
+        return new GlobalModelInterceptor(environment, siteContext);
     }
 
     @Override

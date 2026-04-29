@@ -2,7 +2,7 @@ package kr.me.seesaw.interceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kr.me.seesaw.context.CurrentSiteContext;
+import kr.me.seesaw.context.SiteContext;
 import kr.me.seesaw.model.CategoryModel;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -26,7 +26,7 @@ public class GlobalModelInterceptor implements HandlerInterceptor {
 
     private final Environment environment;
 
-    private final CurrentSiteContext currentSiteContext;
+    private final SiteContext siteContext;
 
     @Override
     public void postHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler, ModelAndView modelAndView) {
@@ -40,11 +40,11 @@ public class GlobalModelInterceptor implements HandlerInterceptor {
         modelAndView.addObject("REQUEST_URI_BUILDER", uriBuilder);
         modelAndView.addObject("ACTIVE_PROFILES", List.of(environment.getActiveProfiles()));
 
-        modelAndView.addObject("SITE_CONTEXT", currentSiteContext.getSite());
+        modelAndView.addObject("SITE_CONTEXT", siteContext.getSite());
 
-        Map<String, CategoryModel> allCategories = currentSiteContext.getAllCategories();
+        Map<String, CategoryModel> allCategories = siteContext.getAllCategories();
         modelAndView.addObject("ALL_CATEGORIES", allCategories);
-        modelAndView.addObject("NESTED_CATEGORIES", currentSiteContext.getNestedCategories());
+        modelAndView.addObject("NESTED_CATEGORIES", siteContext.getNestedCategories());
 
         Optional.ofNullable(request.getParameter("categoryId"))
                 .map(Objects::toString)

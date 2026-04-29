@@ -3,6 +3,7 @@ package kr.me.seesaw.controller;
 import jakarta.validation.Valid;
 import kr.me.seesaw.command.CreateArticleCommand;
 import kr.me.seesaw.command.UpdateArticleCommand;
+import kr.me.seesaw.context.ArticlePermissionContext;
 import kr.me.seesaw.message.CmsMessageSource;
 import kr.me.seesaw.model.ArticleModel;
 import kr.me.seesaw.service.ArticleQueryService;
@@ -27,6 +28,8 @@ public class ArticleApiController {
 
     private final ArticleQueryService articleQueryService;
 
+    private final ArticlePermissionContext articlePermissionContext;
+
     @PreAuthorize("isAuthenticated() and (hasAnyRole('ADMIN', 'MANAGER') or @categoryPermissionEvaluator.hasPermission(#categoryId, T(org.springframework.security.acls.domain.BasePermission).READ))")
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, ArticleModel>> getArticle(@PathVariable("id") String id, @RequestParam("categoryId") String categoryId) {
@@ -42,7 +45,7 @@ public class ArticleApiController {
         return ResponseEntity.ok(message);
     }
 
-    @PreAuthorize("@defaultArticleService.isOwner(#id, authentication.name)")
+    @PreAuthorize("@articlePermissionContext.isOwner(#id, authentication.name)")
     @PostMapping("/{id}")
     public ResponseEntity<String> update(@PathVariable("id") String id, @Valid UpdateArticleCommand command) throws IOException {
         articleService.update(id, command);
@@ -50,7 +53,7 @@ public class ArticleApiController {
         return ResponseEntity.ok(message);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or @defaultArticleService.isOwner(#id, authentication.name)")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or @articlePermissionContext.isOwner(#id, authentication.name)")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable String id) {
         articleService.delete(id);

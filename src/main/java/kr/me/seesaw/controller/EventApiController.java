@@ -7,6 +7,7 @@ import kr.me.seesaw.dto.command.UpdateEventCommand;
 import kr.me.seesaw.dto.model.VEventModel;
 import kr.me.seesaw.dto.query.EventQuery;
 import kr.me.seesaw.service.EventWebService;
+import kr.me.seesaw.context.EventContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,8 @@ import java.util.Map;
 public class EventApiController {
 
     private final EventWebService eventWebService;
+
+    private final EventContext eventContext;
 
     @GetMapping
     public ResponseEntity<List<VEventModel>> findAll(EventQuery eventQuery) {
@@ -50,7 +53,7 @@ public class EventApiController {
         return ResponseEntity.ok(eventWebService.update(id, command));
     }
 
-    @PreAuthorize("isAuthenticated() or hasAnyRole('ADMIN', 'MANAGER') or @defaultEventWebService.isOwner(#id)")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or @eventContext.isOwner(#id)")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable String id) {
         eventWebService.delete(id);

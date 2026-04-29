@@ -1,6 +1,6 @@
 package kr.me.seesaw;
 
-import kr.me.seesaw.context.CurrentSiteContext;
+import kr.me.seesaw.context.SiteContext;
 import kr.me.seesaw.domain.vo.CategoryType;
 import kr.me.seesaw.domain.vo.EventStatus;
 import kr.me.seesaw.dto.model.VEventModel;
@@ -45,7 +45,7 @@ public class IndexController {
 
     private final EventWebService eventWebService;
 
-    private final CurrentSiteContext currentSiteContext;
+    private final SiteContext currentSiteContext;
 
     /**
      * 메인 화면을 반환합니다.
