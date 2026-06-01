@@ -119,3 +119,10 @@ kr:
   me:
     seesaw:
       filepath: ${user.home}/attachments
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+    import: "optional:configserver:http://localhost:8888"
