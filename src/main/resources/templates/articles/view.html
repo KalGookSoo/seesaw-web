@@ -333,6 +333,7 @@
             <div class="d-flex align-items-center">
               <i class="bi bi-person-circle me-2 text-secondary"></i>
               <span class="fw-medium" th:text="${reply.maskedAuthor}"></span>
+              <span class="badge rounded-pill bg-primary ms-2" th:if="${#strings.equals(reply.createdBy, article.createdBy)}" th:text="#{label.author}">작성자</span>
               <span class="text-muted mx-2">|</span>
               <div class="d-flex align-items-center text-muted small">
                 <i class="bi bi-calendar3"></i>
