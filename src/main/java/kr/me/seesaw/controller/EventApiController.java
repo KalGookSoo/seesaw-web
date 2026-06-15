@@ -7,7 +7,6 @@ import kr.me.seesaw.dto.command.UpdateEventCommand;
 import kr.me.seesaw.dto.model.VEventModel;
 import kr.me.seesaw.dto.query.EventQuery;
 import kr.me.seesaw.service.EventWebService;
-import kr.me.seesaw.context.EventContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +24,6 @@ import java.util.Map;
 public class EventApiController {
 
     private final EventWebService eventWebService;
-
-    private final EventContext eventContext;
 
     @GetMapping
     public ResponseEntity<List<VEventModel>> findAll(EventQuery eventQuery) {

@@ -115,11 +115,11 @@ logging:
           utils:
             SpringDocAnnotationsUtils: error
 
-# 첨부파일
 kr:
   me:
     seesaw:
       filepath: ${user.home}/attachments
+      api-host: http://localhost:8081
 
 ---
 spring:

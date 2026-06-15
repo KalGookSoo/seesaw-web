@@ -2,6 +2,7 @@ package kr.me.seesaw.controller;
 
 import jakarta.validation.Valid;
 import kr.me.seesaw.command.CreateArticleCommand;
+import kr.me.seesaw.command.MoveArticleCommand;
 import kr.me.seesaw.command.UpdateArticleCommand;
 import kr.me.seesaw.context.ArticlePermissionContext;
 import kr.me.seesaw.message.CmsMessageSource;
@@ -66,6 +67,14 @@ public class ArticleApiController {
     public ResponseEntity<String> deleteAll(@RequestBody List<String> ids) {
         articleService.deleteAll(ids);
         String message = messageSource.getMessage("command.success.delete");
+        return ResponseEntity.ok(message);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PutMapping("/{id}/move")
+    public ResponseEntity<String> move(@PathVariable String id, @Valid MoveArticleCommand command) {
+        articleService.move(id, command);
+        String message = messageSource.getMessage("command.success.update");
         return ResponseEntity.ok(message);
     }
 

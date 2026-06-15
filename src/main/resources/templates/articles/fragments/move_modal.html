@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="ALL_CATEGORIES" type="java.util.Map<java.lang.String, java.util.List<kr.me.seesaw.model.CategoryModel>>"*/-->
+<!--/*@thymesVar id="NESTED_CATEGORIES" type="java.util.List<kr.me.seesaw.model.CategoryModel>"*/-->
+<!--/*@thymesVar id="root" type="kr.me.seesaw.model.CategoryModel"*/-->
+<!--/*@thymesVar id="child" type="kr.me.seesaw.model.CategoryModel"*/-->
+<!--/*@thymesVar id="CURRENT_CATEGORY" type="kr.me.seesaw.model.CategoryModel"*/-->
+<div th:fragment="move_modal(article)">
+  <div class="modal fade" id="moveArticleModal" tabindex="-1" aria-labelledby="moveArticleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="moveArticleModalLabel">
+            <i class="bi bi-arrows-move me-2"></i>게시글 이동
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form name="moveArticleForm" th:action="@{|/api/articles/${article.id}/move|}" th:method="put">
+          <div class="modal-body p-4">
+            <p class="text-muted small mb-3">게시글을 이동할 대상 카테고리를 선택해주세요.</p>
+            <div class="mb-3">
+              <label for="targetCategoryId" class="form-label fw-bold">대상 카테고리</label>
+              <select class="form-select border-primary-subtle" id="targetCategoryId" name="categoryId" required>
+                <option value="" disabled selected>카테고리 선택</option>
+                <!--/* 하위 카테고리가 있는 경우 그룹화 */-->
+                <optgroup th:each="root : ${NESTED_CATEGORIES}" th:if="${not #lists.isEmpty(root.children)}" th:label="${root.name}">
+                  <option th:each="child : ${root.children}"
+                          th:value="${child.id}"
+                          th:text="|${child.name} (${child.type.description})|"
+                          th:disabled="${CURRENT_CATEGORY.type != ALL_CATEGORIES.get(child.id).type}"
+                          th:selected="${child.id == article.categoryId}">
+                  </option>
+                </optgroup>
+                <!--/* 하위 카테고리가 없는 경우 단일 항목 */-->
+                <option th:each="root : ${NESTED_CATEGORIES}" th:if="${#lists.isEmpty(root.children)}"
+                        th:value="${root.id}"
+                        th:text="|${root.name} (${root.type.description})|"
+                        th:disabled="${CURRENT_CATEGORY.type != ALL_CATEGORIES.get(root.id).type}"
+                        th:selected="${root.id == article.categoryId}">
+                </option>
+              </select>
+              <div class="form-text mt-2" th:if="${CURRENT_CATEGORY != null}">
+                현재 위치: <span class="fw-medium text-primary" th:text="${CURRENT_CATEGORY.name}"></span>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer bg-light">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" th:text="#{label.cancel}">취소</button>
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-check-lg me-1"></i>이동하기
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" th:inline="javascript">
+    const moveForm = document.querySelector('form[name="moveArticleForm"]');
+    moveForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const targetCategoryId = this.elements.categoryId.value;
+      if (!targetCategoryId) {
+        alert('대상 카테고리를 선택해주세요.');
+        return;
+      }
+
+      const formData = new FormData(this);
+      const httpEntity = {
+        method: 'post',
+        headers: {
+          [CSRF.headerName]: CSRF.token
+        },
+        body: formData
+      };
+
+      fetch(this.action, httpEntity)
+        .then(async response => {
+          await response.text();
+          if (response.ok) {
+            alert(/*[[#{command.success.update}]]*/'');
+            // 이동한 카테고리의 목록 또는 상세로 이동 (현재는 상세 페이지 유지하되 카테고리 파라미터 변경)
+            const url = new URL(window.location.href);
+            url.searchParams.set('categoryId', targetCategoryId);
+            window.location.href = url.toString();
+          } else {
+            alert(/*[[#{command.failure.update}]]*/'');
+          }
+        });
+    });
+  </script>
+</div>
+</html>
