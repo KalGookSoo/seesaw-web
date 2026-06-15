@@ -149,6 +149,10 @@
               <span class="mx-1">|</span>
               <i class="bi bi-chat-dots mx-1"></i><span th:text="${article.replies.size()}"></span>
             </th:block>
+            <th:block sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
+              <span class="mx-1">|</span>
+              <i class="bi bi-eye mx-1"></i><span th:text="${article.views.size()}"></span>
+            </th:block>
           </div>
         </td>
       </tr>
@@ -173,6 +177,10 @@
             <th:block th:if="${!article.replies.isEmpty()}">
               <span class="mx-1">|</span>
               <i class="bi bi-chat-dots mx-1"></i><span th:text="${article.replies.size()}"></span>
+            </th:block>
+            <th:block sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
+              <span class="mx-1">|</span>
+              <i class="bi bi-eye mx-1"></i><span th:text="${article.views.size()}"></span>
             </th:block>
           </div>
         </td>

@@ -277,6 +277,13 @@
               <i class="bi bi-calendar3 text-secondary"></i>
               <span class="text-muted ms-1" th:text="${#temporals.format(article.createdDate, 'yyyy.MM.dd')}"></span>
             </div>
+            <th:block sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
+              <span class="text-muted mx-2">|</span>
+              <div class="d-flex align-items-center">
+                <i class="bi bi-eye text-secondary"></i>
+                <span class="text-muted ms-1" th:text="${article.views.size()}"></span>
+              </div>
+            </th:block>
           </div>
         </div>
       </div>
