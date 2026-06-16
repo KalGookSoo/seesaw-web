@@ -7,16 +7,14 @@ import kr.me.seesaw.service.AttachmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.ContentDisposition;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -38,19 +36,20 @@ public class AttachmentApiController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Resource> getAttachment(
-            @PathVariable("id") String id
-    ) throws IOException {
+    public ResponseEntity<Resource> getAttachment(@PathVariable("id") String id) throws IOException {
         AttachmentModel attachment = attachmentService.getAttachmentById(id);
         ByteArrayInputStream stream = fileManager.read(attachmentService.getAbsolutePath(attachment.getPathName(), attachment.getName()));
         InputStreamResource resource = new InputStreamResource(stream);
         String fileName = attachment.getOriginalName();
+
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, attachment.getMimeType());
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment()
-                .filename(fileName, StandardCharsets.UTF_8)
+        ContentDisposition.Builder builder = attachment.isPreviewable() ? ContentDisposition.inline() : ContentDisposition.attachment();
+        String disposition = builder.filename(fileName, StandardCharsets.UTF_8)
                 .build()
-                .toString());
+                .toString();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, disposition);
+
         return ResponseEntity.status(HttpStatus.OK).headers(headers).body(resource);
     }
 
@@ -59,6 +58,20 @@ public class AttachmentApiController {
     public ResponseEntity<Void> deleteAttachment(@PathVariable("id") String id) {
         attachmentService.deleteAttachment(id);
         return ResponseEntity.noContent().build();
+    }
+
+    private ContentDisposition.Builder getDispositionBuilder(String contentType) {
+        try {
+            MediaType mediaType = MediaType.parseMediaType(contentType);
+            List<MediaType> imageAndPdfTypes = Arrays.asList(MediaType.IMAGE_JPEG, MediaType.IMAGE_PNG, MediaType.IMAGE_GIF, MediaType.APPLICATION_PDF);
+            boolean isImageOrPdf = imageAndPdfTypes.stream().anyMatch(mediaType::isCompatibleWith);
+            if (isImageOrPdf) {
+                return ContentDisposition.inline();
+            }
+            return ContentDisposition.attachment();
+        } catch (IllegalArgumentException e) {
+            return ContentDisposition.attachment();
+        }
     }
 
 }

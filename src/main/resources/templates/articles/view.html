@@ -303,9 +303,8 @@
             </a>
           </div>
           <div class="list-group list-group-flush border rounded">
-            <a th:each="attachment : ${article.attachments}"
-               th:href="@{|/attachments/${attachment.id}/download|}" target="_blank"
-               class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
+            <div th:each="attachment : ${article.attachments}"
+                 class="list-group-item d-flex justify-content-between align-items-center py-3">
               <div class="d-flex align-items-center overflow-hidden">
                 <i class="bi bi-file-earmark-text fs-5 me-3 text-primary"></i>
                 <div class="text-truncate">
@@ -313,8 +312,20 @@
                   <small class="text-muted" th:text="${attachment.formattedSize}">0 KB</small>
                 </div>
               </div>
-              <i class="bi bi-download text-secondary"></i>
-            </a>
+              <div class="d-flex gap-2">
+                <a th:if="${attachment.previewable}"
+                   th:href="@{|/api/attachments/${attachment.id}|}" target="_blank"
+                   class="btn btn-sm btn-outline-success d-flex align-items-center">
+                  <i class="bi bi-eye"></i>
+                  <span class="d-none d-sm-inline ms-1" th:text="#{label.preview}">미리보기</span>
+                </a>
+                <a th:href="@{|/attachments/${attachment.id}/download|}" target="_blank"
+                   class="btn btn-sm btn-outline-primary d-flex align-items-center">
+                  <i class="bi bi-download"></i>
+                  <span class="d-none d-sm-inline ms-1" th:text="#{label.download}">다운로드</span>
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
