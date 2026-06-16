@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +43,13 @@ public class AttachmentApiController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, attachment.getMimeType());
+
+        if (MediaType.TEXT_HTML_VALUE.equals(attachment.getMimeType())) {
+            headers.add("Content-Security-Policy", "sandbox; default-src 'none'; style-src 'unsafe-inline';");
+            headers.add("X-Content-Type-Options", "nosniff");
+            headers.add("X-XSS-Protection", "1; mode=block");
+        }
+
         ContentDisposition.Builder builder = attachment.isPreviewable() ? ContentDisposition.inline() : ContentDisposition.attachment();
         String disposition = builder.filename(fileName, StandardCharsets.UTF_8)
                 .build()
@@ -58,20 +64,6 @@ public class AttachmentApiController {
     public ResponseEntity<Void> deleteAttachment(@PathVariable("id") String id) {
         attachmentService.deleteAttachment(id);
         return ResponseEntity.noContent().build();
-    }
-
-    private ContentDisposition.Builder getDispositionBuilder(String contentType) {
-        try {
-            MediaType mediaType = MediaType.parseMediaType(contentType);
-            List<MediaType> imageAndPdfTypes = Arrays.asList(MediaType.IMAGE_JPEG, MediaType.IMAGE_PNG, MediaType.IMAGE_GIF, MediaType.APPLICATION_PDF);
-            boolean isImageOrPdf = imageAndPdfTypes.stream().anyMatch(mediaType::isCompatibleWith);
-            if (isImageOrPdf) {
-                return ContentDisposition.inline();
-            }
-            return ContentDisposition.attachment();
-        } catch (IllegalArgumentException e) {
-            return ContentDisposition.attachment();
-        }
     }
 
 }
