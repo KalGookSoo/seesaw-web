@@ -1,7 +1,6 @@
 package kr.me.seesaw.controller;
 
 import kr.me.seesaw.context.ArticleContext;
-import kr.me.seesaw.context.ArticlePermissionContext;
 import kr.me.seesaw.context.CategoryContext;
 import kr.me.seesaw.dto.query.EventQuery;
 import kr.me.seesaw.model.ArticleModel;
@@ -28,8 +27,6 @@ public class ArticleController {
     private final CategoryContext categoryContext;
 
     private final ArticleContext articleContext;
-
-    private final ArticlePermissionContext articlePermissionContext;
 
     @GetMapping(params = "categoryType=STATIC_CONTENT")
     public String getArticles(
