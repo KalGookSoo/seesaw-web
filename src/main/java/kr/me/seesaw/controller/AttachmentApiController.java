@@ -42,13 +42,19 @@ public class AttachmentApiController {
         String fileName = attachment.getOriginalName();
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, attachment.getMimeType());
+        String contentType = attachment.getMimeType();
 
-        if (MediaType.TEXT_HTML_VALUE.equals(attachment.getMimeType())) {
+        if (attachment.isPreviewable() && !contentType.startsWith("image/") && !MediaType.APPLICATION_PDF_VALUE.equals(contentType)) {
             headers.add("Content-Security-Policy", "sandbox; default-src 'none'; style-src 'unsafe-inline';");
             headers.add("X-Content-Type-Options", "nosniff");
             headers.add("X-XSS-Protection", "1; mode=block");
+
+            if (!MediaType.TEXT_HTML_VALUE.equals(contentType)) {
+                contentType = MediaType.TEXT_PLAIN_VALUE;
+            }
         }
+
+        headers.add(HttpHeaders.CONTENT_TYPE, contentType);
 
         ContentDisposition.Builder builder = attachment.isPreviewable() ? ContentDisposition.inline() : ContentDisposition.attachment();
         String disposition = builder.filename(fileName, StandardCharsets.UTF_8)
