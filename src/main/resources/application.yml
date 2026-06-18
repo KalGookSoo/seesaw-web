@@ -120,10 +120,3 @@ kr:
     seesaw:
       filepath: ${user.home}/attachments
       api-host: http://localhost:8081
-
----
-spring:
-  config:
-    activate:
-      on-profile: prod
-    import: "optional:configserver:http://localhost:8888"
