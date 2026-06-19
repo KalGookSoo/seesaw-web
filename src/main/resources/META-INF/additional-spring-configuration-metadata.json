@@ -5,6 +5,64 @@
       "type": "java.nio.file.Path",
       "description": "첨부 파일을 저장하고 읽어올 기본 디렉터리 경로입니다.",
       "defaultValue": "${user.home}/attachments"
+    },
+    {
+      "name": "spring.mail.host",
+      "type": "java.lang.String",
+      "description": "SMTP 서버의 호스트 이름입니다.",
+      "defaultValue": "smtp.gmail.com"
+    },
+    {
+      "name": "spring.mail.port",
+      "type": "java.lang.Integer",
+      "description": "SMTP 서버의 포트 번호입니다.",
+      "defaultValue": 587
+    },
+    {
+      "name": "spring.mail.username",
+      "type": "java.lang.String",
+      "description": "SMTP 서버 인증을 위한 사용자 이름(이메일 계정)입니다."
+    },
+    {
+      "name": "spring.mail.password",
+      "type": "java.lang.String",
+      "description": "SMTP 서버 인증을 위한 사용자 비밀번호(또는 앱 비밀번호)입니다."
+    },
+    {
+      "name": "spring.mail.protocol",
+      "type": "java.lang.String",
+      "description": "SMTP 서버 통신에 사용할 프로토콜입니다.",
+      "defaultValue": "smtp"
+    },
+    {
+      "name": "spring.mail.default-encoding",
+      "type": "java.lang.String",
+      "description": "메일 메시지의 기본 인코딩 설정입니다.",
+      "defaultValue": "UTF-8"
+    },
+    {
+      "name": "spring.mail.properties.mail.smtp.auth",
+      "type": "java.lang.Boolean",
+      "description": "SMTP 서버 인증 사용 여부입니다.",
+      "defaultValue": true
+    },
+    {
+      "name": "spring.mail.properties.mail.smtp.starttls.enable",
+      "type": "java.lang.Boolean",
+      "description": "STARTTLS를 사용한 보안 연결 활성화 여부입니다.",
+      "defaultValue": true
+    },
+    {
+      "name": "spring.mail.properties.mail.smtp.connectiontimeout",
+      "type": "java.lang.Integer",
+      "description": "SMTP 서버 연결 제한 시간(밀리초)입니다.",
+      "defaultValue": 5000
+    },
+    {
+      "name": "spring.mail.properties.mail.smtp.timeout",
+      "type": "java.lang.Integer",
+      "description": "SMTP 서버 메일 전송 대기 제한 시간(밀리초)입니다.",
+      "defaultValue": 5000
     }
   ],
   "hints": [
@@ -23,6 +81,49 @@
       "providers": [
         {
           "name": "any"
+        }
+      ]
+    },
+    {
+      "name": "spring.mail.port",
+      "values": [
+        {
+          "value": 587,
+          "description": "Google Gmail STARTTLS 기본 포트"
+        },
+        {
+          "value": 465,
+          "description": "Google Gmail SSL 기본 포트"
+        },
+        {
+          "value": 25,
+          "description": "일반 비보안 SMTP 포트"
+        }
+      ]
+    },
+    {
+      "name": "spring.mail.protocol",
+      "values": [
+        {
+          "value": "smtp",
+          "description": "기본 Simple Mail Transfer Protocol"
+        },
+        {
+          "value": "smtps",
+          "description": "보안이 강화된 SMTP (Over SSL)"
+        }
+      ]
+    },
+    {
+      "name": "spring.mail.default-encoding",
+      "values": [
+        {
+          "value": "UTF-8",
+          "description": "다국어 지원 표준 인코딩"
+        },
+        {
+          "value": "EUC-KR",
+          "description": "한글 인코딩"
         }
       ]
     }

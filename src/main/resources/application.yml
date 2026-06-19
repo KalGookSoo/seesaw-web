@@ -32,6 +32,22 @@ spring:
         highlight_sql: true
     open-in-view: false
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: 직접입력
+    password: 직접입력
+    protocol: smtp
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 5000
+
   # Lazy initialization
   main:
     lazy-initialization: true
