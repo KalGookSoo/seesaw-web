@@ -2,6 +2,8 @@ package kr.me.seesaw.service;
 
 public interface MailService {
 
-    void sendToHelp(String subject, String content);
+    void sendToReport(String siteId, String title, String content);
+
+    void sendToHelpdesk(String title, String content);
 
 }

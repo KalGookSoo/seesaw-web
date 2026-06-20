@@ -4,8 +4,10 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import kr.me.seesaw.core.authentication.PrincipalProvider;
 import kr.me.seesaw.core.file.FileManager;
+import kr.me.seesaw.domain.Site;
 import kr.me.seesaw.dto.model.UserPrincipal;
 import kr.me.seesaw.model.UserModel;
+import kr.me.seesaw.repository.SiteRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
@@ -24,6 +26,7 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.io.File;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Slf4j
@@ -32,6 +35,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class JavaMailService implements MailService {
+
+    private final SiteRepository siteRepository;
 
     private final JavaMailSender sender;
 
@@ -44,7 +49,7 @@ public class JavaMailService implements MailService {
     private final PrincipalProvider principalProvider;
 
     @Override
-    public void sendToHelp(String subject, String content) {
+    public void sendToReport(String siteId, String title, String content) {
         Authentication authentication = principalProvider.getAuthentication();
         UserPrincipal principal = Optional.ofNullable(authentication.getPrincipal())
                 .filter(UserPrincipal.class::isInstance)
@@ -53,26 +58,43 @@ public class JavaMailService implements MailService {
         UserModel user = principal.getUser();
         String from = user.getEmail();
         String to = properties.getUsername();
-        send(from, to, subject, content);
+
+        Site site = siteRepository.findById(siteId)
+                .orElseThrow(() -> new NoSuchElementException("사이트를 찾을 수 없습니다. siteId: " + siteId));
+        String prefix = "[" + site.getName() + "]";
+        send(from, to, prefix + title, content);
     }
 
-    private void send(String from, String to, String subject, String text) {
+    @Override
+    public void sendToHelpdesk(String title, String content) {
+        Authentication authentication = principalProvider.getAuthentication();
+        UserPrincipal principal = Optional.ofNullable(authentication.getPrincipal())
+                .filter(UserPrincipal.class::isInstance)
+                .map(UserPrincipal.class::cast)
+                .orElseThrow(() -> new AuthorizationDeniedException("계정 정보를 찾을 수 없습니다."));
+        UserModel user = principal.getUser();
+        String from = user.getEmail();
+        String to = properties.getUsername();
+        send(from, to, title, content);
+    }
+
+    private void send(String from, String to, String title, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(properties.getUsername());
         message.setTo(to);
-        message.setSubject(subject);
+        message.setSubject(title);
         message.setText(text);
         log.info("메일을 전송합니다.\n발신자: {}\n수신자: {}\n제목: {}", from, to, message.getSubject());
         sender.send(message);
     }
 
-    private void send(String from, String to, String subject, String viewName, Map<String, String> values) throws MessagingException {
+    private void send(String from, String to, String title, String viewName, Map<String, String> values) throws MessagingException {
         MimeMessage message = sender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message, true, "utf-8");
 
         mimeMessageHelper.setFrom(properties.getUsername());
         mimeMessageHelper.setTo(to);
-        mimeMessageHelper.setSubject(subject);
+        mimeMessageHelper.setSubject(title);
 
         // 템플릿에 전달할 데이터 설정
         Context context = new Context();
@@ -80,16 +102,16 @@ public class JavaMailService implements MailService {
         String html = springTemplateEngine.process(viewName, context);
         mimeMessageHelper.setText(html, true);
 
-        log.info("메일을 전송합니다.\n발신자: {}\n수신자: {}\n제목: {}", from, to, subject);
+        log.info("메일을 전송합니다.\n발신자: {}\n수신자: {}\n제목: {}", from, to, title);
         sender.send(message);
     }
 
-    private void send(String from, String to, String subject, String text, String attachment) throws MessagingException {
+    private void send(String from, String to, String title, String text, String attachment) throws MessagingException {
         MimeMessage message = sender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message, true);
         mimeMessageHelper.setFrom(properties.getUsername());
         mimeMessageHelper.setTo(to);
-        mimeMessageHelper.setSubject(subject);
+        mimeMessageHelper.setSubject(title);
         mimeMessageHelper.setText(text);
 
         FileSystemResource fileSystemResource = new FileSystemResource(new File(StringUtils.cleanPath(attachment)));
@@ -97,7 +119,7 @@ public class JavaMailService implements MailService {
 
         mimeMessageHelper.addAttachment(fileSystemResource.getFilename(), fileSystemResource);
 
-        log.info("메일을 전송합니다.\n발신자: {}\n수신자: {}\n제목: {}", from, to, subject);
+        log.info("메일을 전송합니다.\n발신자: {}\n수신자: {}\n제목: {}", from, to, title);
         sender.send(message);
     }
 
