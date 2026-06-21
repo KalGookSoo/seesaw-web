@@ -4,41 +4,31 @@
 
 ## 로컬 개발 환경 설정
 
-### 로컬환경 프로그램 인자 (IntelliJ 기준)
-
-로컬 개발 환경에서 프로젝트를 실행할 때 다음 프로그램 인자를 설정해야 합니다:
-
-```shell
---spring.thymeleaf.prefix=file:///$PROJECT_DIR$/seesaw-web/src/main/resources/templates/
---spring.web.resources.static-locations=file:///$PROJECT_DIR$/seesaw-web/src/main/resources/static/
---spring.messages.basename=file:///$PROJECT_DIR$/seesaw-web/src/main/resources/messages/
-```
-
 ### 환경변수 설정
 
 프로젝트에서 사용되는 주요 환경변수에 대한 설명입니다.
 
 #### 설정 파일
 
-- [application.properties](../src/main/resources/application.properties)
+- [application.yml](../src/main/resources/application.yml)
 
 #### 프로필 설정
 
-`spring.profiles.active` 의 값은 test, prod 등으로 나누어 놓았습니다.
-dev, stage 혹은 개인에 맞게 커스텀하려고한다면 application-{profile}.properties 파일을 추가하여 확장 가능합니다.
+`spring.profiles.active` 의 값은 local, test, prod 등으로 나누어 놓았습니다.
+dev, stage 혹은 개인에 맞게 커스텀하려고한다면 application-{profile}.yml 파일을 추가하여 확장 가능합니다.
 
 ## 데이터베이스 설정
 
 ### 초기 설정
 
 1. [데이터베이스 계정 생성 및 테이블 생성](database/init.sql)
-2. [테이블 데이터 삽입](./database/initial_data-1.0.0.sql)
+2. [테이블 데이터 삽입](./database/tables-1.8.0.sql)
 3. [파일 다운로드(첨부파일)](https://nas.nxcoa.com)
    - 첨부파일을 받지않아도 실행은 되지만 기존 데이터 중 파일데이터를 찾을 수 없습니다.
 
 ### 데이터베이스 연결 설정
 
-데이터베이스 연결 설정은 `application.properties` 파일에서 관리됩니다. 자세한 내용은 위의 [환경변수 설정](#환경변수-설정) 섹션을 참조하세요.
+데이터베이스 연결 설정은 `application.yml` 파일에서 관리됩니다. 자세한 내용은 위의 [환경변수 설정](#환경변수-설정) 섹션을 참조하세요.
 
 ## 빌드 가이드
 
