@@ -23,6 +23,7 @@ import org.springframework.security.config.annotation.web.configurers.oauth2.cli
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 
@@ -56,7 +57,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
+        http.requestCache(cache -> cache.requestCache(new HttpSessionRequestCache()));
         http.csrf(this::handleCsrfPolicies);
         http.cors(this::handleCorsPolicies);
         http.authorizeHttpRequests(this::handleAuthorizeHttpRequests);
