@@ -1,8 +1,7 @@
 package kr.me.seesaw.controller;
 
 import jakarta.validation.Valid;
-import kr.me.seesaw.dto.command.SendHelpdeskCommand;
-import kr.me.seesaw.dto.command.SendReportCommand;
+import kr.me.seesaw.dto.command.SendMailCommand;
 import kr.me.seesaw.service.MailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,15 +22,15 @@ public class MailApiController {
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'MANAGER', 'USER')")
     @PostMapping("/send-to-report")
-    public ResponseEntity<Void> sendToReport(@Valid @RequestBody SendReportCommand command) {
+    public ResponseEntity<Void> sendToReport(@Valid @RequestBody SendMailCommand command) {
         mailService.sendToReport(command.siteId(), command.title(), command.title());
         return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'MANAGER', 'USER')")
     @PostMapping("/send-to-helpdesk")
-    public ResponseEntity<Void> sendToHelpdesk(@Valid @RequestBody SendHelpdeskCommand command) {
-        mailService.sendToHelpdesk(command.title(), command.title());
+    public ResponseEntity<Void> sendToHelpdesk(@Valid @RequestBody SendMailCommand command) {
+        mailService.sendToHelpdesk(command.siteId(), command.title(), command.title());
         return ResponseEntity.ok().build();
     }
 

@@ -4,9 +4,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
-@Schema(description = "신고 전송 커맨드")
+@Schema(description = "메일 전송 커맨드")
 @Builder
-public record SendReportCommand(
+public record SendMailCommand(
         @NotBlank
         @Schema(description = "사이트 식별자", example = "8f14e45f-ea9d-4b1c-a3a4-12c4b2a9c001")
         String siteId,

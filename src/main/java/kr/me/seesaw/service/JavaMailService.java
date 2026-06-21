@@ -6,6 +6,7 @@ import kr.me.seesaw.core.authentication.PrincipalProvider;
 import kr.me.seesaw.core.file.FileManager;
 import kr.me.seesaw.domain.Site;
 import kr.me.seesaw.dto.model.UserPrincipal;
+import kr.me.seesaw.message.CmsMessageSource;
 import kr.me.seesaw.model.UserModel;
 import kr.me.seesaw.repository.SiteRepository;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +49,8 @@ public class JavaMailService implements MailService {
 
     private final PrincipalProvider principalProvider;
 
+    private final CmsMessageSource messageSource;
+
     @Override
     public void sendToReport(String siteId, String title, String content) {
         Authentication authentication = principalProvider.getAuthentication();
@@ -61,12 +64,14 @@ public class JavaMailService implements MailService {
 
         Site site = siteRepository.findById(siteId)
                 .orElseThrow(() -> new NoSuchElementException("사이트를 찾을 수 없습니다. siteId: " + siteId));
-        String prefix = "[" + site.getName() + "]";
+
+        String tag = messageSource.getMessage("label.report");
+        String prefix = String.format("[%s][%s] ", tag, site.getName());
         send(from, to, prefix + title, content);
     }
 
     @Override
-    public void sendToHelpdesk(String title, String content) {
+    public void sendToHelpdesk(String siteId, String title, String content) {
         Authentication authentication = principalProvider.getAuthentication();
         UserPrincipal principal = Optional.ofNullable(authentication.getPrincipal())
                 .filter(UserPrincipal.class::isInstance)
@@ -75,7 +80,13 @@ public class JavaMailService implements MailService {
         UserModel user = principal.getUser();
         String from = user.getEmail();
         String to = properties.getUsername();
-        send(from, to, title, content);
+
+        Site site = siteRepository.findById(siteId)
+                .orElseThrow(() -> new NoSuchElementException("사이트를 찾을 수 없습니다. siteId: " + siteId));
+
+        String tag = messageSource.getMessage("label.inquiry");
+        String prefix = String.format("[%s][%s] ", tag, site.getName());
+        send(from, to, prefix + title, content);
     }
 
     private void send(String from, String to, String title, String text) {
