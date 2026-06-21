@@ -11,50 +11,25 @@ function getCookie(name) {
 }
 
 /**
- * 신고 메일을 전송합니다.
- * @param {string} siteId - 사이트 식별자
- * @param {string} title - 메일 제목
- * @param {string} content - 메일 본문
- * @returns {Promise<boolean>} 성공 여부
+ * POST 요청
+ * @param requestUri
+ * @param payload
+ * @returns {Promise<boolean>}
  */
-export async function sendToReport(siteId, title, content) {
+export async function requestApi(requestUri, payload) {
   const headers = {
     'Content-Type': 'application/json'
   };
 
   try {
-    const response = await fetch('/api/mail/send-to-report', {
+    const response = await fetch(requestUri, {
       method: 'POST',
       headers: headers,
-      body: JSON.stringify({ siteId, title, content })
+      body: JSON.stringify(payload)
     });
     return response.ok;
   } catch (error) {
-    console.error('헬프데스크 문의에 실패했습니다.', error);
-    return false;
-  }
-}
-
-/**
- * 헬프데스크 문의 메일을 전송합니다.
- * @param {string} title - 메일 제목
- * @param {string} content - 메일 본문
- * @returns {Promise<boolean>} 성공 여부
- */
-export async function sendToHelpdesk(title, content) {
-  const headers = {
-    'Content-Type': 'application/json'
-  };
-
-  try {
-    const response = await fetch('/api/mail/send-to-helpdesk', {
-      method: 'POST',
-      headers: headers,
-      body: JSON.stringify({ title, content })
-    });
-    return response.ok;
-  } catch (error) {
-    console.error('헬프데스크 문의에 실패했습니다.', error);
+    console.error('통신에 실패했습니다.', error);
     return false;
   }
 }
