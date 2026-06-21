@@ -91,7 +91,7 @@ public class JavaMailService implements MailService {
 
     private void send(String from, String to, String title, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(from);
+        message.setFrom(properties.getUsername());
         message.setTo(to);
         message.setSubject(title);
         message.setText(text);
@@ -103,7 +103,7 @@ public class JavaMailService implements MailService {
         MimeMessage message = sender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message, true, "utf-8");
 
-        mimeMessageHelper.setFrom(from);
+        mimeMessageHelper.setFrom(properties.getUsername());
         mimeMessageHelper.setTo(to);
         mimeMessageHelper.setSubject(title);
 
@@ -120,7 +120,7 @@ public class JavaMailService implements MailService {
     private void send(String from, String to, String title, String text, String attachment) throws MessagingException {
         MimeMessage message = sender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message, true);
-        mimeMessageHelper.setFrom(from);
+        mimeMessageHelper.setFrom(properties.getUsername());
         mimeMessageHelper.setTo(to);
         mimeMessageHelper.setSubject(title);
         mimeMessageHelper.setText(text);
