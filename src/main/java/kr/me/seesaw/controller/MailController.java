@@ -35,4 +35,21 @@ public class MailController {
         return "mail/helpdesk";
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @GetMapping("/article-created")
+    public String articleCreated(Model model) {
+        model.addAttribute("title", "새 게시글 제목 미리보기");
+        model.addAttribute("contentPreview", "새 게시글 내용 미리보기입니다. HTML 태그가 제거되고 100자 이내로 절삭됩니다...");
+        model.addAttribute("articleUrl", "http://localhost:8080/articles/sample-article-id?categoryId=sample-category-id");
+        return "mail/article-created";
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @GetMapping("/reply-created")
+    public String replyCreated(Model model) {
+        model.addAttribute("title", "새 댓글이 달린 게시글 제목 미리보기");
+        model.addAttribute("contentPreview", "새 댓글 내용 미리보기입니다. HTML 태그가 제거되고 100자 이내로 절삭됩니다...");
+        model.addAttribute("articleUrl", "http://localhost:8080/articles/sample-article-id?categoryId=sample-category-id#sample-reply-id");
+        return "mail/reply-created";
+    }
 }
