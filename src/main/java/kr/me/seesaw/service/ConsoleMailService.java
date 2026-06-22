@@ -50,7 +50,14 @@ public class ConsoleMailService implements MailService {
 
         String tag = messageSource.getMessage("label.report");
         String prefix = String.format("[%s][%s] ", tag, site.getName());
-        send(from, to, prefix + title, content);
+
+        Map<String, String> values = Map.of(
+                "senderEmail", from,
+                "siteName", site.getName(),
+                "title", title,
+                "content", content
+        );
+        send(from, to, prefix + title, "mail/report", values);
     }
 
     @Override
@@ -69,7 +76,14 @@ public class ConsoleMailService implements MailService {
 
         String tag = messageSource.getMessage("label.inquiry");
         String prefix = String.format("[%s][%s] ", tag, site.getName());
-        send(from, to, prefix + title, content);
+
+        Map<String, String> values = Map.of(
+                "senderEmail", from,
+                "siteName", site.getName(),
+                "title", title,
+                "content", content
+        );
+        send(from, to, prefix + title, "mail/helpdesk", values);
     }
 
     public void send(String from, String to, String title, String text) {
@@ -77,7 +91,9 @@ public class ConsoleMailService implements MailService {
     }
 
     public void send(String from, String to, String title, String viewName, Map<String, String> values) {
-        log.info("메일을 전송합니다.\n발신자: {}\n수신자: {}\n제목: {}", from, to, title);
+        String templateType = viewName.replace("mail/", "");
+        String previewUrl = String.format("/mail/preview/%s?from=%s", templateType, from);
+        log.info("메일을 전송합니다.\n발신자: {}\n수신자: {}\n제목: {}\n템플릿 미리보기: {}", from, to, title, previewUrl);
     }
 
     public void send(String from, String to, String title, String text, String attachment) {

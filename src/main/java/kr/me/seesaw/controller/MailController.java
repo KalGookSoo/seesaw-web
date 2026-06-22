@@ -1,0 +1,38 @@
+package kr.me.seesaw.controller;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+@RequiredArgsConstructor
+@Controller
+@RequestMapping("/mail/preview")
+public class MailController {
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or (#from != null and #from == authentication.principal.user.email)")
+    @GetMapping("/report")
+    public String report(@RequestParam(required = false) String from, Model model) {
+        // 미리보기 샘플 데이터 설정
+        model.addAttribute("senderEmail", from != null ? from : "example@email.com");
+        model.addAttribute("siteName", "대전포스트잇 ♣대전독서모임");
+        model.addAttribute("title", "부적합한 스팸성 내용");
+        model.addAttribute("content", "해당 게시글은 광고 목적의 스팸 게시물로 판단됩니다.\n커뮤니티 규칙에 위반되는 내용이 포함되어 있어 신고합니다.");
+        return "mail/report";
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or (#from != null and #from == authentication.principal.user.email)")
+    @GetMapping("/helpdesk")
+    public String helpdesk(@RequestParam(required = false) String from, Model model) {
+        // 미리보기 샘플 데이터 설정
+        model.addAttribute("senderEmail", from != null ? from : "example@email.com");
+        model.addAttribute("siteName", "대전포스트잇 ♣대전독서모임");
+        model.addAttribute("title", "이용 방법 문의");
+        model.addAttribute("content", "안녕하세요. 서비스 이용 중 궁금한 점이 있어 문의드립니다.\n게시글 작성 시 첨부파일 용량 제한이 어떻게 되는지 알고 싶습니다.");
+        return "mail/helpdesk";
+    }
+
+}

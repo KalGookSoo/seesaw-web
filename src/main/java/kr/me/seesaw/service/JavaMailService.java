@@ -3,7 +3,6 @@ package kr.me.seesaw.service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import kr.me.seesaw.core.authentication.PrincipalProvider;
-import kr.me.seesaw.core.file.FileManager;
 import kr.me.seesaw.domain.Site;
 import kr.me.seesaw.dto.model.UserPrincipal;
 import kr.me.seesaw.message.CmsMessageSource;
@@ -26,6 +25,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -43,8 +43,6 @@ public class JavaMailService implements MailService {
 
     private final MailProperties properties;
 
-    private final FileManager fileManager;
-
     private final SpringTemplateEngine springTemplateEngine;
 
     private final PrincipalProvider principalProvider;
@@ -59,6 +57,7 @@ public class JavaMailService implements MailService {
                 .map(UserPrincipal.class::cast)
                 .orElseThrow(() -> new AuthorizationDeniedException("계정 정보를 찾을 수 없습니다."));
         UserModel user = principal.getUser();
+        // 네이버 SMTP 보안 정책: 발신자는 반드시 인증된 계정(properties.getUsername())이어야 함
         String from = user.getEmail();
         String to = properties.getUsername();
 
@@ -67,7 +66,18 @@ public class JavaMailService implements MailService {
 
         String tag = messageSource.getMessage("label.report");
         String prefix = String.format("[%s][%s] ", tag, site.getName());
-        send(from, to, prefix + title, content);
+
+        Map<String, String> values = Map.of(
+                "senderEmail", from,
+                "siteName", site.getName(),
+                "title", title,
+                "content", content
+        );
+        try {
+            send(from, to, prefix + title, "mail/report", values);
+        } catch (MessagingException e) {
+            throw new RuntimeException("신고 메일 전송에 실패했습니다.", e);
+        }
     }
 
     @Override
@@ -78,6 +88,7 @@ public class JavaMailService implements MailService {
                 .map(UserPrincipal.class::cast)
                 .orElseThrow(() -> new AuthorizationDeniedException("계정 정보를 찾을 수 없습니다."));
         UserModel user = principal.getUser();
+
         String from = user.getEmail();
         String to = properties.getUsername();
 
@@ -86,7 +97,18 @@ public class JavaMailService implements MailService {
 
         String tag = messageSource.getMessage("label.inquiry");
         String prefix = String.format("[%s][%s] ", tag, site.getName());
-        send(from, to, prefix + title, content);
+
+        Map<String, String> values = Map.of(
+                "senderEmail", from,
+                "siteName", site.getName(),
+                "title", title,
+                "content", content
+        );
+        try {
+            send(from, to, prefix + title, "mail/helpdesk", values);
+        } catch (MessagingException e) {
+            throw new RuntimeException("헬프데스크 문의 메일 전송에 실패했습니다.", e);
+        }
     }
 
     private void send(String from, String to, String title, String text) {
@@ -101,10 +123,11 @@ public class JavaMailService implements MailService {
 
     private void send(String from, String to, String title, String viewName, Map<String, String> values) throws MessagingException {
         MimeMessage message = sender.createMimeMessage();
-        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message, true, "utf-8");
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
 
         mimeMessageHelper.setFrom(properties.getUsername());
         mimeMessageHelper.setTo(to);
+        mimeMessageHelper.setReplyTo(from);
         mimeMessageHelper.setSubject(title);
 
         // 템플릿에 전달할 데이터 설정
