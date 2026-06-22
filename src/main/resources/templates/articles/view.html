@@ -319,6 +319,7 @@
       <div class="card-body p-0">
         <!--/* Existing replies */-->
         <div class="reply-item p-3"
+             th:id="${reply.id}"
              th:classappend="${!replyStat.last ? 'border-bottom' : ''}"
              th:each="reply : ${article.replies}"
              th:if="${!article.replies.isEmpty()}"
