@@ -59,15 +59,16 @@ public class DefaultHelpdeskService implements HelpdeskService {
                 "content", content
         );
         mailService.send(from, new String[]{to}, prefix + title, "mail/send_to_helpdesk", values);
-        logPreviewUrl(from, title, site.getName(), "/mail/preview/send-to-helpdesk");
+        logPreviewUrl("/mail/preview/send-to-helpdesk", values);
     }
 
-    public void logPreviewUrl(String from, String title, String siteName, String path) {
+    public void logPreviewUrl(String path, Map<String, String> values) {
         ServletUriComponentsBuilder builder = ServletUriComponentsBuilder.fromCurrentContextPath();
         String previewUrl = builder.path(path)
-                .queryParam("from", from)
-                .queryParam("title", title)
-                .queryParam("siteName", siteName)
+                .queryParam("from", values.get("from"))
+                .queryParam("siteName", values.get("siteName"))
+                .queryParam("title", values.get("title"))
+                .queryParam("content", values.get("content"))
                 .encode()
                 .build()
                 .toUriString();
