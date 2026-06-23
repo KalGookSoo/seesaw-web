@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/mail/preview")
-public class MailController {
+public class MailPreviewController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @GetMapping("/send-to-report")
