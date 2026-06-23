@@ -138,7 +138,7 @@
             <a class="none d-flex align-items-center gap-2"
                th:href="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/articles/' + article.id).build().toUriString()}">
               [[${article.title}]]
-              <span class="badge bg-primary ms-1" th:if="${article.isRecentlyGenerated()}" th:text="#{label.detail}">Detail</span>
+              <span class="badge bg-primary ms-1" th:if="${article.isRecentlyGenerated()}" th:text="#{label.new}">New</span>
             </a>
           </div>
           <div class="small text-muted mt-1">
