@@ -83,6 +83,7 @@ public class AdminNotificationService implements NotificationService {
     public void logPreviewUrl(String path) {
         ServletUriComponentsBuilder builder = ServletUriComponentsBuilder.fromCurrentContextPath();
         String previewUrl = builder.path(path)
+                .encode()
                 .build()
                 .toUriString();
         log.info("미리보기 URL: {}", previewUrl);
