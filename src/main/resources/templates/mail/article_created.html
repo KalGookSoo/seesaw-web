@@ -33,7 +33,7 @@
                 <p><strong>제목:</strong> <span th:text="${title}">게시글 제목</span></p>
                 <p><strong>내용 미리보기:</strong></p>
                 <div style="background-color: #f8f9fa; border: 1px solid #e9ecef; padding: 10px; border-radius: 5px; white-space: pre-wrap; word-break: break-word;">
-                    <span th:text="${contentPreview}">HTML 파싱 없이 100자 절삭된 본문 미리보기</span>
+                    <span th:text="${content}">HTML 파싱 없이 100자 절삭된 본문 미리보기</span>
                 </div>
             </div>
         </div>
@@ -47,7 +47,7 @@
         </p>
     </div>
     <div class="footer">
-        &copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2023</span> Seesaw Project. All rights reserved.
+        &copy; <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2025</span> Seesaw Project. All rights reserved.
     </div>
 </div>
 </body>

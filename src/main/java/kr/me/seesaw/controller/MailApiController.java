@@ -2,7 +2,8 @@ package kr.me.seesaw.controller;
 
 import jakarta.validation.Valid;
 import kr.me.seesaw.dto.command.SendMailCommand;
-import kr.me.seesaw.service.MailService;
+import kr.me.seesaw.service.HelpdeskService;
+import kr.me.seesaw.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -18,19 +19,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/mail")
 public class MailApiController {
 
-    private final MailService mailService;
+    private final ReportService reportService;
+
+    private final HelpdeskService helpdeskService;
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'MANAGER', 'USER')")
     @PostMapping("/send-to-report")
     public ResponseEntity<Void> sendToReport(@Valid @RequestBody SendMailCommand command) {
-        mailService.sendToReport(command.siteId(), command.title(), command.title());
+        reportService.sendToReport(command.siteId(), command.title(), command.title());
         return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'MANAGER', 'USER')")
     @PostMapping("/send-to-helpdesk")
     public ResponseEntity<Void> sendToHelpdesk(@Valid @RequestBody SendMailCommand command) {
-        mailService.sendToHelpdesk(command.siteId(), command.title(), command.title());
+        helpdeskService.sendToHelpdesk(command.siteId(), command.title(), command.title());
         return ResponseEntity.ok().build();
     }
 

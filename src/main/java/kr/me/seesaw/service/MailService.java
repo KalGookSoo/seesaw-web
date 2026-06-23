@@ -1,9 +1,9 @@
 package kr.me.seesaw.service;
 
+import java.util.Map;
+
 public interface MailService {
 
-    void sendToReport(String siteId, String title, String content);
-
-    void sendToHelpdesk(String siteId, String title, String content);
+    void send(String from, String[] to, String title, String viewName, Map<String, String> values);
 
 }

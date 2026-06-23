@@ -19,7 +19,7 @@ public class ArticleCreateEventListener {
     @EventListener
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void onArticleCreated(ArticleCreatedEvent event) {
-        notificationService.sendOnArticleCreated(event.articleId());
+        notificationService.sendOnArticleCreated(event.categoryId(), event.articleId(), event.title(), event.content());
     }
 
 }

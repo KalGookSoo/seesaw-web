@@ -14,6 +14,7 @@ import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -34,70 +35,18 @@ public class ConsoleMailService implements MailService {
 
     private final CmsMessageSource messageSource;
 
-    @Override
-    public void sendToReport(String siteId, String title, String content) {
-        Authentication authentication = principalProvider.getAuthentication();
-        UserPrincipal principal = Optional.ofNullable(authentication.getPrincipal())
-                .filter(UserPrincipal.class::isInstance)
-                .map(UserPrincipal.class::cast)
-                .orElseThrow(() -> new AuthorizationDeniedException("계정 정보를 찾을 수 없습니다."));
-        UserModel user = principal.getUser();
-        String from = user.getEmail();
-        String to = properties.getUsername();
 
-        Site site = siteRepository.findById(siteId)
-                .orElseThrow(() -> new NoSuchElementException("사이트를 찾을 수 없습니다. siteId: " + siteId));
 
-        String tag = messageSource.getMessage("label.report");
-        String prefix = String.format("[%s][%s] ", tag, site.getName());
 
-        Map<String, String> values = Map.of(
-                "senderEmail", from,
-                "siteName", site.getName(),
-                "title", title,
-                "content", content
-        );
-        send(from, to, prefix + title, "mail/report", values);
-    }
 
-    @Override
-    public void sendToHelpdesk(String siteId, String title, String content) {
-        Authentication authentication = principalProvider.getAuthentication();
-        UserPrincipal principal = Optional.ofNullable(authentication.getPrincipal())
-                .filter(UserPrincipal.class::isInstance)
-                .map(UserPrincipal.class::cast)
-                .orElseThrow(() -> new AuthorizationDeniedException("계정 정보를 찾을 수 없습니다."));
-        UserModel user = principal.getUser();
-        String from = user.getEmail();
-        String to = properties.getUsername();
 
-        Site site = siteRepository.findById(siteId)
-                .orElseThrow(() -> new NoSuchElementException("사이트를 찾을 수 없습니다. siteId: " + siteId));
 
-        String tag = messageSource.getMessage("label.inquiry");
-        String prefix = String.format("[%s][%s] ", tag, site.getName());
-
-        Map<String, String> values = Map.of(
-                "senderEmail", from,
-                "siteName", site.getName(),
-                "title", title,
-                "content", content
-        );
-        send(from, to, prefix + title, "mail/helpdesk", values);
-    }
-
-    public void send(String from, String to, String title, String text) {
+    public void send(String from, String[] to, String title, String viewName, Map<String, String> values) {
         log.info("메일을 전송합니다.\n발신자: {}\n수신자: {}\n제목: {}", from, to, title);
     }
 
-    public void send(String from, String to, String title, String viewName, Map<String, String> values) {
-        String templateType = viewName.replace("mail/", "");
-        String previewUrl = String.format("/mail/preview/%s?from=%s", templateType, from);
-        log.info("메일을 전송합니다.\n발신자: {}\n수신자: {}\n제목: {}\n템플릿 미리보기: {}", from, to, title, previewUrl);
-    }
 
-    public void send(String from, String to, String title, String text, String attachment) {
-        log.info("메일을 전송합니다.\n발신자: {}\n수신자: {}\n제목: {}", from, to, title);
-    }
+
+
 
 }

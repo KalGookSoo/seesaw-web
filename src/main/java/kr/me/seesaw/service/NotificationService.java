@@ -2,7 +2,7 @@ package kr.me.seesaw.service;
 
 public interface NotificationService {
 
-    void sendOnArticleCreated(String articleId);
+    void sendOnArticleCreated(String categoryId, String articleId, String title, String content);
 
     void sendOnReplyCreated(String replyId);
 
