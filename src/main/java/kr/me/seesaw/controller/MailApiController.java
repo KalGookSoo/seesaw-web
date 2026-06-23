@@ -26,14 +26,14 @@ public class MailApiController {
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'MANAGER', 'USER')")
     @PostMapping("/send-to-report")
     public ResponseEntity<Void> sendToReport(@Valid @RequestBody SendMailCommand command) {
-        reportService.sendToReport(command.siteId(), command.title(), command.title());
+        reportService.sendToReport(command.siteId(), command.title(), command.content());
         return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("isAuthenticated() and hasAnyRole('ADMIN', 'MANAGER', 'USER')")
     @PostMapping("/send-to-helpdesk")
     public ResponseEntity<Void> sendToHelpdesk(@Valid @RequestBody SendMailCommand command) {
-        helpdeskService.sendToHelpdesk(command.siteId(), command.title(), command.title());
+        helpdeskService.sendToHelpdesk(command.siteId(), command.title(), command.content());
         return ResponseEntity.ok().build();
     }
 
