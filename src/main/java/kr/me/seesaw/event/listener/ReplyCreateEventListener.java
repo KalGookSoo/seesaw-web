@@ -19,7 +19,7 @@ public class ReplyCreateEventListener {
     @EventListener
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void onReplyCreated(ReplyCreatedEvent event) {
-        notificationService.sendOnReplyCreated(event.replyId());
+        notificationService.sendOnReplyCreated(event.articleId(), event.replyId(), event.content());
     }
 
 }

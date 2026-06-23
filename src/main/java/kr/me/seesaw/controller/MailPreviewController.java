@@ -49,19 +49,30 @@ public class MailPreviewController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @GetMapping("/article-created")
-    public String articleCreated(Model model) {
-        model.addAttribute("title", "새 게시글 제목 미리보기");
-        model.addAttribute("contentPreview", "새 게시글 내용 미리보기입니다. HTML 태그가 제거되고 100자 이내로 절삭됩니다...");
-        model.addAttribute("articleUrl", "http://localhost:8080/articles/sample-article-id?categoryId=sample-category-id");
+    public String articleCreated(
+            @RequestParam(required = false, defaultValue = "새 게시글 제목 미리보기") String title,
+            @RequestParam(required = false, defaultValue = "새 게시글 내용 미리보기입니다. HTML 태그가 제거되고 100자 이내로 절삭됩니다...") String content,
+            @RequestParam(required = false, defaultValue = "http://localhost:8080/articles/sample-article-id?categoryId=sample-category-id") String articleUrl,
+            Model model
+    ) {
+        model.addAttribute("title", title);
+        model.addAttribute("content", content);
+        model.addAttribute("articleUrl", articleUrl);
         return "mail/article_created";
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @GetMapping("/reply-created")
-    public String replyCreated(Model model) {
-        model.addAttribute("title", "새 댓글이 달린 게시글 제목 미리보기");
-        model.addAttribute("contentPreview", "새 댓글 내용 미리보기입니다. HTML 태그가 제거되고 100자 이내로 절삭됩니다...");
-        model.addAttribute("articleUrl", "http://localhost:8080/articles/sample-article-id?categoryId=sample-category-id#sample-reply-id");
+    public String replyCreated(
+            @RequestParam(required = false, defaultValue = "새 댓글이 달린 게시글 제목 미리보기") String title,
+            @RequestParam(required = false, defaultValue = "새 댓글 내용 미리보기입니다. HTML 태그가 제거되고 100자 이내로 절삭됩니다...") String content,
+            @RequestParam(required = false, defaultValue = "http://localhost:8080/articles/sample-article-id?categoryId=sample-category-id#sample-reply-id") String articleUrl,
+            Model model
+    ) {
+        model.addAttribute("title", title);
+        model.addAttribute("content", content);
+        model.addAttribute("articleUrl", articleUrl);
         return "mail/reply_created";
     }
+
 }

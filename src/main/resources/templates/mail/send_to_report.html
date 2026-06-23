@@ -4,74 +4,218 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>신고 접수</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f8fafc;
+      color: #0f172a;
+      font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif;
+    }
+
+    .page {
+      display: flex;
+      justify-content: center;
+      padding: 40px 16px;
+      background-color: #f8fafc;
+    }
+
+    .mail {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 620px;
+    }
+
+    .header {
+      padding: 32px 36px;
+      background-color: #dc2626;
+      border-radius: 12px 12px 0 0;
+      color: #ffffff;
+    }
+
+    .badge {
+      display: inline-flex;
+      margin-bottom: 12px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background-color: #f87171;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 18px;
+      letter-spacing: 0.06em;
+    }
+
+    .title {
+      margin: 0;
+      color: #ffffff;
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1.45;
+    }
+
+    .body {
+      padding: 32px 36px;
+      background-color: #ffffff;
+      border-left: 1px solid #e2e8f0;
+      border-right: 1px solid #e2e8f0;
+    }
+
+    .summary {
+      margin: 0 0 24px;
+      color: #64748b;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .info-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .info-row {
+      display: flex;
+      gap: 8px;
+      padding: 13px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .info-row:last-child {
+      border-bottom: 0;
+    }
+
+    .info-label {
+      flex: 0 0 96px;
+      color: #64748b;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.5;
+      white-space: nowrap;
+    }
+
+    .info-value {
+      flex: 1 1 auto;
+      min-width: 0;
+      color: #0f172a;
+      font-size: 14px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .info-value-email {
+      word-break: break-all;
+    }
+
+    .content-section {
+      margin-top: 28px;
+    }
+
+    .content-title {
+      margin: 0 0 10px;
+      color: #334155;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    .content-box {
+      padding: 16px 20px;
+      background-color: #f8fafc;
+      border-left: 4px solid #dc2626;
+      border-radius: 0 8px 8px 0;
+      color: #334155;
+      font-size: 14px;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .footer {
+      padding: 20px 36px;
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-top: 0;
+      border-radius: 0 0 12px 12px;
+      color: #94a3b8;
+      font-size: 12px;
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    .footer p {
+      margin: 0;
+    }
+
+    .footer p + p {
+      margin-top: 4px;
+    }
+
+    .footer strong {
+      color: #64748b;
+      font-weight: 700;
+    }
+
+    @media (max-width: 480px) {
+      .page {
+        padding: 24px 12px;
+      }
+
+      .header,
+      .body,
+      .footer {
+        padding-left: 24px;
+        padding-right: 24px;
+      }
+
+      .info-row {
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .info-label {
+        flex-basis: auto;
+      }
+    }
+  </style>
 </head>
-<body style="margin:0; padding:0; background-color:#f8fafc; font-family:'Apple SD Gothic Neo','Malgun Gothic',Arial,sans-serif; color:#0f172a;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="width:100%; border-collapse:collapse; background-color:#f8fafc;">
-    <tr>
-      <td style="padding:40px 16px; text-align: center;">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="width:100%; max-width:620px; border-collapse:collapse;">
-          <tr>
-            <td style="padding:32px 36px; background-color:#dc2626; border-radius:12px 12px 0 0; color:#ffffff;">
-              <div style="display:inline-block; margin-bottom:12px; padding:5px 12px; border-radius:999px; background-color:#f87171; color:#ffffff; font-size:12px; font-weight:700; line-height:18px; letter-spacing:0.06em;">
-                신고 접수
-              </div>
-              <h1 style="margin:0; color:#ffffff; font-size:22px; font-weight:800; line-height:1.45;" th:text="${title}">신고 제목</h1>
-            </td>
-          </tr>
+<body>
+<div class="page">
+  <div class="mail">
+    <div class="header">
+      <div class="badge">신고 접수</div>
+      <h1 class="title" th:text="${title}">신고 제목</h1>
+    </div>
 
-          <tr>
-            <td style="padding:32px 36px; background-color:#ffffff; border-left:1px solid #e2e8f0; border-right:1px solid #e2e8f0;">
-              <p style="margin:0 0 24px; color:#64748b; font-size:14px; line-height:1.7;">
-                아래 내용으로 신고가 접수되었습니다. 확인 후 적절한 조치를 취해주세요.
-              </p>
+    <div class="body">
+      <p class="summary">아래 내용으로 신고가 접수되었습니다. 확인 후 적절한 조치를 취해주세요.</p>
 
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="width:100%; border-collapse:collapse;">
-                <tr>
-                  <td width="96" valign="top" style="width:96px; padding:13px 8px 13px 0; border-bottom:1px solid #f1f5f9; color:#64748b; font-size:14px; font-weight:700; line-height:1.5; white-space:nowrap;">
-                    신고자
-                  </td>
-                  <td valign="top" style="padding:13px 0; border-bottom:1px solid #f1f5f9; color:#0f172a; font-size:14px; line-height:1.5; word-break:break-all;" th:text="${from}">
-                    신고자 이메일
-                  </td>
-                </tr>
-                <tr>
-                  <td width="96" valign="top" style="width:96px; padding:13px 8px 13px 0; border-bottom:1px solid #f1f5f9; color:#64748b; font-size:14px; font-weight:700; line-height:1.5; white-space:nowrap;">
-                    사이트
-                  </td>
-                  <td valign="top" style="padding:13px 0; border-bottom:1px solid #f1f5f9; color:#0f172a; font-size:14px; line-height:1.5; word-break:break-word;" th:text="${siteName}">
-                    사이트명
-                  </td>
-                </tr>
-                <tr>
-                  <td width="96" valign="top" style="width:96px; padding:13px 8px 13px 0; color:#64748b; font-size:14px; font-weight:700; line-height:1.5; white-space:nowrap;">
-                    제목
-                  </td>
-                  <td valign="top" style="padding:13px 0; color:#0f172a; font-size:14px; line-height:1.5; word-break:break-word;" th:text="${title}">
-                    신고 제목
-                  </td>
-                </tr>
-              </table>
+      <div class="info-list">
+        <div class="info-row">
+          <div class="info-label">신고자</div>
+          <div class="info-value info-value-email" th:text="${from}">신고자 이메일</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">사이트</div>
+          <div class="info-value" th:text="${siteName}">사이트명</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">제목</div>
+          <div class="info-value" th:text="${title}">신고 제목</div>
+        </div>
+      </div>
 
-              <div style="margin-top:28px;">
-                <p style="margin:0 0 10px; color:#334155; font-size:14px; font-weight:700; line-height:1.5;">
-                  신고 내용
-                </p>
-                <div style="padding:16px 20px; background-color:#f8fafc; border-left:4px solid #dc2626; border-radius:0 8px 8px 0; color:#334155; font-size:14px; line-height:1.8; white-space:pre-wrap; word-break:break-word;" th:text="${content}">
-                  신고 내용이 여기에 표시됩니다.
-                </div>
-              </div>
-            </td>
-          </tr>
+      <div class="content-section">
+        <p class="content-title">신고 내용</p>
+        <div class="content-box" th:text="${content}">신고 내용이 여기에 표시됩니다.</div>
+      </div>
+    </div>
 
-          <tr>
-            <td align="center" style="padding:20px 36px; background-color:#f8fafc; border:1px solid #e2e8f0; border-top:0; border-radius:0 0 12px 12px; color:#94a3b8; font-size:12px; line-height:1.7;">
-              <p style="margin:0 0 4px;">이 메일은 <strong style="font-weight:700; color:#64748b;">Seesaw</strong> 서비스에서 자동으로 발송된 메일입니다.</p>
-              <p style="margin:0;">회신하시면 신고자 이메일로 직접 답장됩니다.</p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
+    <div class="footer">
+      <p>이 메일은 <strong>Seesaw</strong> 서비스에서 자동으로 발송된 메일입니다.</p>
+      <p>회신하시면 신고자 이메일로 직접 답장됩니다.</p>
+    </div>
+  </div>
+</div>
 </body>
 </html>
