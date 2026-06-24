@@ -11,22 +11,39 @@
  * }} VapidPublicKeyResponse
  */
 
-document.addEventListener('DOMContentLoaded', () => {
+/**
+ * @typedef {{
+ *   endpoint: string,
+ *   keys: {
+ *     p256dh: string,
+ *     auth: string
+ *   }
+ * }} PushSubscriptionJson
+ */
+
+document.addEventListener('DOMContentLoaded', async () => {
   const themeColorMeta = /** @type {HTMLMetaElement} */ (document.querySelector('meta[name="theme-color"]'));
+  const siteIdMeta = /** @type {HTMLMetaElement} */ (document.querySelector('meta[name="seesaw-site-id"]'));
 
   const currentNavigator = /** @type {Navigator & { standalone?: boolean }} */ (window.navigator);
 
   const themeColor = themeColorMeta.content || '#000000';
+  const siteId = siteIdMeta.content;
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || currentNavigator.standalone === true;
-
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(error => {
-      console.debug('Service worker registration failed.', error);
-    });
-  }
 
   /** @type {BeforeInstallPromptEvent | null} */
   let deferredPrompt = null;
+
+  /**
+   * @returns {Promise<ServiceWorkerRegistration | null>}
+   */
+  const registerServiceWorker = async () => {
+    if (!('serviceWorker' in navigator)) {
+      return null;
+    }
+
+    return navigator.serviceWorker.register('/sw.js', { scope: '/' });
+  };
 
   const getVapidPublicKey = async () => {
     const response = await fetch('/api/push/vapid-public-key', {
@@ -41,6 +58,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const data = /** @type {VapidPublicKeyResponse} */ (await response.json());
     return data.publicKey;
+  };
+
+  /**
+   * @param {PushSubscription} subscription
+   * @returns {Promise<void>}
+   */
+  const savePushSubscription = async subscription => {
+    const subscriptionJson = /** @type {PushSubscriptionJson} */ (subscription.toJSON());
+    const response = await fetch('/api/push/subscriptions', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        siteId,
+        endpoint: subscriptionJson.endpoint,
+        keys: {
+          p256dh: subscriptionJson.keys.p256dh,
+          auth: subscriptionJson.keys.auth
+        }
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`푸시 구독 정보를 저장할 수 없습니다. status=${response.status}`);
+    }
   };
 
   /**
@@ -64,7 +109,11 @@ document.addEventListener('DOMContentLoaded', () => {
     return outputArray;
   };
 
-  const subscribePushNotification = async () => {
+  /**
+   * @param {ServiceWorkerRegistration} registration
+   * @returns {Promise<PushSubscription>}
+   */
+  const subscribePushNotification = async registration => {
     if (!('Notification' in window) || !('PushManager' in window) || !('serviceWorker' in navigator)) {
       throw new Error('이 브라우저는 Web Push를 지원하지 않습니다.');
     }
@@ -74,9 +123,9 @@ document.addEventListener('DOMContentLoaded', () => {
       throw new Error(`알림 권한이 허용되지 않았습니다. permission=${permission}`);
     }
 
-    const registration = await navigator.serviceWorker.ready;
     const currentSubscription = await registration.pushManager.getSubscription();
     if (currentSubscription) {
+      await savePushSubscription(currentSubscription);
       window.dispatchEvent(new CustomEvent('seesaw:push-subscribed', { detail: currentSubscription.toJSON() }));
       return currentSubscription;
     }
@@ -87,6 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
       applicationServerKey: urlBase64ToUint8Array(publicKey)
     });
 
+    await savePushSubscription(subscription);
     window.dispatchEvent(new CustomEvent('seesaw:push-subscribed', { detail: subscription.toJSON() }));
     return subscription;
   };
@@ -167,9 +217,13 @@ document.addEventListener('DOMContentLoaded', () => {
       await deferredPrompt.userChoice;
       deferredPrompt = null;
       removeInstallPrompt();
-      subscribePushNotification().catch(error => {
+
+      const registration = await navigator.serviceWorker.ready;
+      try {
+        await subscribePushNotification(registration);
+      } catch (error) {
         console.debug('Push subscription failed.', error);
-      });
+      }
     });
 
     closeButton.addEventListener('click', () => {
@@ -195,4 +249,13 @@ document.addEventListener('DOMContentLoaded', () => {
     deferredPrompt = null;
     removeInstallPrompt();
   });
+
+  try {
+    const registration = await registerServiceWorker();
+    if (registration && 'Notification' in window && Notification.permission !== 'denied') {
+      await subscribePushNotification(registration);
+    }
+  } catch (error) {
+    console.debug('Push setup failed.', error);
+  }
 });
