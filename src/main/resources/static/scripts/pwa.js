@@ -5,16 +5,18 @@
  * }} BeforeInstallPromptEvent
  */
 
-document.addEventListener('DOMContentLoaded', () => {
-  const siteIdMeta = /** @type {HTMLMetaElement} */ (document.querySelector('meta[name="seesaw-site-id"]'));
+/**
+ * @typedef {{
+ *   publicKey: string
+ * }} VapidPublicKeyResponse
+ */
 
+document.addEventListener('DOMContentLoaded', () => {
   const themeColorMeta = /** @type {HTMLMetaElement} */ (document.querySelector('meta[name="theme-color"]'));
 
   const currentNavigator = /** @type {Navigator & { standalone?: boolean }} */ (window.navigator);
 
-  const siteId = siteIdMeta.content || 'default';
   const themeColor = themeColorMeta.content || '#000000';
-  const storageKey = `seesaw:pwa:install-dismissed:${siteId}`;
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || currentNavigator.standalone === true;
 
   if ('serviceWorker' in navigator) {
@@ -23,25 +25,92 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  if (isStandalone || localStorage.getItem(storageKey) === 'true') {
-    return;
-  }
-
   /** @type {BeforeInstallPromptEvent | null} */
   let deferredPrompt = null;
 
-  const removeInstallPrompt = () => {
-    document.getElementById('pwa-install-prompt')?.remove();
-  };
+  const getVapidPublicKey = async () => {
+    const response = await fetch('/api/push/vapid-public-key', {
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
 
-  const createInstallPrompt = () => {
-    if (document.getElementById('pwa-install-prompt')) {
-      return;
+    if (!response.ok) {
+      throw new Error(`VAPID 공개 키를 조회할 수 없습니다. status=${response.status}`);
     }
 
+    const data = /** @type {VapidPublicKeyResponse} */ (await response.json());
+    return data.publicKey;
+  };
+
+  /**
+   * Base64 URL-safe 문자열을 PushManager가 요구하는 Uint8Array로 변환합니다.
+   *
+   * @param {string} base64UrlString
+   * @returns {Uint8Array}
+   */
+  const urlBase64ToUint8Array = base64UrlString => {
+    const padding = '='.repeat((4 - base64UrlString.length % 4) % 4);
+    const base64 = (base64UrlString + padding)
+      .replace(/-/g, '+')
+      .replace(/_/g, '/');
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+
+    for (let i = 0; i < rawData.length; i += 1) {
+      outputArray[i] = rawData.charCodeAt(i);
+    }
+
+    return outputArray;
+  };
+
+  const subscribePushNotification = async () => {
+    if (!('Notification' in window) || !('PushManager' in window) || !('serviceWorker' in navigator)) {
+      throw new Error('이 브라우저는 Web Push를 지원하지 않습니다.');
+    }
+
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted') {
+      throw new Error(`알림 권한이 허용되지 않았습니다. permission=${permission}`);
+    }
+
+    const registration = await navigator.serviceWorker.ready;
+    const currentSubscription = await registration.pushManager.getSubscription();
+    if (currentSubscription) {
+      window.dispatchEvent(new CustomEvent('seesaw:push-subscribed', { detail: currentSubscription.toJSON() }));
+      return currentSubscription;
+    }
+
+    const publicKey = await getVapidPublicKey();
+    const subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(publicKey)
+    });
+
+    window.dispatchEvent(new CustomEvent('seesaw:push-subscribed', { detail: subscription.toJSON() }));
+    return subscription;
+  };
+
+  const createButton = (text, variant = 'primary') => {
+    /** @type {HTMLButtonElement} */
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = text;
+    button.style.cssText = [
+      `border:${variant === 'primary' ? '0' : '1px solid #cbd5e1'}`,
+      'border-radius:6px',
+      'padding:8px 12px',
+      `background:${variant === 'primary' ? themeColor : '#ffffff'}`,
+      `color:${variant === 'primary' ? '#ffffff' : '#334155'}`,
+      'font-weight:700'
+    ].join(';');
+    return button;
+  };
+
+  const createPrompt = id => {
     /** @type {HTMLDivElement} */
     const prompt = document.createElement('div');
-    prompt.id = 'pwa-install-prompt';
+    prompt.id = id;
     prompt.setAttribute('role', 'status');
     prompt.style.cssText = [
       'position:fixed',
@@ -64,6 +133,19 @@ document.addEventListener('DOMContentLoaded', () => {
       'font-size:14px',
       'line-height:1.5'
     ].join(';');
+    return prompt;
+  };
+
+  const removeInstallPrompt = () => {
+    document.getElementById('pwa-install-prompt')?.remove();
+  };
+
+  const createInstallPrompt = () => {
+    if (document.getElementById('pwa-install-prompt')) {
+      return;
+    }
+
+    const prompt = createPrompt('pwa-install-prompt');
 
     /** @type {HTMLSpanElement} */
     const message = document.createElement('span');
@@ -73,31 +155,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const actions = document.createElement('span');
     actions.style.cssText = 'display:flex;gap:8px;flex:0 0 auto';
 
-    /** @type {HTMLButtonElement} */
-    const installButton = document.createElement('button');
-    installButton.type = 'button';
-    installButton.textContent = '추가';
-    installButton.style.cssText = [
-      'border:0',
-      'border-radius:6px',
-      'padding:8px 12px',
-      `background:${themeColor}`,
-      'color:#ffffff',
-      'font-weight:700'
-    ].join(';');
-
-    /** @type {HTMLButtonElement} */
-    const closeButton = document.createElement('button');
-    closeButton.type = 'button';
-    closeButton.textContent = '닫기';
-    closeButton.style.cssText = [
-      'border:1px solid #cbd5e1',
-      'border-radius:6px',
-      'padding:8px 12px',
-      'background:#ffffff',
-      'color:#334155',
-      'font-weight:700'
-    ].join(';');
+    const installButton = createButton('추가');
+    const closeButton = createButton('닫기', 'secondary');
 
     installButton.addEventListener('click', async () => {
       if (!deferredPrompt) {
@@ -107,12 +166,13 @@ document.addEventListener('DOMContentLoaded', () => {
       deferredPrompt.prompt();
       await deferredPrompt.userChoice;
       deferredPrompt = null;
-      localStorage.setItem(storageKey, 'true');
       removeInstallPrompt();
+      subscribePushNotification().catch(error => {
+        console.debug('Push subscription failed.', error);
+      });
     });
 
     closeButton.addEventListener('click', () => {
-      localStorage.setItem(storageKey, 'true');
       deferredPrompt = null;
       removeInstallPrompt();
     });
@@ -125,11 +185,13 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('beforeinstallprompt', event => {
     event.preventDefault();
     deferredPrompt = /** @type {BeforeInstallPromptEvent} */ (event);
+    if (isStandalone) {
+      return;
+    }
     createInstallPrompt();
   });
 
   window.addEventListener('appinstalled', () => {
-    localStorage.setItem(storageKey, 'true');
     deferredPrompt = null;
     removeInstallPrompt();
   });
