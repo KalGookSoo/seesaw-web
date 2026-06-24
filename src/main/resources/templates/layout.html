@@ -4,6 +4,9 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       th:lang="${#locale.language}"
 >
+<!--/*@thymesVar id="SITE_CONTEXT" type="kr.me.seesaw.model.SiteModel"*/-->
+<!--/*@thymesVar id="CURRENT_CATEGORY" type="kr.me.seesaw.model.CategoryModel"*/-->
+<!--/*@thymesVar id="CSRF" type="org.springframework.security.web.csrf.CsrfToken"*/-->
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -12,7 +15,11 @@
 
     <meta name="google-site-verification" content="SmP65FAXUDTeiNBaujsGFx3c2dbyNPze6Fu0FLDlCnY">
 
-    <meta name="theme-color" content="#cc4202">
+    <meta name="theme-color" th:content="${SITE_CONTEXT.themeColor}">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" th:content="${SITE_CONTEXT.name}">
+    <meta name="seesaw-site-id" th:content="${SITE_CONTEXT.id}">
 
     <meta name="naver-site-verification" content="3d44ef25fe0fdc4aa0c39c38f36b5c0b1ac0d87b">
 
@@ -21,6 +28,8 @@
     <!--/* CSS */-->
     <!--/*@thymesVar id="REQUEST_URI_BUILDER" type="org.springframework.web.util.UriComponentsBuilder"*/-->
     <link rel="canonical" th:href="${REQUEST_URI_BUILDER.cloneBuilder().toUriString()}">
+    <link rel="manifest" th:href="@{/manifest.webmanifest}">
+    <link rel="icon" th:href="@{/favicon.ico}">
     <link rel="stylesheet" th:href="@{/styles/bootstrap.css}">
     <link rel="stylesheet" th:href="@{/styles/bootstrap-icons.min.css}">
     <link rel="stylesheet" th:href="@{/styles/global.css}">
@@ -49,6 +58,7 @@
     <script th:src="@{/scripts/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/scripts/main.js}"></script>
     <script th:src="@{/scripts/aside.js}"></script>
+    <script th:src="@{/scripts/pwa.js}"></script>
     <script th:inline="javascript">
         sessionStorage.setItem("contextPath", /*[[@{/}]]*/'');
 
