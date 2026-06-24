@@ -89,7 +89,7 @@ public class SecurityConfig {
                 .requestMatchers(new AntPathRequestMatcher("/scripts/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/images/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/fonts/**")).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/favicon.ico")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/favicon.png")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/manifest.webmanifest")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/sw.js")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/actuator/health")).permitAll()

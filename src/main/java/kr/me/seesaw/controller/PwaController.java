@@ -44,11 +44,24 @@ public class PwaController {
         manifest.put("display", "standalone");
         manifest.put("background_color", getBackgroundColor(site));
         manifest.put("theme_color", getThemeColor(site));
-        manifest.put("icons", List.of(Map.of(
-                "src", "/favicon.ico",
-                "sizes", "48x48 32x32 16x16",
-                "type", "image/x-icon"
-        )));
+        manifest.put("icons", List.of(
+                Map.of(
+                        "src", "/favicon.png",
+                        "sizes", "320x320",
+                        "type", "image/png"
+                ),
+                Map.of(
+                        "src", "/pwa-icon-192.png",
+                        "sizes", "192x192",
+                        "type", "image/png"
+                ),
+                Map.of(
+                        "src", "/pwa-icon-512.png",
+                        "sizes", "512x512",
+                        "type", "image/png",
+                        "purpose", "any maskable"
+                )
+        ));
 
         return ResponseEntity.ok()
                 .contentType(MANIFEST_MEDIA_TYPE)
@@ -65,7 +78,9 @@ public class PwaController {
                 const SITE_ID = %s;
                 const CACHE_NAME = %s;
                 const CACHEABLE_PATHS = [
-                  "/favicon.ico",
+                  "/favicon.png",
+                  "/pwa-icon-192.png",
+                  "/pwa-icon-512.png",
                   "/styles/",
                   "/scripts/",
                   "/images/",
@@ -131,8 +146,8 @@ public class PwaController {
                   const title = data.title || "Seesaw";
                   const options = {
                     body: data.body || "",
-                    icon: data.icon || "/favicon.ico",
-                    badge: data.badge || "/favicon.ico",
+                    icon: data.icon || "/favicon.png",
+                    badge: data.badge || "/favicon.png",
                     data: {
                       url: data.url || "/"
                     }
