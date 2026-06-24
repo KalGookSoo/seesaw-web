@@ -137,3 +137,8 @@ kr:
     seesaw:
       filepath: ${user.home}/attachments
       api-host: http://localhost:8081
+      web-push:
+        vapid:
+          public-key: BHLywoOj-w1RKKxZVMXaMDSVInsIs-68f1YcBRm27KkPxRaMmSPSLHskNiCPVl-cPqAi6nQ-Q8sbP_fkZtczRfQ
+          private-key: d40ivWHvq9BEQ-Gh3b7fzOlHAJK29cVzCE7vzvbsxBo
+          subject: mailto:ga.miro3721@gmail.com

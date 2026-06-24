@@ -63,6 +63,22 @@
       "type": "java.lang.Integer",
       "description": "SMTP 서버 메일 전송 대기 제한 시간(밀리초)입니다.",
       "defaultValue": 5000
+    },
+    {
+      "name": "kr.me.seesaw.web-push.vapid.public-key",
+      "type": "java.lang.String",
+      "description": "Web Push 구독 생성 시 클라이언트에 전달할 VAPID 공개 키입니다."
+    },
+    {
+      "name": "kr.me.seesaw.web-push.vapid.private-key",
+      "type": "java.lang.String",
+      "description": "Web Push 발송 시 서버에서 서명에 사용할 VAPID 비공개 키입니다. 공개 저장소에 실제 값을 커밋하지 않습니다."
+    },
+    {
+      "name": "kr.me.seesaw.web-push.vapid.subject",
+      "type": "java.lang.String",
+      "description": "VAPID subject 값입니다. 보통 mailto:admin@example.com 또는 운영 사이트 URL을 사용합니다.",
+      "defaultValue": "mailto:직접입력"
     }
   ],
   "hints": [
@@ -124,6 +140,24 @@
         {
           "value": "EUC-KR",
           "description": "한글 인코딩"
+        }
+      ]
+    },
+    {
+      "name": "kr.me.seesaw.web-push.vapid.subject",
+      "values": [
+        {
+          "value": "mailto:admin@example.com",
+          "description": "관리자 이메일을 사용하는 VAPID subject 예시"
+        },
+        {
+          "value": "https://example.com",
+          "description": "운영 사이트 URL을 사용하는 VAPID subject 예시"
+        }
+      ],
+      "providers": [
+        {
+          "name": "any"
         }
       ]
     }
