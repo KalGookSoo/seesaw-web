@@ -33,10 +33,12 @@ public class ArticleController {
             @RequestParam String categoryId,
             Model model
     ) {
+        CategoryModel category = categoryContext.getCategory(categoryId);
         Sort sort = Sort.by(Sort.Order.asc("fixedOrder"), Sort.Order.desc("createdDate"));
         Pageable pageable = Pageable.unpaged(sort);
         Page<ArticleModel> page = articleContext.findAllByCategoryId(categoryId, pageable);
 
+        model.addAttribute("selectedCategory", category);
         model.addAttribute("page", page);
 
         return "articles/static_content";
@@ -48,8 +50,8 @@ public class ArticleController {
             @ModelAttribute("search") ArticleSearch search,
             Model model
     ) {
+        CategoryModel category = categoryContext.getCategory(search.getCategoryId());
         if (search.getCategoryType() == null) {
-            CategoryModel category = categoryContext.getCategory(search.getCategoryId());
             search.setCategoryType(category.getType());
         }
         // 공지는 오름차순 후 createdDate로 내림차순
@@ -58,6 +60,7 @@ public class ArticleController {
 
         Page<ArticleModel> page = articleContext.findAll(pageable, search);
 
+        model.addAttribute("selectedCategory", category);
         model.addAttribute("fixedArticles", fixedArticles);
         model.addAttribute("page", page);
 
@@ -66,8 +69,10 @@ public class ArticleController {
 
     @GetMapping(params = "categoryType=SCHEDULE")
     public String getArticlesInCalendarView(
-            @ModelAttribute("search") EventQuery search
+            @ModelAttribute("search") EventQuery search,
+            Model model
     ) {
+        model.addAttribute("selectedCategory", categoryContext.getCategory(search.getCategoryId()));
         return "events/index";
     }
 
@@ -77,8 +82,10 @@ public class ArticleController {
             @ModelAttribute("search") ArticleSearch search,
             Model model
     ) {
+        CategoryModel category = categoryContext.getCategory(search.getCategoryId());
         Page<ArticleModel> page = articleContext.findAll(pageable, search);
 
+        model.addAttribute("selectedCategory", category);
         model.addAttribute("page", page);
 
         return "articles/card";
@@ -91,6 +98,14 @@ public class ArticleController {
             Model model
     ) {
         ArticleModel article = articleContext.getArticleAggregation(id);
+        CategoryModel category = categoryContext.getCategory(article.getCategoryId());
+        if (search.getCategoryId() == null) {
+            search.setCategoryId(article.getCategoryId());
+        }
+        if (search.getCategoryType() == null) {
+            search.setCategoryType(category.getType());
+        }
+        model.addAttribute("selectedCategory", category);
         model.addAttribute("article", article);
 
         ArticleModel previousArticle = articleContext.getPreviousArticle(search, article.getCreatedDate());
@@ -105,8 +120,10 @@ public class ArticleController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/new")
     public String getArticleNew(
-            @ModelAttribute("search") ArticleSearch search
+            @ModelAttribute("search") ArticleSearch search,
+            Model model
     ) {
+        model.addAttribute("selectedCategory", categoryContext.getCategory(search.getCategoryId()));
         return "articles/new";
     }
 
@@ -119,6 +136,7 @@ public class ArticleController {
             Model model
     ) {
         ArticleModel article = articleContext.find(id);
+        model.addAttribute("selectedCategory", categoryContext.getCategory(article.getCategoryId()));
 
         model.addAttribute("article", article);
         model.addAttribute("page", page);

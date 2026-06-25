@@ -4,7 +4,7 @@
 <!--/*@thymesVar id="NESTED_CATEGORIES" type="java.util.List<kr.me.seesaw.model.CategoryModel>"*/-->
 <!--/*@thymesVar id="root" type="kr.me.seesaw.model.CategoryModel"*/-->
 <!--/*@thymesVar id="child" type="kr.me.seesaw.model.CategoryModel"*/-->
-<!--/*@thymesVar id="CURRENT_CATEGORY" type="kr.me.seesaw.model.CategoryModel"*/-->
+<!--/*@thymesVar id="selectedCategory" type="kr.me.seesaw.model.CategoryModel"*/-->
 <div th:fragment="move_modal(article)">
   <div class="modal fade" id="moveArticleModal" tabindex="-1" aria-labelledby="moveArticleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -27,7 +27,7 @@
                   <option th:each="child : ${root.children}"
                           th:value="${child.id}"
                           th:text="|${child.name} (${child.type.description})|"
-                          th:disabled="${CURRENT_CATEGORY.type != ALL_CATEGORIES.get(child.id).type}"
+                          th:disabled="${selectedCategory.type != ALL_CATEGORIES.get(child.id).type}"
                           th:selected="${child.id == article.categoryId}">
                   </option>
                 </optgroup>
@@ -35,12 +35,12 @@
                 <option th:each="root : ${NESTED_CATEGORIES}" th:if="${#lists.isEmpty(root.children)}"
                         th:value="${root.id}"
                         th:text="|${root.name} (${root.type.description})|"
-                        th:disabled="${CURRENT_CATEGORY.type != ALL_CATEGORIES.get(root.id).type}"
+                        th:disabled="${selectedCategory.type != ALL_CATEGORIES.get(root.id).type}"
                         th:selected="${root.id == article.categoryId}">
                 </option>
               </select>
-              <div class="form-text mt-2" th:if="${CURRENT_CATEGORY != null}">
-                현재 위치: <span class="fw-medium text-primary" th:text="${CURRENT_CATEGORY.name}"></span>
+              <div class="form-text mt-2" th:if="${selectedCategory != null}">
+                현재 위치: <span class="fw-medium text-primary" th:text="${selectedCategory.name}"></span>
               </div>
             </div>
           </div>

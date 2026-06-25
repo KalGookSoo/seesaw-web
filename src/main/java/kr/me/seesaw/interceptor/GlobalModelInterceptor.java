@@ -16,8 +16,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 public class GlobalModelInterceptor implements HandlerInterceptor {
@@ -45,14 +43,6 @@ public class GlobalModelInterceptor implements HandlerInterceptor {
         Map<String, CategoryModel> allCategories = siteContext.getAllCategories();
         modelAndView.addObject("ALL_CATEGORIES", allCategories);
         modelAndView.addObject("NESTED_CATEGORIES", siteContext.getNestedCategories());
-
-        Optional.ofNullable(request.getParameter("categoryId"))
-                .map(Objects::toString)
-                .ifPresent(categoryId -> {
-                    CategoryModel category = allCategories.get(categoryId);
-                    modelAndView.addObject("CURRENT_CATEGORY", category);
-                    logger.debug("현재 카테고리 속성 추가: categoryId={}, categoryName={}", categoryId, category != null ? category.getName() : "null");
-                });
     }
 
 }

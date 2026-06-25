@@ -8,10 +8,10 @@
 >
 <!--/*@thymesVar id="REQUEST_URI_BUILDER" type="org.springframework.web.util.UriComponentsBuilder"*/-->
 <!--/*@thymesVar id="SITE_CONTEXT" type="kr.me.seesaw.model.SiteModel"*/-->
-<!--/*@thymesVar id="CURRENT_CATEGORY" type="kr.me.seesaw.model.CategoryModel"*/-->
+<!--/*@thymesVar id="selectedCategory" type="kr.me.seesaw.model.CategoryModel"*/-->
 <head>
   <meta name="description" th:content="${article.plainContent}">
-  <meta name="keywords" th:content="${CURRENT_CATEGORY.name}">
+  <meta name="keywords" th:content="${selectedCategory.name}">
 
   <meta property="og:type" content="article">
   <meta property="og:title" content="페이지 제목" th:content="${article.title}">
@@ -245,7 +245,7 @@
               const responseBody = await response.text();
               if (response.ok) {
                 alert(/*[[#{command.success.delete}]]*/'');
-                location.href = /*[[@{/articles(categoryType=${CURRENT_CATEGORY.type}, categoryId=${CURRENT_CATEGORY.id})}]]*/'';
+                location.href = /*[[@{/articles(categoryType=${selectedCategory.type}, categoryId=${selectedCategory.id})}]]*/'';
               } else {
                 alert(/*[[#{command.failure.delete}]]*/'');
               }
@@ -259,7 +259,7 @@
   <section th:replace="~{components/breadcrumb :: breadcrumbs}"></section>
   <header class="container-sm title-section">
     <div class="d-flex">
-      <h5 class="title pb-1" th:text="${CURRENT_CATEGORY.name}"></h5>
+      <h5 class="title pb-1" th:text="${selectedCategory.name}"></h5>
     </div>
   </header>
   <section class="container-sm mb-4">

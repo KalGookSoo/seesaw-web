@@ -3,7 +3,7 @@
 <body>
 <!--/*@thymesVar id="ALL_CATEGORIES" type="java.util.Map<java.lang.String, java.util.List<kr.me.seesaw.model.CategoryModel>>"*/-->
 <!--/*@thymesVar id="NESTED_CATEGORIES" type="java.util.List<kr.me.seesaw.model.CategoryModel>"*/-->
-<!--/*@thymesVar id="CURRENT_CATEGORY" type="kr.me.seesaw.model.CategoryModel"*/-->
+<!--/*@thymesVar id="selectedCategory" type="kr.me.seesaw.model.CategoryModel"*/-->
 <section class="container-sm pt-4 mt-4" th:fragment="breadcrumbs">
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb modern-breadcrumb">
@@ -17,17 +17,17 @@
       </li>
 
       <!--/* Parent category */-->
-      <li class="breadcrumb-item" th:if="${CURRENT_CATEGORY.parent != null}">
+      <li class="breadcrumb-item" th:if="${selectedCategory.parent != null}">
         <div class="dropdown">
           <a class="dropdown-toggle" href="#" role="button" id="parentDropdown" data-bs-toggle="dropdown" aria-expanded="false"
-             th:text="${CURRENT_CATEGORY.parent.name}">
+             th:text="${selectedCategory.parent.name}">
             부모 카테고리
           </a>
           <ul class="dropdown-menu shadow-sm" aria-labelledby="parentDropdown">
             <li th:each="siblingCategory : ${ALL_CATEGORIES.values()}"
-                th:if="${siblingCategory.parentId == null || #strings.equals(siblingCategory.parentId, CURRENT_CATEGORY.parent.parentId)}">
+                th:if="${siblingCategory.parentId == null || #strings.equals(siblingCategory.parentId, selectedCategory.parent.parentId)}">
               <a class="dropdown-item"
-                 th:classappend="${#strings.equals(siblingCategory.id, CURRENT_CATEGORY.parent.id)} ? 'active' : ''"
+                 th:classappend="${#strings.equals(siblingCategory.id, selectedCategory.parent.id)} ? 'active' : ''"
                  th:href="${siblingCategory.url}"
                  th:text="${siblingCategory.name}">
               </a>
@@ -40,25 +40,25 @@
       <li class="breadcrumb-item active" aria-current="page">
         <div class="dropdown">
           <a class="dropdown-toggle" href="#" role="button" id="currentDropdown" data-bs-toggle="dropdown" aria-expanded="false"
-             th:text="${CURRENT_CATEGORY.name}">
+             th:text="${selectedCategory.name}">
             현재 카테고리
           </a>
           <ul class="dropdown-menu shadow-sm" aria-labelledby="currentDropdown">
             <!--/* When parent exists, show parent's children (siblings) */-->
-            <th:block th:if="${CURRENT_CATEGORY.parent != null}">
-              <li th:each="siblingCategory : ${CURRENT_CATEGORY.parent.children}">
+            <th:block th:if="${selectedCategory.parent != null}">
+              <li th:each="siblingCategory : ${selectedCategory.parent.children}">
                 <a class="dropdown-item"
-                   th:classappend="${#strings.equals(siblingCategory.id, CURRENT_CATEGORY.id)} ? 'active' : ''"
+                   th:classappend="${#strings.equals(siblingCategory.id, selectedCategory.id)} ? 'active' : ''"
                    th:href="${siblingCategory.url}"
                    th:text="${siblingCategory.name}">
                 </a>
               </li>
             </th:block>
             <!--/* When parent is null (root category), show all nested categories (siblings) */-->
-            <th:block th:if="${CURRENT_CATEGORY.parent == null}">
+            <th:block th:if="${selectedCategory.parent == null}">
               <li th:each="siblingCategory : ${NESTED_CATEGORIES}">
                 <a class="dropdown-item"
-                   th:classappend="${#strings.equals(siblingCategory.id, CURRENT_CATEGORY.id)} ? 'active' : ''"
+                   th:classappend="${#strings.equals(siblingCategory.id, selectedCategory.id)} ? 'active' : ''"
                    th:href="${siblingCategory.url}"
                    th:text="${siblingCategory.name}">
                 </a>
