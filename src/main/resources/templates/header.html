@@ -13,7 +13,7 @@
 <!--/*@thymesVar id="selectedCategory" type="kr.me.seesaw.model.CategoryModel"*/-->
 <header id="header" class="d-flex align-items-center justify-content-center" th:fragment="header">
   <div class="container-sm wrapper d-flex align-items-center justify-content-between">
-    <h1 class="logo mb-0 d-lg-none"><a class="none" th:href="@{/}" th:text="${SITE_CONTEXT.name}"></a></h1>
+    <h1 class="logo mb-0 d-lg-none"><a class="none" th:href="@{/}" th:text="${@siteContext.site.name}"></a></h1>
     <nav class="gnb nav d-none d-lg-flex align-items-center justify-content-start">
       <div class="nav-item">
         <a class="btn nav-link" th:classappend="${selectedCategory == null} ? 'main-color' : ''" th:href="@{/}" th:text="#{label.home}">홈</a>

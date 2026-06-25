@@ -38,8 +38,6 @@ public class GlobalModelInterceptor implements HandlerInterceptor {
         modelAndView.addObject("REQUEST_URI_BUILDER", uriBuilder);
         modelAndView.addObject("ACTIVE_PROFILES", List.of(environment.getActiveProfiles()));
 
-        modelAndView.addObject("SITE_CONTEXT", siteContext.getSite());
-
         Map<String, CategoryModel> allCategories = siteContext.getAllCategories();
         modelAndView.addObject("ALL_CATEGORIES", allCategories);
         modelAndView.addObject("NESTED_CATEGORIES", siteContext.getNestedCategories());

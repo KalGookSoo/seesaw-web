@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}"
 >
-<!--/*@thymesVar id="SITE_CONTEXT" type="kr.me.seesaw.model.SiteModel"*/-->
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -355,11 +355,11 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <form id="reportForm" name="reportForm" th:action="@{/api/mail/send-to-report}" th:method="post">
-          <input type="hidden" name="siteId" th:value="${SITE_CONTEXT.id}">
+          <input type="hidden" name="siteId" th:value="${@siteContext.site.id}">
           <div class="modal-body">
             <div class="mb-3">
               <label for="reportSiteName" class="form-label" th:text="#{label.homepage.name}">홈페이지명</label>
-              <input type="text" class="form-control" id="reportSiteName" name="reportSiteName" th:value="${SITE_CONTEXT.name}" readonly>
+              <input type="text" class="form-control" id="reportSiteName" name="reportSiteName" th:value="${@siteContext.site.name}" readonly>
             </div>
             <div class="mb-3">
               <label for="reportEmail" class="form-label" th:text="#{label.email}">이메일</label>
@@ -429,7 +429,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <form id="inquiryForm" name="inquiryForm" th:action="@{/api/mail/send-to-helpdesk}" th:method="post">
-          <input type="hidden" name="siteId" th:value="${SITE_CONTEXT.id}">
+          <input type="hidden" name="siteId" th:value="${@siteContext.site.id}">
           <div class="modal-body">
             <div class="mb-3">
               <label for="inquiryEmail" class="form-label" th:text="#{label.email}">이메일</label>

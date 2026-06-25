@@ -7,30 +7,30 @@
       th:lang="${#locale.language}"
 >
 <!--/*@thymesVar id="REQUEST_URI_BUILDER" type="org.springframework.web.util.UriComponentsBuilder"*/-->
-<!--/*@thymesVar id="SITE_CONTEXT" type="kr.me.seesaw.model.SiteModel"*/-->
+
 <!--/*@thymesVar id="selectedCategory" type="kr.me.seesaw.model.CategoryModel"*/-->
 <head>
 
   <meta name="description"
-        th:content="|${SITE_CONTEXT.name} ${selectedCategory.name} ${selectedCategory.description != null ? selectedCategory.description : ''}|">
-  <meta name="keywords" th:content="|${SITE_CONTEXT.name} ${selectedCategory.name}|">
+        th:content="|${@siteContext.site.name} ${selectedCategory.name} ${selectedCategory.description != null ? selectedCategory.description : ''}|">
+  <meta name="keywords" th:content="|${@siteContext.site.name} ${selectedCategory.name}|">
 
   <meta property="og:type" content="website">
-  <meta property="og:title" content="페이지 제목" th:content="|${SITE_CONTEXT.name} ${selectedCategory.name}|">
+  <meta property="og:title" content="페이지 제목" th:content="|${@siteContext.site.name} ${selectedCategory.name}|">
   <meta property="og:description" content="페이지 설명"
-        th:content="|${SITE_CONTEXT.name} ${selectedCategory.name} ${selectedCategory.description != null ? selectedCategory.description : ''}|">
-  <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${SITE_CONTEXT.profileImage != null}"
-        th:content="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/api/attachments/' + SITE_CONTEXT.profileImage.id).replaceQuery(null).toUriString()}">
+        th:content="|${@siteContext.site.name} ${selectedCategory.name} ${selectedCategory.description != null ? selectedCategory.description : ''}|">
+  <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${@siteContext.site.profileImage != null}"
+        th:content="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/api/attachments/' + @siteContext.site.profileImage.id).replaceQuery(null).toUriString()}">
   <meta property="og:url" content="페이지 주소" th:content="${REQUEST_URI_BUILDER.cloneBuilder().toUriString()}">
 
   <meta property="twitter:card" content="summary">
-  <meta property="twitter:title" content="페이지 제목" th:content="|${SITE_CONTEXT.name}  ${selectedCategory.name}|">
+  <meta property="twitter:title" content="페이지 제목" th:content="|${@siteContext.site.name}  ${selectedCategory.name}|">
   <meta property="twitter:description" content="페이지 설명"
-        th:content="|${SITE_CONTEXT.name} ${selectedCategory.name} ${selectedCategory.description != null ? selectedCategory.description : ''}|">
-  <meta property="twitter:image" content="페이지 썸네일 이미지 주소" th:if="${SITE_CONTEXT.profileImage != null}"
-        th:content="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/api/attachments/' + SITE_CONTEXT.profileImage.id).replaceQuery(null).toUriString()}">
+        th:content="|${@siteContext.site.name} ${selectedCategory.name} ${selectedCategory.description != null ? selectedCategory.description : ''}|">
+  <meta property="twitter:image" content="페이지 썸네일 이미지 주소" th:if="${@siteContext.site.profileImage != null}"
+        th:content="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/api/attachments/' + @siteContext.site.profileImage.id).replaceQuery(null).toUriString()}">
 
-  <title>[[${selectedCategory.name}]] | [[${SITE_CONTEXT.name}]]</title>
+  <title>[[${selectedCategory.name}]] | [[${@siteContext.site.name}]]</title>
   <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
   <script th:inline="javascript">
     document.addEventListener('DOMContentLoaded', e => {

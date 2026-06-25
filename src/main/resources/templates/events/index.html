@@ -7,7 +7,7 @@
       xmlns:th="http://www.thymeleaf.org"
 >
 <head>
-  <title>[[${selectedCategory.name}]] | [[${SITE_CONTEXT.name}]]</title>
+  <title>[[${selectedCategory.name}]] | [[${@siteContext.site.name}]]</title>
   <link href="/static/styles/content.css" rel="stylesheet" th:href="@{/styles/content.css}">
 
   <!--/* Editor */-->
