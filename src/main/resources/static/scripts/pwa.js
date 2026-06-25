@@ -23,13 +23,16 @@
 
 document.addEventListener('DOMContentLoaded', async () => {
   const themeColorMeta = /** @type {HTMLMetaElement} */ (document.querySelector('meta[name="theme-color"]'));
+  const authenticatedMeta = /** @type {HTMLMetaElement} */ (document.querySelector('meta[name="seesaw-authenticated"]'));
   const siteIdMeta = /** @type {HTMLMetaElement} */ (document.querySelector('meta[name="seesaw-site-id"]'));
 
   const currentNavigator = /** @type {Navigator & { standalone?: boolean }} */ (window.navigator);
 
   const themeColor = themeColorMeta.content || '#000000';
+  const isAuthenticated = authenticatedMeta.content === 'true';
   const siteId = siteIdMeta.content;
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || currentNavigator.standalone === true;
+  const installPromptDismissedKey = `seesaw:${siteId}:install-prompt-dismissed`;
 
   /** @type {BeforeInstallPromptEvent | null} */
   let deferredPrompt = null;
@@ -111,9 +114,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   /**
    * @param {ServiceWorkerRegistration} registration
-   * @returns {Promise<PushSubscription>}
+   * @returns {Promise<PushSubscription | null>}
    */
   const subscribePushNotification = async registration => {
+    if (!isAuthenticated) {
+      return null;
+    }
+
     if (!('Notification' in window) || !('PushManager' in window) || !('serviceWorker' in navigator)) {
       throw new Error('이 브라우저는 Web Push를 지원하지 않습니다.');
     }
@@ -190,8 +197,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('pwa-install-prompt')?.remove();
   };
 
+  const dismissInstallPrompt = () => {
+    localStorage.setItem(installPromptDismissedKey, 'true');
+    removeInstallPrompt();
+  };
+
+  const isInstallPromptDismissed = () => localStorage.getItem(installPromptDismissedKey) === 'true';
+
   const createInstallPrompt = () => {
-    if (document.getElementById('pwa-install-prompt')) {
+    if (isInstallPromptDismissed() || document.getElementById('pwa-install-prompt')) {
       return;
     }
 
@@ -228,7 +242,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     closeButton.addEventListener('click', () => {
       deferredPrompt = null;
-      removeInstallPrompt();
+      dismissInstallPrompt();
     });
 
     actions.append(installButton, closeButton);
@@ -239,7 +253,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   window.addEventListener('beforeinstallprompt', event => {
     event.preventDefault();
     deferredPrompt = /** @type {BeforeInstallPromptEvent} */ (event);
-    if (isStandalone) {
+    if (isStandalone || isInstallPromptDismissed()) {
       return;
     }
     createInstallPrompt();
@@ -247,12 +261,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   window.addEventListener('appinstalled', () => {
     deferredPrompt = null;
+    localStorage.removeItem(installPromptDismissedKey);
     removeInstallPrompt();
   });
 
   try {
     const registration = await registerServiceWorker();
-    if (registration && 'Notification' in window && Notification.permission !== 'denied') {
+    if (isAuthenticated && registration && 'Notification' in window && Notification.permission !== 'denied') {
       await subscribePushNotification(registration);
     }
   } catch (error) {

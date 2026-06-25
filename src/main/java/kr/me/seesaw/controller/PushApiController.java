@@ -1,6 +1,5 @@
 package kr.me.seesaw.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import kr.me.seesaw.command.CreateWebPushSubscriptionCommand;
 import kr.me.seesaw.command.DeleteWebPushSubscriptionCommand;
@@ -11,12 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -39,9 +33,9 @@ public class PushApiController {
     @PostMapping("/subscriptions")
     public ResponseEntity<WebPushSubscriptionModel> subscribe(
             @Valid @RequestBody CreateWebPushSubscriptionCommand command,
-            HttpServletRequest request
+            @RequestHeader(HttpHeaders.USER_AGENT) String userAgent
     ) {
-        WebPushSubscriptionModel subscription = webPushSubscriptionService.subscribe(command, request.getHeader(HttpHeaders.USER_AGENT));
+        WebPushSubscriptionModel subscription = webPushSubscriptionService.subscribe(command, userAgent);
         return ResponseEntity.ok(subscription);
     }
 
