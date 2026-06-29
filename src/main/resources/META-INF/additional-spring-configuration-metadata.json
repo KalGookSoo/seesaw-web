@@ -65,6 +65,63 @@
       "defaultValue": 5000
     },
     {
+      "name": "spring.security.oauth2.client.registration.naver.client-id",
+      "type": "java.lang.String",
+      "description": "네이버 OAuth2.0 애플리케이션의 Client ID입니다."
+    },
+    {
+      "name": "spring.security.oauth2.client.registration.naver.client-secret",
+      "type": "java.lang.String",
+      "description": "네이버 OAuth2.0 애플리케이션의 Client Secret입니다. 공개 저장소에 실제 값을 커밋하지 않습니다."
+    },
+    {
+      "name": "spring.security.oauth2.client.registration.naver.redirect-uri",
+      "type": "java.lang.String",
+      "description": "네이버 OAuth2.0 인증 완료 후 인가 코드를 받을 Redirect URI입니다."
+    },
+    {
+      "name": "spring.security.oauth2.client.registration.naver.authorization-grant-type",
+      "type": "java.lang.String",
+      "description": "네이버 OAuth2.0 인증 방식입니다.",
+      "defaultValue": "authorization_code"
+    },
+    {
+      "name": "spring.security.oauth2.client.registration.naver.scope",
+      "type": "java.lang.String",
+      "description": "네이버 OAuth2.0 요청 scope입니다. 캘린더 API 사용 시 네이버 개발자센터에서 필요한 권한 동의 항목을 확인해야 합니다.",
+      "defaultValue": "profile,email"
+    },
+    {
+      "name": "spring.security.oauth2.client.registration.naver.client-name",
+      "type": "java.lang.String",
+      "description": "Spring Security OAuth2 클라이언트 표시 이름입니다.",
+      "defaultValue": "Naver"
+    },
+    {
+      "name": "spring.security.oauth2.client.provider.naver.authorization-uri",
+      "type": "java.lang.String",
+      "description": "네이버 OAuth2.0 인가 엔드포인트 URI입니다.",
+      "defaultValue": "https://nid.naver.com/oauth2.0/authorize"
+    },
+    {
+      "name": "spring.security.oauth2.client.provider.naver.token-uri",
+      "type": "java.lang.String",
+      "description": "네이버 OAuth2.0 토큰 엔드포인트 URI입니다.",
+      "defaultValue": "https://nid.naver.com/oauth2.0/token"
+    },
+    {
+      "name": "spring.security.oauth2.client.provider.naver.user-info-uri",
+      "type": "java.lang.String",
+      "description": "네이버 로그인 사용자 정보 조회 엔드포인트 URI입니다.",
+      "defaultValue": "https://openapi.naver.com/v1/nid/me"
+    },
+    {
+      "name": "spring.security.oauth2.client.provider.naver.user-name-attribute",
+      "type": "java.lang.String",
+      "description": "네이버 사용자 정보 응답에서 principal name으로 사용할 attribute입니다.",
+      "defaultValue": "response"
+    },
+    {
       "name": "kr.me.seesaw.web-push.vapid.public-key",
       "type": "java.lang.String",
       "description": "Web Push 구독 생성 시 클라이언트에 전달할 VAPID 공개 키입니다."
@@ -140,6 +197,33 @@
         {
           "value": "EUC-KR",
           "description": "한글 인코딩"
+        }
+      ]
+    },
+    {
+      "name": "spring.security.oauth2.client.registration.naver.authorization-grant-type",
+      "values": [
+        {
+          "value": "authorization_code",
+          "description": "네이버 로그인 OAuth2.0 인가 코드 방식"
+        }
+      ]
+    },
+    {
+      "name": "spring.security.oauth2.client.registration.naver.client-name",
+      "values": [
+        {
+          "value": "Naver",
+          "description": "네이버 OAuth2 클라이언트 표시 이름"
+        }
+      ]
+    },
+    {
+      "name": "spring.security.oauth2.client.provider.naver.user-name-attribute",
+      "values": [
+        {
+          "value": "response",
+          "description": "네이버 사용자 정보 응답의 최상위 response 객체"
         }
       ]
     },
