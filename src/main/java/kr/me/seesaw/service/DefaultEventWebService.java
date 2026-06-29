@@ -2,21 +2,23 @@ package kr.me.seesaw.service;
 
 import kr.me.seesaw.command.CreateArticleCommand;
 import kr.me.seesaw.command.UpdateArticleCommand;
-import kr.me.seesaw.core.authentication.PrincipalProvider;
 import kr.me.seesaw.domain.Article;
-import kr.me.seesaw.domain.Category;
 import kr.me.seesaw.domain.VEvent;
 import kr.me.seesaw.domain.vo.ArticleType;
 import kr.me.seesaw.dto.command.CreateEventCommand;
 import kr.me.seesaw.dto.command.UpdateEventCommand;
 import kr.me.seesaw.dto.model.VEventModel;
 import kr.me.seesaw.dto.query.EventQuery;
+import kr.me.seesaw.event.VEventCreatedEvent;
+import kr.me.seesaw.event.VEventDeletedEvent;
+import kr.me.seesaw.event.VEventUpdatedEvent;
 import kr.me.seesaw.model.ArticleModel;
 import kr.me.seesaw.repository.ArticleRepository;
 import kr.me.seesaw.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +40,8 @@ public class DefaultEventWebService implements EventWebService {
     private final ArticleService articleService;
 
     private final ArticleRepository articleRepository;
+
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional(readOnly = true)
@@ -94,6 +98,7 @@ public class DefaultEventWebService implements EventWebService {
         event.setDtStamp(Instant.now());
 
         eventRepository.save(event);
+        eventPublisher.publishEvent(new VEventCreatedEvent(event.getId()));
 
         VEventModel model = new VEventModel(event);
         model.setArticle(articleModel);
@@ -134,9 +139,10 @@ public class DefaultEventWebService implements EventWebService {
         }
         event.setDtStamp(Instant.now());
 
-        eventRepository.save(event);
+        VEvent updatedEvent = eventRepository.update(event);
+        eventPublisher.publishEvent(new VEventUpdatedEvent(updatedEvent.getId()));
 
-        VEventModel model = new VEventModel(event);
+        VEventModel model = new VEventModel(updatedEvent);
         model.setArticle(articleModel);
         model.setDescription(articleModel.getContent());
         return model;
@@ -147,8 +153,10 @@ public class DefaultEventWebService implements EventWebService {
     public void delete(String id) {
         logger.info("이벤트 삭제: id={}", id);
         VEvent event = eventRepository.getReferenceById(id);
+        String uid = event.getUid();
         eventRepository.delete(event);
         articleService.delete(event.getArticleId());
+        eventPublisher.publishEvent(new VEventDeletedEvent(uid));
     }
 
 }
