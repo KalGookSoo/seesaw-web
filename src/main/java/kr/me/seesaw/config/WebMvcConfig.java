@@ -3,12 +3,11 @@ package kr.me.seesaw.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import kr.me.seesaw.interceptor.GlobalModelInterceptor;
 import kr.me.seesaw.context.SiteContext;
+import kr.me.seesaw.interceptor.GlobalModelInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -25,8 +24,6 @@ import java.util.Locale;
 @RequiredArgsConstructor
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
-
-    private final Environment environment;
 
     private final SiteContext siteContext;
 
@@ -52,7 +49,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Bean
     public GlobalModelInterceptor globalModelInterceptor() {
-        return new GlobalModelInterceptor(environment, siteContext);
+        return new GlobalModelInterceptor(siteContext);
     }
 
     @Override
