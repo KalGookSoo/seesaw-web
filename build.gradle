@@ -1,5 +1,6 @@
 dependencies {
     api project(':seesaw-core:calendar')
+가    implementation 'nl.martijndwars:web-push:5.1.1'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
     implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.3.0'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
