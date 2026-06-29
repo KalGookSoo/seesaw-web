@@ -40,6 +40,8 @@ public class AdminNotificationService implements NotificationService {
 
     private final MailService mailService;
 
+    private final WebPushNotificationService webPushNotificationService;
+
     @Override
     public void sendOnArticleCreated(String categoryId, String articleId, String title, String content) {
         Category category = categoryRepository.findById(categoryId)
@@ -121,6 +123,7 @@ public class AdminNotificationService implements NotificationService {
                 .toArray(String[]::new);
 
         mailService.send(properties.getUsername(), emails, "[알림] 게시글이 생성되었습니다.", "mail/reply_created", values);
+        webPushNotificationService.sendOnReplyCreated(article, replyId, content, articleUrl);
         logPreviewUrl("/mail/preview/reply-created", values);
     }
 
