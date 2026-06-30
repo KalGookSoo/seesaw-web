@@ -130,6 +130,10 @@ info:
     version: ${spring.application.version}
     profiles: ${spring.profiles.active:default}
 
+jwt:
+  secret:
+    key: YOUR_JWT_SECRET_KEY_MUST_BE_AT_LEAST_32_BYTES
+
 # Logging
 logging:
   level:

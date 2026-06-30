@@ -1,12 +1,20 @@
-package kr.me.seesaw.config;
+package kr.me.seesaw.web.framework.config;
 
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
-import kr.me.seesaw.domain.*;
-import kr.me.seesaw.domain.vo.ArticleType;
-import kr.me.seesaw.domain.vo.CategoryType;
-import kr.me.seesaw.domain.vo.Email;
-import kr.me.seesaw.domain.vo.RoleName;
+import kr.me.seesaw.core.domain.article.Article;
+import kr.me.seesaw.core.domain.category.Category;
+import kr.me.seesaw.core.domain.mapping.RoleMapping;
+import kr.me.seesaw.core.domain.reply.Reply;
+import kr.me.seesaw.core.domain.role.Role;
+import kr.me.seesaw.core.domain.site.Site;
+import kr.me.seesaw.core.domain.user.User;
+import kr.me.seesaw.core.domain.view.View;
+import kr.me.seesaw.core.domain.article.ArticleType;
+import kr.me.seesaw.core.domain.category.CategoryType;
+import kr.me.seesaw.core.domain.user.Email;
+import kr.me.seesaw.core.domain.role.RoleName;
+import kr.me.seesaw.core.domain.vote.Vote;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;

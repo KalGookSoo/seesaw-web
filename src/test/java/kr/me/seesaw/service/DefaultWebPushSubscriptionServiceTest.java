@@ -1,13 +1,13 @@
-package kr.me.seesaw.service;
+package kr.me.seesaw.web.domain.service;
 
-import kr.me.seesaw.request.CreateWebPushSubscriptionRequest;
-import kr.me.seesaw.request.DeleteWebPushSubscriptionRequest;
-import kr.me.seesaw.config.TestDataInitializerConfig;
-import kr.me.seesaw.domain.Site;
-import kr.me.seesaw.domain.WebPushSubscription;
-import kr.me.seesaw.response.WebPushSubscriptionResponse;
-import kr.me.seesaw.repository.SiteRepository;
-import kr.me.seesaw.repository.WebPushSubscriptionRepository;
+import kr.me.seesaw.api.dto.request.CreateWebPushSubscriptionRequest;
+import kr.me.seesaw.api.dto.request.DeleteWebPushSubscriptionRequest;
+import kr.me.seesaw.web.framework.config.TestDataInitializerConfig;
+import kr.me.seesaw.core.domain.site.Site;
+import kr.me.seesaw.core.domain.notification.WebPushSubscription;
+import kr.me.seesaw.api.dto.response.WebPushSubscriptionResponse;
+import kr.me.seesaw.core.domain.site.SiteRepository;
+import kr.me.seesaw.core.domain.notification.WebPushSubscriptionRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

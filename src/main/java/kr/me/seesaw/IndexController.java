@@ -1,14 +1,14 @@
 package kr.me.seesaw;
 
-import kr.me.seesaw.context.SiteContext;
-import kr.me.seesaw.domain.vo.CategoryType;
-import kr.me.seesaw.domain.vo.EventStatus;
-import kr.me.seesaw.dto.response.VEventResponse;
-import kr.me.seesaw.dto.request.SearchEventsRequest;
-import kr.me.seesaw.response.ArticleResponse;
-import kr.me.seesaw.response.CategoryResponse;
-import kr.me.seesaw.service.ArticleService;
-import kr.me.seesaw.service.EventWebService;
+import kr.me.seesaw.api.domain.context.SiteContext;
+import kr.me.seesaw.core.domain.category.CategoryType;
+import kr.me.seesaw.core.domain.event.EventStatus;
+import kr.me.seesaw.api.dto.response.VEventResponse;
+import kr.me.seesaw.api.dto.request.SearchEventsRequest;
+import kr.me.seesaw.api.dto.response.ArticleResponse;
+import kr.me.seesaw.api.dto.response.CategoryResponse;
+import kr.me.seesaw.api.domain.service.ArticleService;
+import kr.me.seesaw.api.domain.service.EventWebService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

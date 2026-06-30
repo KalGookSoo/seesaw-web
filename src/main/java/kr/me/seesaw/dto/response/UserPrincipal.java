@@ -1,9 +1,9 @@
 package kr.me.seesaw.dto.response;
 
-import kr.me.seesaw.domain.User;
-import kr.me.seesaw.domain.vo.RoleName;
-import kr.me.seesaw.response.RoleResponse;
-import kr.me.seesaw.response.UserResponse;
+import kr.me.seesaw.api.dto.response.RoleResponse;
+import kr.me.seesaw.api.dto.response.UserResponse;
+import kr.me.seesaw.core.domain.user.User;
+import kr.me.seesaw.core.domain.role.RoleName;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

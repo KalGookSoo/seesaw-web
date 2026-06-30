@@ -2,8 +2,8 @@ package kr.me.seesaw.interceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kr.me.seesaw.context.SiteContext;
-import kr.me.seesaw.response.CategoryResponse;
+import kr.me.seesaw.api.domain.context.SiteContext;
+import kr.me.seesaw.api.dto.response.CategoryResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
