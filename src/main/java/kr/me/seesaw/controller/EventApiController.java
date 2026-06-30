@@ -5,7 +5,7 @@ import kr.me.seesaw.core.validation.ValidationError;
 import kr.me.seesaw.dto.command.CreateEventCommand;
 import kr.me.seesaw.dto.command.UpdateEventCommand;
 import kr.me.seesaw.dto.model.VEventModel;
-import kr.me.seesaw.dto.query.EventQuery;
+import kr.me.seesaw.dto.request.SearchEventsRequest;
 import kr.me.seesaw.service.EventWebService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,8 +26,8 @@ public class EventApiController {
     private final EventWebService eventWebService;
 
     @GetMapping
-    public ResponseEntity<List<VEventModel>> findAll(EventQuery eventQuery) {
-        return ResponseEntity.ok(eventWebService.findAll(eventQuery));
+    public ResponseEntity<List<VEventModel>> findAll(SearchEventsRequest request) {
+        return ResponseEntity.ok(eventWebService.findAll(request));
     }
 
     @GetMapping("/{id}")

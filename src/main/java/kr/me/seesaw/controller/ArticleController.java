@@ -2,7 +2,7 @@ package kr.me.seesaw.controller;
 
 import kr.me.seesaw.context.ArticleContext;
 import kr.me.seesaw.context.CategoryContext;
-import kr.me.seesaw.dto.query.EventQuery;
+import kr.me.seesaw.dto.request.SearchEventsRequest;
 import kr.me.seesaw.model.ArticleModel;
 import kr.me.seesaw.model.CategoryModel;
 import kr.me.seesaw.search.ArticleSearch;
@@ -69,10 +69,10 @@ public class ArticleController {
 
     @GetMapping(params = "categoryType=SCHEDULE")
     public String getArticlesInCalendarView(
-            @ModelAttribute("search") EventQuery search,
+            @ModelAttribute("search") SearchEventsRequest request,
             Model model
     ) {
-        model.addAttribute("selectedCategory", categoryContext.getCategory(search.getCategoryId()));
+        model.addAttribute("selectedCategory", categoryContext.getCategory(request.categoryId()));
         return "events/index";
     }
 

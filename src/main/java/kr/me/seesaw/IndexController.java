@@ -4,7 +4,7 @@ import kr.me.seesaw.context.SiteContext;
 import kr.me.seesaw.domain.vo.CategoryType;
 import kr.me.seesaw.domain.vo.EventStatus;
 import kr.me.seesaw.dto.model.VEventModel;
-import kr.me.seesaw.dto.query.EventQuery;
+import kr.me.seesaw.dto.request.SearchEventsRequest;
 import kr.me.seesaw.model.ArticleModel;
 import kr.me.seesaw.model.CategoryModel;
 import kr.me.seesaw.service.ArticleService;
@@ -96,11 +96,12 @@ public class IndexController {
         Map<String, List<VEventModel>> siteExposedScheduleEvents = siteExposedScheduleCategoryIds.stream()
                 .collect(Collectors.toMap(Function.identity(),
                         id -> {
-                            EventQuery query = new EventQuery();
-                            query.setCategoryId(id);
-                            query.setStart(startOfMonth);
-                            query.setEnd(endOfMonth);
-                            return eventWebService.findAll(query);
+                            final SearchEventsRequest request = SearchEventsRequest.builder()
+                                    .categoryId(id)
+                                    .start(startOfMonth)
+                                    .end(endOfMonth)
+                                    .build();
+                            return eventWebService.findAll(request);
                         },
                         (oldValue, newValue) -> oldValue,
                         LinkedHashMap::new

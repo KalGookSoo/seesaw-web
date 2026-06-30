@@ -8,7 +8,7 @@ import kr.me.seesaw.domain.vo.ArticleType;
 import kr.me.seesaw.dto.command.CreateEventCommand;
 import kr.me.seesaw.dto.command.UpdateEventCommand;
 import kr.me.seesaw.dto.model.VEventModel;
-import kr.me.seesaw.dto.query.EventQuery;
+import kr.me.seesaw.dto.request.SearchEventsRequest;
 import kr.me.seesaw.model.ArticleModel;
 import kr.me.seesaw.repository.ArticleRepository;
 import kr.me.seesaw.repository.EventRepository;
@@ -39,9 +39,9 @@ public class DefaultEventWebService implements EventWebService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<VEventModel> findAll(EventQuery search) {
-        logger.debug("이벤트 목록 조회: search={}", search);
-        return eventRepository.findAll(search).stream()
+    public List<VEventModel> findAll(SearchEventsRequest request) {
+        logger.debug("이벤트 목록 조회: request={}", request);
+        return eventRepository.findAll(request.categoryId(), request.start(), request.end(), request.query()).stream()
                 .map(VEventModel::new)
                 .collect(Collectors.toList());
     }

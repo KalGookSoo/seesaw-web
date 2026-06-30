@@ -3,14 +3,14 @@ package kr.me.seesaw.service;
 import kr.me.seesaw.dto.command.CreateEventCommand;
 import kr.me.seesaw.dto.command.UpdateEventCommand;
 import kr.me.seesaw.dto.model.VEventModel;
-import kr.me.seesaw.dto.query.EventQuery;
+import kr.me.seesaw.dto.request.SearchEventsRequest;
 
 import java.io.IOException;
 import java.util.List;
 
 public interface EventWebService {
 
-    List<VEventModel> findAll(EventQuery search);
+    List<VEventModel> findAll(SearchEventsRequest request);
 
     VEventModel find(String id);
 
