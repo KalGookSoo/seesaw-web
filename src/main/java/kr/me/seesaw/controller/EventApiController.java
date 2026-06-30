@@ -2,9 +2,9 @@ package kr.me.seesaw.controller;
 
 import jakarta.validation.Valid;
 import kr.me.seesaw.core.validation.ValidationError;
-import kr.me.seesaw.dto.command.CreateEventCommand;
-import kr.me.seesaw.dto.command.UpdateEventCommand;
-import kr.me.seesaw.dto.model.VEventModel;
+import kr.me.seesaw.dto.request.CreateEventRequest;
+import kr.me.seesaw.dto.request.UpdateEventRequest;
+import kr.me.seesaw.dto.response.VEventResponse;
 import kr.me.seesaw.dto.request.SearchEventsRequest;
 import kr.me.seesaw.service.EventWebService;
 import lombok.RequiredArgsConstructor;
@@ -26,26 +26,26 @@ public class EventApiController {
     private final EventWebService eventWebService;
 
     @GetMapping
-    public ResponseEntity<List<VEventModel>> findAll(SearchEventsRequest request) {
+    public ResponseEntity<List<VEventResponse>> findAll(SearchEventsRequest request) {
         return ResponseEntity.ok(eventWebService.findAll(request));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<VEventModel> find(@PathVariable String id) {
+    public ResponseEntity<VEventResponse> find(@PathVariable String id) {
         return ResponseEntity.ok(eventWebService.find(id));
     }
 
     @PreAuthorize("isAuthenticated() and (hasAnyRole('ADMIN', 'MANAGER') or @categoryPermissionEvaluator.hasPermission(#command.categoryId, T(org.springframework.security.acls.domain.BasePermission).CREATE))")
     @PostMapping
-    public ResponseEntity<VEventModel> create(@Valid CreateEventCommand command) throws IOException {
+    public ResponseEntity<VEventResponse> create(@Valid CreateEventRequest command) throws IOException {
         return ResponseEntity.ok(eventWebService.create(command));
     }
 
     @PreAuthorize("isAuthenticated()")
     @PutMapping("/{id}")
-    public ResponseEntity<VEventModel> update(
+    public ResponseEntity<VEventResponse> update(
             @PathVariable String id,
-            @Valid UpdateEventCommand command
+            @Valid UpdateEventRequest command
     ) throws IOException {
         return ResponseEntity.ok(eventWebService.update(id, command));
     }

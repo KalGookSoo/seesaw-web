@@ -6,9 +6,9 @@ import kr.me.seesaw.domain.Site;
 import kr.me.seesaw.domain.User;
 import kr.me.seesaw.domain.vo.Email;
 import kr.me.seesaw.domain.vo.RoleName;
-import kr.me.seesaw.dto.model.UserPrincipal;
-import kr.me.seesaw.model.RoleModel;
-import kr.me.seesaw.model.UserModel;
+import kr.me.seesaw.dto.response.UserPrincipal;
+import kr.me.seesaw.response.RoleResponse;
+import kr.me.seesaw.response.UserResponse;
 import kr.me.seesaw.oauth2.provider.NaverUserDetail;
 import kr.me.seesaw.oauth2.provider.OAuth2UserDetail;
 import kr.me.seesaw.repository.RoleRepository;
@@ -86,9 +86,9 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                     }
 
                     // 모델 변환 및 권한 주입
-                    UserModel userModel = new UserModel(user);
+                    UserResponse userModel = new UserResponse(user);
                     roles.stream()
-                            .map(RoleModel::new)
+                            .map(RoleResponse::new)
                             .forEach(userModel::addRole);
                     return new UserPrincipal(userModel, oAuth2User.getAttributes());
                 })
@@ -111,8 +111,8 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                     userRepository.save(user);
 
                     // 모델 변환 및 권한 주입
-                    UserModel userModel = new UserModel(user);
-                    userModel.addRole(new RoleModel(role));
+                    UserResponse userModel = new UserResponse(user);
+                    userModel.addRole(new RoleResponse(role));
                     return new UserPrincipal(userModel, oAuth2User.getAttributes());
                 });
     }

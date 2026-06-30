@@ -1,7 +1,7 @@
 package kr.me.seesaw.controller;
 
 import kr.me.seesaw.core.file.FileManager;
-import kr.me.seesaw.model.AttachmentModel;
+import kr.me.seesaw.response.AttachmentResponse;
 import kr.me.seesaw.service.AttachmentQueryService;
 import kr.me.seesaw.service.AttachmentService;
 import lombok.RequiredArgsConstructor;
@@ -29,14 +29,14 @@ public class AttachmentApiController {
     private final FileManager fileManager;
 
     @GetMapping
-    public ResponseEntity<Map<String, List<AttachmentModel>>> getAttachments(@RequestParam("referenceId") String referenceId) {
-        List<AttachmentModel> attachments = attachmentQueryService.getAttachments(referenceId);
+    public ResponseEntity<Map<String, List<AttachmentResponse>>> getAttachments(@RequestParam("referenceId") String referenceId) {
+        List<AttachmentResponse> attachments = attachmentQueryService.getAttachments(referenceId);
         return ResponseEntity.ok(Map.of("attachments", attachments));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Resource> getAttachment(@PathVariable("id") String id) throws IOException {
-        AttachmentModel attachment = attachmentService.getAttachmentById(id);
+        AttachmentResponse attachment = attachmentService.getAttachmentById(id);
         ByteArrayInputStream stream = fileManager.read(attachmentService.getAbsolutePath(attachment.getPathName(), attachment.getName()));
         InputStreamResource resource = new InputStreamResource(stream);
         String fileName = attachment.getOriginalName();

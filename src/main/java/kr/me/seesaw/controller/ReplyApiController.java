@@ -1,10 +1,10 @@
 package kr.me.seesaw.controller;
 
 import jakarta.validation.Valid;
-import kr.me.seesaw.command.CreateReplyCommand;
-import kr.me.seesaw.command.UpdateReplyCommand;
+import kr.me.seesaw.request.CreateReplyRequest;
+import kr.me.seesaw.request.UpdateReplyRequest;
 import kr.me.seesaw.message.CmsMessageSource;
-import kr.me.seesaw.model.ReplyModel;
+import kr.me.seesaw.response.ReplyResponse;
 import kr.me.seesaw.service.ArticleQueryService;
 import kr.me.seesaw.service.ReplyService;
 import lombok.RequiredArgsConstructor;
@@ -29,14 +29,14 @@ public class ReplyApiController {
     private final ReplyService replyService;
 
     @GetMapping
-    public ResponseEntity<Map<String, List<ReplyModel>>> getRepliesByArticleId(@RequestParam("articleId") String articleId) {
-        List<ReplyModel> replies = articleQueryService.getReplies(articleId);
+    public ResponseEntity<Map<String, List<ReplyResponse>>> getRepliesByArticleId(@RequestParam("articleId") String articleId) {
+        List<ReplyResponse> replies = articleQueryService.getReplies(articleId);
         return ResponseEntity.ok(Map.of("replies", replies));
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping(produces = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> create(@Valid CreateReplyCommand command) throws IOException {
+    public ResponseEntity<String> create(@Valid CreateReplyRequest command) throws IOException {
         replyService.create(command);
         String message = messageSource.getMessage("command.success.create");
         return ResponseEntity.ok(message);
@@ -44,7 +44,7 @@ public class ReplyApiController {
 
     @PreAuthorize("@replyPermissionService.isOwner(#id)")
     @PostMapping(value = "/{id}", produces = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> update(@PathVariable("id") String id, @Valid UpdateReplyCommand command) throws IOException {
+    public ResponseEntity<String> update(@PathVariable("id") String id, @Valid UpdateReplyRequest command) throws IOException {
         replyService.update(id, command);
         String message = messageSource.getMessage("command.success.update");
         return ResponseEntity.ok(message);

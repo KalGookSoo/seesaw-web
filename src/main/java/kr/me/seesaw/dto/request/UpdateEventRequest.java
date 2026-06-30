@@ -1,4 +1,4 @@
-package kr.me.seesaw.dto.command;
+package kr.me.seesaw.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.AssertTrue;
@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@Schema(name = "UpdateEventCommand", description = "일정 수정 커맨드")
-public class UpdateEventCommand {
+@Schema(name = "UpdateEventRequest", description = "일정 수정 커맨드")
+public class UpdateEventRequest {
 
     private static final long MAX_FILE_SIZE = 50L * 1024L * 1024L;
 

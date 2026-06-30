@@ -1,12 +1,12 @@
 package kr.me.seesaw.controller;
 
 import jakarta.validation.Valid;
-import kr.me.seesaw.command.CreateArticleCommand;
-import kr.me.seesaw.command.MoveArticleCommand;
-import kr.me.seesaw.command.UpdateArticleCommand;
+import kr.me.seesaw.request.CreateArticleRequest;
+import kr.me.seesaw.request.MoveArticleRequest;
+import kr.me.seesaw.request.UpdateArticleRequest;
 import kr.me.seesaw.context.ArticlePermissionContext;
 import kr.me.seesaw.message.CmsMessageSource;
-import kr.me.seesaw.model.ArticleModel;
+import kr.me.seesaw.response.ArticleResponse;
 import kr.me.seesaw.service.ArticleQueryService;
 import kr.me.seesaw.service.ArticleService;
 import lombok.RequiredArgsConstructor;
@@ -33,14 +33,14 @@ public class ArticleApiController {
 
     @PreAuthorize("isAuthenticated() and (hasAnyRole('ADMIN', 'MANAGER') or @categoryPermissionEvaluator.hasPermission(#categoryId, T(org.springframework.security.acls.domain.BasePermission).READ))")
     @GetMapping("/{id}")
-    public ResponseEntity<Map<String, ArticleModel>> getArticle(@PathVariable("id") String id, @RequestParam("categoryId") String categoryId) {
-        ArticleModel article = articleQueryService.getArticleAggregation(id);
+    public ResponseEntity<Map<String, ArticleResponse>> getArticle(@PathVariable("id") String id, @RequestParam("categoryId") String categoryId) {
+        ArticleResponse article = articleQueryService.getArticleAggregation(id);
         return ResponseEntity.ok(Map.of("article", article));
     }
 
     @PreAuthorize("isAuthenticated() and (hasAnyRole('ADMIN', 'MANAGER') or @categoryPermissionEvaluator.hasPermission(#command.categoryId, T(org.springframework.security.acls.domain.BasePermission).CREATE))")
     @PostMapping
-    public ResponseEntity<String> create(@Valid CreateArticleCommand command) throws IOException {
+    public ResponseEntity<String> create(@Valid CreateArticleRequest command) throws IOException {
         articleService.create(command);
         String message = messageSource.getMessage("command.success.create");
         return ResponseEntity.ok(message);
@@ -48,7 +48,7 @@ public class ArticleApiController {
 
     @PreAuthorize("@articlePermissionContext.isOwner(#id, authentication.name)")
     @PostMapping("/{id}")
-    public ResponseEntity<String> update(@PathVariable("id") String id, @Valid UpdateArticleCommand command) throws IOException {
+    public ResponseEntity<String> update(@PathVariable("id") String id, @Valid UpdateArticleRequest command) throws IOException {
         articleService.update(id, command);
         String message = messageSource.getMessage("command.success.update");
         return ResponseEntity.ok(message);
@@ -72,7 +72,7 @@ public class ArticleApiController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @PutMapping("/{id}/move")
-    public ResponseEntity<String> move(@PathVariable String id, @Valid MoveArticleCommand command) {
+    public ResponseEntity<String> move(@PathVariable String id, @Valid MoveArticleRequest command) {
         articleService.move(id, command);
         String message = messageSource.getMessage("command.success.update");
         return ResponseEntity.ok(message);

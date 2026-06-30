@@ -1,29 +1,29 @@
-package kr.me.seesaw.dto.model;
+package kr.me.seesaw.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import kr.me.seesaw.domain.VEvent;
 import kr.me.seesaw.domain.vo.EventStatus;
 import kr.me.seesaw.domain.vo.RecurrenceRule;
-import kr.me.seesaw.model.ArticleModel;
-import kr.me.seesaw.model.BaseModel;
+import kr.me.seesaw.response.ArticleResponse;
+import kr.me.seesaw.response.BaseResponse;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Schema(name = "VEventModel", description = "일정 모델")
+@Schema(name = "VEventResponse", description = "일정 모델")
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public final class VEventModel extends BaseModel {
+public final class VEventResponse extends BaseResponse {
 
     @Schema(description = "게시글 식별자")
     private String articleId;
 
     @Schema(description = "연관 게시글 모델")
-    private ArticleModel article;
+    private ArticleResponse article;
 
     @Schema(description = "시작 일시")
     private LocalDateTime dtStart;
@@ -52,7 +52,7 @@ public final class VEventModel extends BaseModel {
     @Schema(description = "기간")
     private String duration;
 
-    public VEventModel(VEvent event) {
+    public VEventResponse(VEvent event) {
         setBaseModel(event);
         this.articleId = event.getArticleId();
         this.dtStart = event.getDtStart();
@@ -64,7 +64,7 @@ public final class VEventModel extends BaseModel {
         this.tzid = event.getTzid();
         this.duration = event.getDuration();
         if (event.getArticle() != null) {
-            this.article = new ArticleModel(event.getArticle());
+            this.article = new ArticleResponse(event.getArticle());
             this.description = this.article.getContent();
         }
     }

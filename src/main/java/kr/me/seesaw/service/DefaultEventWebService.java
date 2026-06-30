@@ -1,15 +1,15 @@
 package kr.me.seesaw.service;
 
-import kr.me.seesaw.command.CreateArticleCommand;
-import kr.me.seesaw.command.UpdateArticleCommand;
+import kr.me.seesaw.request.CreateArticleRequest;
+import kr.me.seesaw.request.UpdateArticleRequest;
 import kr.me.seesaw.domain.Article;
 import kr.me.seesaw.domain.VEvent;
 import kr.me.seesaw.domain.vo.ArticleType;
-import kr.me.seesaw.dto.command.CreateEventCommand;
-import kr.me.seesaw.dto.command.UpdateEventCommand;
-import kr.me.seesaw.dto.model.VEventModel;
+import kr.me.seesaw.dto.request.CreateEventRequest;
+import kr.me.seesaw.dto.request.UpdateEventRequest;
+import kr.me.seesaw.dto.response.VEventResponse;
 import kr.me.seesaw.dto.request.SearchEventsRequest;
-import kr.me.seesaw.model.ArticleModel;
+import kr.me.seesaw.response.ArticleResponse;
 import kr.me.seesaw.repository.ArticleRepository;
 import kr.me.seesaw.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,23 +39,23 @@ public class DefaultEventWebService implements EventWebService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<VEventModel> findAll(SearchEventsRequest request) {
+    public List<VEventResponse> findAll(SearchEventsRequest request) {
         logger.debug("이벤트 목록 조회: request={}", request);
         return eventRepository.findAll(request.categoryId(), request.start(), request.end(), request.query()).stream()
-                .map(VEventModel::new)
+                .map(VEventResponse::new)
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public VEventModel find(String id) {
+    public VEventResponse find(String id) {
         logger.debug("이벤트 상세 조회: id={}", id);
         VEvent event = eventRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Event not found with id: " + id));
-        VEventModel model = new VEventModel(event);
+        VEventResponse model = new VEventResponse(event);
 
-        // Article 상세 정보(첨부파일, 댓글 등)를 포함하기 위해 ArticleModel 상세 조회를 활용할 수 있음
-        ArticleModel articleAggregation = articleService.getArticleAggregation(event.getArticleId());
+        // Article 상세 정보(첨부파일, 댓글 등)를 포함하기 위해 ArticleResponse 상세 조회를 활용할 수 있음
+        ArticleResponse articleAggregation = articleService.getArticleAggregation(event.getArticleId());
         model.setArticle(articleAggregation);
 
         return model;
@@ -63,11 +63,11 @@ public class DefaultEventWebService implements EventWebService {
 
     @Override
     @Transactional
-    public VEventModel create(CreateEventCommand command) throws IOException {
+    public VEventResponse create(CreateEventRequest command) throws IOException {
         logger.info("이벤트 생성: command={}", command);
 
         // 1. Article 생성
-        CreateArticleCommand articleCommand = new CreateArticleCommand();
+        CreateArticleRequest articleCommand = new CreateArticleRequest();
         articleCommand.setCategoryId(command.getCategoryId());
         articleCommand.setTitle(command.getTitle());
         articleCommand.setContent(command.getContent());
@@ -77,7 +77,7 @@ public class DefaultEventWebService implements EventWebService {
         articleCommand.setMultipartFiles(command.getMultipartFiles());
         articleCommand.setInlineImages(command.getInlineImages());
 
-        ArticleModel articleModel = articleService.create(articleCommand);
+        ArticleResponse articleModel = articleService.create(articleCommand);
         Article article = articleRepository.getReferenceById(articleModel.getId());
 
         // 2. VEvent 생성 및 Article 연동
@@ -93,7 +93,7 @@ public class DefaultEventWebService implements EventWebService {
 
         eventRepository.save(event);
 
-        VEventModel model = new VEventModel(event);
+        VEventResponse model = new VEventResponse(event);
         model.setArticle(articleModel);
         model.setDescription(articleModel.getContent());
         return model;
@@ -101,13 +101,13 @@ public class DefaultEventWebService implements EventWebService {
 
     @Override
     @Transactional
-    public VEventModel update(String id, UpdateEventCommand command) throws IOException {
+    public VEventResponse update(String id, UpdateEventRequest command) throws IOException {
         logger.info("이벤트 수정: id={}, command={}", id, command);
         VEvent event = eventRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Event not found with id: " + id));
 
         // 1. Article 수정
-        UpdateArticleCommand articleCommand = new UpdateArticleCommand();
+        UpdateArticleRequest articleCommand = new UpdateArticleRequest();
         articleCommand.setCategoryId(command.getCategoryId() != null ? command.getCategoryId() : event.getArticle().getCategory().getId());
         articleCommand.setTitle(command.getTitle());
         articleCommand.setContent(command.getContent());
@@ -117,7 +117,7 @@ public class DefaultEventWebService implements EventWebService {
         articleCommand.setMultipartFiles(command.getMultipartFiles());
         articleCommand.setInlineImages(command.getInlineImages());
 
-        ArticleModel articleModel = articleService.update(event.getArticleId(), articleCommand);
+        ArticleResponse articleModel = articleService.update(event.getArticleId(), articleCommand);
 
         // 2. VEvent 수정
         event.setDtStart(command.getDtStart());
@@ -134,7 +134,7 @@ public class DefaultEventWebService implements EventWebService {
 
         VEvent updatedEvent = eventRepository.update(event);
 
-        VEventModel model = new VEventModel(updatedEvent);
+        VEventResponse model = new VEventResponse(updatedEvent);
         model.setArticle(articleModel);
         model.setDescription(articleModel.getContent());
         return model;

@@ -1,13 +1,13 @@
 package kr.me.seesaw.service;
 
-import kr.me.seesaw.command.CreateWebPushSubscriptionCommand;
-import kr.me.seesaw.command.DeleteWebPushSubscriptionCommand;
+import kr.me.seesaw.request.CreateWebPushSubscriptionRequest;
+import kr.me.seesaw.request.DeleteWebPushSubscriptionRequest;
 import kr.me.seesaw.core.authentication.PrincipalProvider;
 import kr.me.seesaw.domain.Site;
 import kr.me.seesaw.domain.User;
 import kr.me.seesaw.domain.WebPushSubscription;
-import kr.me.seesaw.dto.model.UserPrincipal;
-import kr.me.seesaw.model.WebPushSubscriptionModel;
+import kr.me.seesaw.dto.response.UserPrincipal;
+import kr.me.seesaw.response.WebPushSubscriptionResponse;
 import kr.me.seesaw.repository.SiteRepository;
 import kr.me.seesaw.repository.UserRepository;
 import kr.me.seesaw.repository.WebPushSubscriptionRepository;
@@ -35,7 +35,7 @@ public class DefaultWebPushSubscriptionService implements WebPushSubscriptionSer
     private final PrincipalProvider principalProvider;
 
     @Override
-    public WebPushSubscriptionModel subscribe(CreateWebPushSubscriptionCommand command, String userAgent) {
+    public WebPushSubscriptionResponse subscribe(CreateWebPushSubscriptionRequest command, String userAgent) {
         Authentication authentication = getAuthentication();
         String userId = getUserId(authentication);
         Site site = siteRepository.getReferenceById(command.getSiteId());
@@ -52,11 +52,11 @@ public class DefaultWebPushSubscriptionService implements WebPushSubscriptionSer
                 userAgent
         );
 
-        return new WebPushSubscriptionModel(webPushSubscriptionRepository.save(subscription));
+        return new WebPushSubscriptionResponse(webPushSubscriptionRepository.save(subscription));
     }
 
     @Override
-    public void unsubscribe(DeleteWebPushSubscriptionCommand command) {
+    public void unsubscribe(DeleteWebPushSubscriptionRequest command) {
         Authentication authentication = getAuthentication();
         webPushSubscriptionRepository.findBySiteIdAndUserUsernameAndEndpoint(
                         command.getSiteId(),
@@ -71,10 +71,10 @@ public class DefaultWebPushSubscriptionService implements WebPushSubscriptionSer
 
     @Transactional(readOnly = true)
     @Override
-    public List<WebPushSubscriptionModel> findAllEnabledBySiteId(String siteId) {
+    public List<WebPushSubscriptionResponse> findAllEnabledBySiteId(String siteId) {
         return webPushSubscriptionRepository.findAllBySiteIdAndEnabledTrue(siteId)
                 .stream()
-                .map(WebPushSubscriptionModel::new)
+                .map(WebPushSubscriptionResponse::new)
                 .toList();
     }
 
@@ -90,7 +90,7 @@ public class DefaultWebPushSubscriptionService implements WebPushSubscriptionSer
                 .filter(UserPrincipal.class::isInstance)
                 .map(UserPrincipal.class::cast)
                 .map(UserPrincipal::getUser)
-                .map(kr.me.seesaw.model.UserModel::getId);
+                .map(kr.me.seesaw.response.UserResponse::getId);
 
         return userId.or(() -> userRepository.findByUsername(authentication.getName()).map(User::getId))
                 .orElseThrow(() -> new AuthorizationDeniedException("계정 정보를 찾을 수 없습니다."));

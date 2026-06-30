@@ -1,8 +1,8 @@
 package kr.me.seesaw.service;
 
-import kr.me.seesaw.dto.command.CreateEventCommand;
-import kr.me.seesaw.dto.command.UpdateEventCommand;
-import kr.me.seesaw.dto.model.VEventModel;
+import kr.me.seesaw.dto.request.CreateEventRequest;
+import kr.me.seesaw.dto.request.UpdateEventRequest;
+import kr.me.seesaw.dto.response.VEventResponse;
 import kr.me.seesaw.dto.request.SearchEventsRequest;
 
 import java.io.IOException;
@@ -10,13 +10,13 @@ import java.util.List;
 
 public interface EventWebService {
 
-    List<VEventModel> findAll(SearchEventsRequest request);
+    List<VEventResponse> findAll(SearchEventsRequest request);
 
-    VEventModel find(String id);
+    VEventResponse find(String id);
 
-    VEventModel create(CreateEventCommand command) throws IOException;
+    VEventResponse create(CreateEventRequest command) throws IOException;
 
-    VEventModel update(String id, UpdateEventCommand command) throws IOException;
+    VEventResponse update(String id, UpdateEventRequest command) throws IOException;
 
     void delete(String id);
 

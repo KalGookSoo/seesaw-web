@@ -2,7 +2,7 @@ package kr.me.seesaw.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
 import kr.me.seesaw.core.file.FileManager;
-import kr.me.seesaw.model.AttachmentModel;
+import kr.me.seesaw.response.AttachmentResponse;
 import kr.me.seesaw.service.ArticleQueryService;
 import kr.me.seesaw.service.AttachmentService;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +42,7 @@ public class AttachmentController {
             @PathVariable("id") String id,
             HttpServletResponse response
     ) throws IOException {
-        AttachmentModel attachment = attachmentService.getAttachmentById(id);
+        AttachmentResponse attachment = attachmentService.getAttachmentById(id);
         String fileName = attachment.getOriginalName();
         ByteArrayInputStream inputStream = fileManager.read(attachmentService.getAbsolutePath(attachment.getPathName(), attachment.getName()));
 
@@ -61,9 +61,9 @@ public class AttachmentController {
             @RequestParam String articleId,
             HttpServletResponse response
     ) throws IOException {
-        List<AttachmentModel> attachments = articleQueryService.getAttachments(articleId)
+        List<AttachmentResponse> attachments = articleQueryService.getAttachments(articleId)
                 .stream()
-                .filter(AttachmentModel::isAttachment)
+                .filter(AttachmentResponse::isAttachment)
                 .toList();
         if (attachments.isEmpty()) {
             throw new NoSuchElementException();
@@ -82,7 +82,7 @@ public class AttachmentController {
                 .toString());
 
         try (ZipOutputStream outputStream = new ZipOutputStream(response.getOutputStream())) {
-            for (AttachmentModel attachment : attachments) {
+            for (AttachmentResponse attachment : attachments) {
                 ZipEntry entry = new ZipEntry(attachment.getOriginalName());
                 outputStream.putNextEntry(entry);
                 ByteArrayInputStream inputStream = fileManager.read(attachmentService.getAbsolutePath(attachment.getPathName(), attachment.getName()));

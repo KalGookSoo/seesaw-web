@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.me.seesaw.context.SiteContext;
 import kr.me.seesaw.domain.vo.SiteColor;
-import kr.me.seesaw.model.SiteModel;
+import kr.me.seesaw.response.SiteResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
@@ -33,7 +33,7 @@ public class PwaController {
 
     @GetMapping(value = "/manifest.webmanifest", produces = "application/manifest+json")
     public ResponseEntity<Map<String, Object>> getManifest() {
-        SiteModel site = siteContext.getSite();
+        SiteResponse site = siteContext.getSite();
         Map<String, Object> manifest = new LinkedHashMap<>();
         manifest.put("id", site.getId());
         manifest.put("name", site.getName());
@@ -71,7 +71,7 @@ public class PwaController {
 
     @GetMapping(value = "/sw.js", produces = "application/javascript")
     public ResponseEntity<String> getServiceWorker() {
-        SiteModel site = siteContext.getSite();
+        SiteResponse site = siteContext.getSite();
         String siteId = site.getId();
         String cacheName = "seesaw-" + siteId + "-v1";
         String serviceWorker = """
@@ -178,13 +178,13 @@ public class PwaController {
                 .body(serviceWorker);
     }
 
-    private String getThemeColor(SiteModel site) {
+    private String getThemeColor(SiteResponse site) {
         return site.getThemeColor() == null || site.getThemeColor().isBlank()
                 ? SiteColor.DEFAULT_THEME_COLOR
                 : site.getThemeColor();
     }
 
-    private String getBackgroundColor(SiteModel site) {
+    private String getBackgroundColor(SiteResponse site) {
         return site.getBackgroundColor() == null || site.getBackgroundColor().isBlank()
                 ? SiteColor.DEFAULT_BACKGROUND_COLOR
                 : site.getBackgroundColor();

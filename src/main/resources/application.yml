@@ -52,6 +52,7 @@ spring:
   # Lazy initialization
   main:
     lazy-initialization: true
+    allow-bean-definition-overriding: true
   
   # 정적 자원 경로
   web:

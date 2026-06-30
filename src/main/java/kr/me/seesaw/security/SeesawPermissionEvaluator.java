@@ -1,8 +1,8 @@
 package kr.me.seesaw.security;
 
 import kr.me.seesaw.domain.vo.RoleName;
-import kr.me.seesaw.model.PermissionModel;
-import kr.me.seesaw.model.RoleModel;
+import kr.me.seesaw.response.PermissionResponse;
+import kr.me.seesaw.response.RoleResponse;
 import kr.me.seesaw.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -55,10 +55,10 @@ public class SeesawPermissionEvaluator implements PermissionEvaluator {
 
             try {
                 // 역할 이름으로 역할 조회
-                RoleModel role = roleService.getRole(roleName);
+                RoleResponse role = roleService.getRole(roleName);
 
                 // 역할 ID로 권한 조회
-                List<PermissionModel> permissions = roleService.getPermissions(role.getId());
+                List<PermissionResponse> permissions = roleService.getPermissions(role.getId());
 
                 if (permissions.isEmpty()) {
                     logger.info("역할 {}에 대한 권한이 없습니다.", roleName);
@@ -66,7 +66,7 @@ public class SeesawPermissionEvaluator implements PermissionEvaluator {
                 }
 
                 // 각 권한에 대해 확인
-                for (PermissionModel permissionByRoleId : permissions) {
+                for (PermissionResponse permissionByRoleId : permissions) {
                     // 권한 마스크 비교
                     int permissionMask = permissionByRoleId.getMask();
                     int requiredMask = basePermission.getMask();
@@ -115,10 +115,10 @@ public class SeesawPermissionEvaluator implements PermissionEvaluator {
 
             try {
                 // 역할 이름으로 역할 조회
-                RoleModel role = roleService.getRole(roleName);
+                RoleResponse role = roleService.getRole(roleName);
 
                 // 역할 ID와 대상 ID로 권한 조회
-                PermissionModel permissionByRoleId = roleService.getPermission(role.getId(), targetId.toString());
+                PermissionResponse permissionByRoleId = roleService.getPermission(role.getId(), targetId.toString());
 
                 // 권한 마스크 비교
                 int permissionMask = permissionByRoleId.getMask();

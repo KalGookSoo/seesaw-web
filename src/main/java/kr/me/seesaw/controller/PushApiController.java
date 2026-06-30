@@ -1,10 +1,10 @@
 package kr.me.seesaw.controller;
 
 import jakarta.validation.Valid;
-import kr.me.seesaw.command.CreateWebPushSubscriptionCommand;
-import kr.me.seesaw.command.DeleteWebPushSubscriptionCommand;
+import kr.me.seesaw.request.CreateWebPushSubscriptionRequest;
+import kr.me.seesaw.request.DeleteWebPushSubscriptionRequest;
 import kr.me.seesaw.config.SeesawProperties;
-import kr.me.seesaw.model.WebPushSubscriptionModel;
+import kr.me.seesaw.response.WebPushSubscriptionResponse;
 import kr.me.seesaw.service.WebPushSubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -31,17 +31,17 @@ public class PushApiController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/subscriptions")
-    public ResponseEntity<WebPushSubscriptionModel> subscribe(
-            @Valid @RequestBody CreateWebPushSubscriptionCommand command,
+    public ResponseEntity<WebPushSubscriptionResponse> subscribe(
+            @Valid @RequestBody CreateWebPushSubscriptionRequest command,
             @RequestHeader(HttpHeaders.USER_AGENT) String userAgent
     ) {
-        WebPushSubscriptionModel subscription = webPushSubscriptionService.subscribe(command, userAgent);
+        WebPushSubscriptionResponse subscription = webPushSubscriptionService.subscribe(command, userAgent);
         return ResponseEntity.ok(subscription);
     }
 
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/subscriptions")
-    public ResponseEntity<Void> unsubscribe(@Valid @RequestBody DeleteWebPushSubscriptionCommand command) {
+    public ResponseEntity<Void> unsubscribe(@Valid @RequestBody DeleteWebPushSubscriptionRequest command) {
         webPushSubscriptionService.unsubscribe(command);
         return ResponseEntity.noContent().build();
     }

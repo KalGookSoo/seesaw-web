@@ -2,9 +2,9 @@ package kr.me.seesaw.service;
 
 import kr.me.seesaw.core.authentication.PrincipalProvider;
 import kr.me.seesaw.domain.Site;
-import kr.me.seesaw.dto.model.UserPrincipal;
+import kr.me.seesaw.dto.response.UserPrincipal;
 import kr.me.seesaw.message.CmsMessageSource;
-import kr.me.seesaw.model.UserModel;
+import kr.me.seesaw.response.UserResponse;
 import kr.me.seesaw.repository.SiteRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -3,9 +3,9 @@ package kr.me.seesaw.controller;
 import kr.me.seesaw.context.ArticleContext;
 import kr.me.seesaw.context.CategoryContext;
 import kr.me.seesaw.dto.request.SearchEventsRequest;
-import kr.me.seesaw.model.ArticleModel;
-import kr.me.seesaw.model.CategoryModel;
-import kr.me.seesaw.search.ArticleSearch;
+import kr.me.seesaw.response.ArticleResponse;
+import kr.me.seesaw.response.CategoryResponse;
+import kr.me.seesaw.request.search.SearchArticlesRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,10 +33,10 @@ public class ArticleController {
             @RequestParam String categoryId,
             Model model
     ) {
-        CategoryModel category = categoryContext.getCategory(categoryId);
+        CategoryResponse category = categoryContext.getCategory(categoryId);
         Sort sort = Sort.by(Sort.Order.asc("fixedOrder"), Sort.Order.desc("createdDate"));
         Pageable pageable = Pageable.unpaged(sort);
-        Page<ArticleModel> page = articleContext.findAllByCategoryId(categoryId, pageable);
+        Page<ArticleResponse> page = articleContext.findAllByCategoryId(categoryId, pageable);
 
         model.addAttribute("selectedCategory", category);
         model.addAttribute("page", page);
@@ -47,18 +47,18 @@ public class ArticleController {
     @GetMapping
     public String getArticlesInListView(
             @PageableDefault(size = 8, sort = "article.createdDate", direction = Sort.Direction.DESC) Pageable pageable,
-            @ModelAttribute("search") ArticleSearch search,
+            @ModelAttribute("search") SearchArticlesRequest search,
             Model model
     ) {
-        CategoryModel category = categoryContext.getCategory(search.getCategoryId());
+        CategoryResponse category = categoryContext.getCategory(search.getCategoryId());
         if (search.getCategoryType() == null) {
             search.setCategoryType(category.getType());
         }
         // 공지는 오름차순 후 createdDate로 내림차순
         Sort sort = Sort.by(Sort.Order.asc("fixedOrder"), Sort.Order.desc("createdDate"));
-        List<ArticleModel> fixedArticles = articleContext.getFixedArticles(search.getCategoryId(), true, sort);
+        List<ArticleResponse> fixedArticles = articleContext.getFixedArticles(search.getCategoryId(), true, sort);
 
-        Page<ArticleModel> page = articleContext.findAll(pageable, search);
+        Page<ArticleResponse> page = articleContext.findAll(pageable, search);
 
         model.addAttribute("selectedCategory", category);
         model.addAttribute("fixedArticles", fixedArticles);
@@ -79,11 +79,11 @@ public class ArticleController {
     @GetMapping(params = {"viewType=CARD"})
     public String getArticlesInCardView(
             @PageableDefault(size = 9, sort = "article.createdDate", direction = Sort.Direction.DESC) Pageable pageable,
-            @ModelAttribute("search") ArticleSearch search,
+            @ModelAttribute("search") SearchArticlesRequest search,
             Model model
     ) {
-        CategoryModel category = categoryContext.getCategory(search.getCategoryId());
-        Page<ArticleModel> page = articleContext.findAll(pageable, search);
+        CategoryResponse category = categoryContext.getCategory(search.getCategoryId());
+        Page<ArticleResponse> page = articleContext.findAll(pageable, search);
 
         model.addAttribute("selectedCategory", category);
         model.addAttribute("page", page);
@@ -94,11 +94,11 @@ public class ArticleController {
     @GetMapping("/{id}")
     public String getArticle(
             @PathVariable("id") String id,
-            @ModelAttribute("search") ArticleSearch search,
+            @ModelAttribute("search") SearchArticlesRequest search,
             Model model
     ) {
-        ArticleModel article = articleContext.getArticleAggregation(id);
-        CategoryModel category = categoryContext.getCategory(article.getCategoryId());
+        ArticleResponse article = articleContext.getArticleAggregation(id);
+        CategoryResponse category = categoryContext.getCategory(article.getCategoryId());
         if (search.getCategoryId() == null) {
             search.setCategoryId(article.getCategoryId());
         }
@@ -108,10 +108,10 @@ public class ArticleController {
         model.addAttribute("selectedCategory", category);
         model.addAttribute("article", article);
 
-        ArticleModel previousArticle = articleContext.getPreviousArticle(search, article.getCreatedDate());
+        ArticleResponse previousArticle = articleContext.getPreviousArticle(search, article.getCreatedDate());
         model.addAttribute("previousArticle", previousArticle);
 
-        ArticleModel nextArticle = articleContext.getNextArticle(search, article.getCreatedDate());
+        ArticleResponse nextArticle = articleContext.getNextArticle(search, article.getCreatedDate());
         model.addAttribute("nextArticle", nextArticle);
 
         return "articles/view";
@@ -120,7 +120,7 @@ public class ArticleController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/new")
     public String getArticleNew(
-            @ModelAttribute("search") ArticleSearch search,
+            @ModelAttribute("search") SearchArticlesRequest search,
             Model model
     ) {
         model.addAttribute("selectedCategory", categoryContext.getCategory(search.getCategoryId()));
@@ -131,11 +131,11 @@ public class ArticleController {
     @GetMapping("/{id}/edit")
     public String getArticleEdit(
             @PathVariable("id") String id,
-            @ModelAttribute("search") ArticleSearch search,
+            @ModelAttribute("search") SearchArticlesRequest search,
             @RequestParam(defaultValue = "0") int page,
             Model model
     ) {
-        ArticleModel article = articleContext.find(id);
+        ArticleResponse article = articleContext.find(id);
         model.addAttribute("selectedCategory", categoryContext.getCategory(article.getCategoryId()));
 
         model.addAttribute("article", article);

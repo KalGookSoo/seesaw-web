@@ -3,7 +3,7 @@ package kr.me.seesaw.interceptor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.me.seesaw.context.SiteContext;
-import kr.me.seesaw.model.CategoryModel;
+import kr.me.seesaw.response.CategoryResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +33,7 @@ public class GlobalModelInterceptor implements HandlerInterceptor {
         UriComponentsBuilder uriBuilder = ServletUriComponentsBuilder.fromRequest(request);
         modelAndView.addObject("REQUEST_URI_BUILDER", uriBuilder);
 
-        Map<String, CategoryModel> allCategories = siteContext.getAllCategories();
+        Map<String, CategoryResponse> allCategories = siteContext.getAllCategories();
         modelAndView.addObject("ALL_CATEGORIES", allCategories);
         modelAndView.addObject("NESTED_CATEGORIES", siteContext.getNestedCategories());
     }
