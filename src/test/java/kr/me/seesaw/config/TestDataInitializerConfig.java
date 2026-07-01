@@ -1,4 +1,4 @@
-package kr.me.seesaw.web.framework.config;
+package kr.me.seesaw.framework.config;
 
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;

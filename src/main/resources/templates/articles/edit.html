@@ -10,7 +10,7 @@
 
 
 <head>
-  <title>[[${ALL_CATEGORIES.get(article.categoryId).name}]] | [[${@siteContext.site.name}]]</title>
+  <title>[[${@siteContext.allCategories.get(article.categoryId).name}]] | [[${@siteContext.site.name}]]</title>
   <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
 
   <!--/* Editor */-->
@@ -331,7 +331,7 @@
   <section th:replace="~{components/breadcrumb :: breadcrumbs}"></section>
     <header class="container-sm title-section">
       <div class="d-flex">
-        <h5 class="title pb-1" th:text="${ALL_CATEGORIES.get(article.categoryId).name}"></h5>
+        <h5 class="title pb-1" th:text="${@siteContext.allCategories.get(article.categoryId).name}"></h5>
       </div>
     </header>
     <form name="updateArticleForm" enctype="multipart/form-data" th:action="@{'/api/articles/' + ${article.id}}" th:method="post">

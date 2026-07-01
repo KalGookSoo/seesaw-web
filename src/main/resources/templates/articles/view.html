@@ -18,8 +18,8 @@
   <meta property="og:description" content="페이지 설명" th:content="${article.plainContent}">
   <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${!article.inlineImages.isEmpty()}"
         th:content="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/api/attachments/' + article.inlineImages.get(0).id).replaceQuery(null).toUriString()}">
-  <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${article.inlineImages.isEmpty() and @siteContext.site.profileImage != null}"
-        th:content="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/api/attachments/' + @siteContext.site.profileImage.id).replaceQuery(null).toUriString()}">
+  <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${article.inlineImages.isEmpty() and @siteContext.siteContext.profileImage != null}"
+        th:content="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/api/attachments/' + @siteContext.siteContext.profileImage.id).replaceQuery(null).toUriString()}">
   <meta property="og:url" content="페이지 주소" th:content="${REQUEST_URI_BUILDER.cloneBuilder().toUriString()}">
 
   <meta property="twitter:card" content="summary">

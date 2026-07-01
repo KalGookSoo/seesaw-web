@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <body>
-<!--/*@thymesVar id="ALL_CATEGORIES" type="java.util.Map<java.lang.String, java.util.List<kr.me.seesaw.api.dto.response.CategoryResponse>>"*/-->
-<!--/*@thymesVar id="NESTED_CATEGORIES" type="java.util.List<kr.me.seesaw.api.dto.response.CategoryResponse>"*/-->
+
+
 
 <section class="container-sm pt-4 mt-4" th:fragment="breadcrumbs">
   <nav aria-label="breadcrumb">
@@ -24,7 +24,7 @@
             부모 카테고리
           </a>
           <ul class="dropdown-menu shadow-sm" aria-labelledby="parentDropdown">
-            <li th:each="siblingCategory : ${ALL_CATEGORIES.values()}"
+            <li th:each="siblingCategory : ${@siteContext.allCategories.values()}"
                 th:if="${siblingCategory.parentId == null || #strings.equals(siblingCategory.parentId, selectedCategory.parent.parentId)}">
               <a class="dropdown-item"
                  th:classappend="${#strings.equals(siblingCategory.id, selectedCategory.parent.id)} ? 'active' : ''"
@@ -56,7 +56,7 @@
             </th:block>
             <!--/* When parent is null (root category), show all nested categories (siblings) */-->
             <th:block th:if="${selectedCategory.parent == null}">
-              <li th:each="siblingCategory : ${NESTED_CATEGORIES}">
+              <li th:each="siblingCategory : ${@siteContext.nestedCategories}">
                 <a class="dropdown-item"
                    th:classappend="${#strings.equals(siblingCategory.id, selectedCategory.id)} ? 'active' : ''"
                    th:href="${siblingCategory.url}"

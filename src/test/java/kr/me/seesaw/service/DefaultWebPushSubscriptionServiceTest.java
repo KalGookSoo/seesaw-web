@@ -1,11 +1,12 @@
 package kr.me.seesaw.web.domain.service;
 
-import kr.me.seesaw.api.dto.request.CreateWebPushSubscriptionRequest;
-import kr.me.seesaw.api.dto.request.DeleteWebPushSubscriptionRequest;
-import kr.me.seesaw.web.framework.config.TestDataInitializerConfig;
+import kr.me.seesaw.web.notification.WebPushSubscriptionService;
+import kr.me.seesaw.web.notification.dto.CreateWebPushSubscriptionRequest;
+import kr.me.seesaw.web.notification.dto.DeleteWebPushSubscriptionRequest;
+import kr.me.seesaw.framework.config.TestDataInitializerConfig;
 import kr.me.seesaw.core.domain.site.Site;
 import kr.me.seesaw.core.domain.notification.WebPushSubscription;
-import kr.me.seesaw.api.dto.response.WebPushSubscriptionResponse;
+import kr.me.seesaw.web.notification.dto.WebPushSubscriptionResponse;
 import kr.me.seesaw.core.domain.site.SiteRepository;
 import kr.me.seesaw.core.domain.notification.WebPushSubscriptionRepository;
 import org.junit.jupiter.api.DisplayName;

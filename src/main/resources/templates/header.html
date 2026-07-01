@@ -8,8 +8,6 @@
   <title>Header</title>
   <link rel="stylesheet" href="/static/styles/header.css" th:href="@{/styles/header.css}">
 </head>
-<!--/*@thymesVar id="ALL_CATEGORIES" type="java.util.Map<java.lang.String, java.util.List<kr.me.seesaw.api.dto.response.CategoryResponse>>"*/-->
-<!--/*@thymesVar id="NESTED_CATEGORIES" type="java.util.List<kr.me.seesaw.api.dto.response.CategoryResponse>"*/-->
 
 <header id="header" class="d-flex align-items-center justify-content-center" th:fragment="header">
   <div class="container-sm wrapper d-flex align-items-center justify-content-between">
@@ -18,7 +16,7 @@
       <div class="nav-item">
         <a class="btn nav-link" th:classappend="${selectedCategory == null} ? 'main-color' : ''" th:href="@{/}" th:text="#{label.home}">홈</a>
       </div>
-      <div class="nav-item" th:each="category : ${NESTED_CATEGORIES}" th:classappend="${category.type.name() == 'NONE' && !category.children.isEmpty()} ? 'dropdown' : ''">
+      <div class="nav-item" th:each="category : ${@siteContext.nestedCategories}" th:classappend="${category.type.name() == 'NONE' && !category.children.isEmpty()} ? 'dropdown' : ''">
         <!--/* Case 1: Type is NOT NONE - Render as a simple anchor */-->
         <th:block th:if="${category.type.name() != 'NONE'}">
           <a class="btn nav-link"

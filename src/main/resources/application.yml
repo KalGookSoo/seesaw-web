@@ -48,10 +48,6 @@ spring:
             enable: true
           connectiontimeout: 5000
           timeout: 5000
-
-  # Lazy initialization
-  main:
-    lazy-initialization: true
   
   # 정적 자원 경로
   web:

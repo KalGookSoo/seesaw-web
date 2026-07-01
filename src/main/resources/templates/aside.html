@@ -18,7 +18,7 @@
             </div>
             <div class="text-center pt-4">
                 <div class="mx-auto mb-2" style="width: 100px; height: 100px;">
-                    <img class="w-100 h-100 rounded-circle" th:src="@{|/api/attachments/${@siteContext.site.profileImage.id}|}" th:alt="${@siteContext.site.profileImage.originalName}">
+                    <img class="w-100 h-100 rounded-circle" th:src="@{|/api/attachments/${@siteContext.siteContext.profileImage.id}|}" th:alt="${@siteContext.siteContext.profileImage.originalName}">
                 </div>
                 <h5 class="fw-bold mb-1">대전포스트잇 ♣대전독서모임</h5>
                 <div class="small text-white-50 mb-2" sec:authorize="isAuthenticated()" th:text="${#authentication.name}"></div>
@@ -91,7 +91,7 @@
             </div>
 
             <!--/* Nested categories */-->
-            <div th:replace="~{::nestedCategories(${NESTED_CATEGORIES})}"></div>
+            <div th:replace="~{::nestedCategories(${@siteContext.nestedCategories})}"></div>
 
             <th:block th:fragment="nestedCategories(categories)">
                 <div class="accordion-item border-bottom" th:each="category : ${categories}">
