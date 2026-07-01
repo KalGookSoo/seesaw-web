@@ -14,12 +14,12 @@
 
   <meta name="google-site-verification" content="SmP65FAXUDTeiNBaujsGFx3c2dbyNPze6Fu0FLDlCnY">
 
-  <meta name="theme-color" th:content="${@siteContext.site.themeColor}">
+  <meta name="theme-color" th:content="${SITE_CONTEXT.themeColor}">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" th:content="${@siteContext.site.name}">
+  <meta name="apple-mobile-web-app-title" th:content="${SITE_CONTEXT.name}">
   <meta name="seesaw-authenticated" th:content="${#authorization.expression('isAuthenticated()')}">
-  <meta name="seesaw-site-id" th:content="${@siteContext.site.id}">
+  <meta name="seesaw-site-id" th:content="${SITE_CONTEXT.id}">
 
   <meta name="naver-site-verification" content="3d44ef25fe0fdc4aa0c39c38f36b5c0b1ac0d87b">
 

@@ -7,6 +7,7 @@ import kr.me.seesaw.api.calendar.dto.SearchEventsRequest;
 import kr.me.seesaw.api.calendar.dto.VEventResponse;
 import kr.me.seesaw.api.category.dto.CategoryResponse;
 import kr.me.seesaw.api.site.SiteContext;
+import kr.me.seesaw.api.site.dto.SiteResponse;
 import kr.me.seesaw.core.domain.category.CategoryType;
 import kr.me.seesaw.core.domain.event.EventStatus;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +46,7 @@ public class IndexController {
 
     private final EventWebService eventWebService;
 
-    private final SiteContext currentSiteContext;
+    private final SiteContext siteContext;
 
     /**
      * 메인 화면을 반환합니다.
@@ -59,8 +60,16 @@ public class IndexController {
     ) {
 
         logger.debug("하위 카테고리 중 사이트 노출 카테고리 목록을 추출");
-        Map<String, CategoryResponse> allCategories = currentSiteContext.getAllCategories();
-        List<String> siteExposedBoardCategoryIds = allCategories.values()
+        final SiteResponse site = siteContext.getSiteContext();
+        model.addAttribute("SITE_CONTEXT", site);
+
+        final Map<String, CategoryResponse> allCategories = site.getCategories()
+                .stream()
+                .collect(Collectors.toMap(CategoryResponse::getId, Function.identity(), (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+        model.addAttribute("ALL_CATEGORIES", allCategories);
+        model.addAttribute("NESTED_CATEGORIES", siteContext.getNestedCategories(site.getCategories()));
+
+        final List<String> siteExposedBoardCategoryIds = allCategories.values()
                 .stream()
                 .filter(Predicate.not(CategoryResponse::isRoot))
                 .filter(CategoryResponse::isSiteExposed)
@@ -79,7 +88,7 @@ public class IndexController {
         model.addAttribute("siteExposedBoardPages", siteExposedBoardPages);
 
         logger.debug("스케쥴 타입 카테고리 중 사이트 노출 카테고리 목록을 추출");
-        List<String> siteExposedScheduleCategoryIds = allCategories.values()
+        final List<String> siteExposedScheduleCategoryIds = allCategories.values()
                 .stream()
                 .filter(Predicate.not(CategoryResponse::isRoot))
                 .filter(CategoryResponse::isSiteExposed)
@@ -89,11 +98,11 @@ public class IndexController {
                 .toList();
 
         logger.debug("사이트 노출 일정은 이번 달 기준으로 규정");
-        LocalDate now = LocalDate.now();
-        LocalDateTime startOfMonth = now.with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay();
-        LocalDateTime endOfMonth = now.with(TemporalAdjusters.lastDayOfMonth()).atTime(LocalTime.MAX);
+        final LocalDate now = LocalDate.now();
+        final LocalDateTime startOfMonth = now.with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay();
+        final LocalDateTime endOfMonth = now.with(TemporalAdjusters.lastDayOfMonth()).atTime(LocalTime.MAX);
 
-        Map<String, List<VEventResponse>> siteExposedScheduleEvents = siteExposedScheduleCategoryIds.stream()
+        final Map<String, List<VEventResponse>> siteExposedScheduleEvents = siteExposedScheduleCategoryIds.stream()
                 .collect(Collectors.toMap(Function.identity(),
                         id -> {
                             final SearchEventsRequest request = SearchEventsRequest.builder()

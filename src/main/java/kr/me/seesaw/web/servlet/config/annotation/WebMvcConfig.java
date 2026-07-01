@@ -3,6 +3,7 @@ package kr.me.seesaw.web.servlet.config.annotation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import kr.me.seesaw.api.site.SiteContext;
 import kr.me.seesaw.web.servlet.GlobalModelInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -23,6 +24,8 @@ import java.util.Locale;
 @RequiredArgsConstructor
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
+
+    private final SiteContext siteContext;
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
@@ -46,7 +49,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Bean
     public GlobalModelInterceptor globalModelInterceptor() {
-        return new GlobalModelInterceptor();
+        return new GlobalModelInterceptor(siteContext);
     }
 
     @Override

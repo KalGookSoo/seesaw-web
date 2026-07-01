@@ -9,23 +9,23 @@
 
 <head>
 
-    <meta name="description" th:content="${@siteContext.site.intro}">
-    <meta name="keywords" th:content="${@siteContext.site.name}">
+    <meta name="description" th:content="${SITE_CONTEXT.intro}">
+    <meta name="keywords" th:content="${SITE_CONTEXT.name}">
 
     <meta property="og:type" content="website">
-    <meta property="og:title" content="페이지 제목" th:content="${@siteContext.site.name}">
-    <meta property="og:description" content="페이지 설명" th:content="${@siteContext.site.intro}">
-    <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${@siteContext.siteContext.profileImage != null}"
-          th:content="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/api/attachments/' + @siteContext.siteContext.profileImage.id).replaceQuery(null).toUriString()}">
+    <meta property="og:title" content="페이지 제목" th:content="${SITE_CONTEXT.name}">
+    <meta property="og:description" content="페이지 설명" th:content="${SITE_CONTEXT.intro}">
+    <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${SITE_CONTEXT.profileImage != null}"
+          th:content="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/api/attachments/' + SITE_CONTEXT.profileImage.id).replaceQuery(null).toUriString()}">
     <meta property="og:url" content="페이지 주소" th:content="${REQUEST_URI_BUILDER.cloneBuilder().toUriString()}">
 
     <meta property="twitter:card" content="summary">
-    <meta property="twitter:title" content="페이지 제목" th:content="${@siteContext.site.name}">
-    <meta property="twitter:description" content="페이지 설명" th:content="${@siteContext.site.description}">
-    <meta property="twitter:image" content="페이지 썸네일 이미지 주소" th:if="${@siteContext.siteContext.profileImage != null}"
-          th:content="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/api/attachments/' + @siteContext.siteContext.profileImage.id).replaceQuery(null).toUriString()}">
+    <meta property="twitter:title" content="페이지 제목" th:content="${SITE_CONTEXT.name}">
+    <meta property="twitter:description" content="페이지 설명" th:content="${SITE_CONTEXT.description}">
+    <meta property="twitter:image" content="페이지 썸네일 이미지 주소" th:if="${SITE_CONTEXT.profileImage != null}"
+          th:content="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/api/attachments/' + SITE_CONTEXT.profileImage.id).replaceQuery(null).toUriString()}">
 
-    <title>[[#{label.home}]] | [[${@siteContext.site.name}]]</title>
+    <title>[[#{label.home}]] | [[${SITE_CONTEXT.name}]]</title>
     <link rel="stylesheet" href="/static/styles/index.css" th:href="@{/styles/index.css}">
     <!-- TUI Calendar CSS -->
     <link rel="stylesheet" href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css">
@@ -58,21 +58,21 @@
 </head>
 
 <div layout:fragment="content">
-<section class="profile-section d-flex flex-column justify-content-center align-items-center" th:style="${@siteContext.siteContext.backgroundImage != null ? 'background-image: url(/api/attachments/' + @siteContext.siteContext.backgroundImage.id + ')' : ''}">
+<section class="profile-section d-flex flex-column justify-content-center align-items-center" th:style="${SITE_CONTEXT.backgroundImage != null ? 'background-image: url(/api/attachments/' + SITE_CONTEXT.backgroundImage.id + ')' : ''}">
     <div class="profile d-flex flex-column justify-content-center align-items-center container-fluid px-3">
-        <p class="image mb-3" th:if="${@siteContext.siteContext.profileImage != null}"><img class="rounded-circle shadow" th:alt="#{label.profile.image}" th:title="#{label.profile.image}" th:src="@{|/api/attachments/${@siteContext.siteContext.profileImage.id}|}"></p>
-        <h2 class="mb-3" th:text="${@siteContext.site.name}"></h2>
-        <p class="text-center px-2" th:text="${@siteContext.site.description}"></p>
+        <p class="image mb-3" th:if="${SITE_CONTEXT.profileImage != null}"><img class="rounded-circle shadow" th:alt="#{label.profile.image}" th:title="#{label.profile.image}" th:src="@{|/api/attachments/${SITE_CONTEXT.profileImage.id}|}"></p>
+        <h2 class="mb-3" th:text="${SITE_CONTEXT.name}"></h2>
+        <p class="text-center px-2" th:text="${SITE_CONTEXT.description}"></p>
     </div>
 </section>
 <section class="intro-section d-flex flex-column justify-content-center align-items-center container-fluid">
-    <h6 class="mb-3" th:text="${@siteContext.site.intro}"></h6>
-    <span class="text-center px-3 mb-3" th:text="${@siteContext.site.content}"></span>
+    <h6 class="mb-3" th:text="${SITE_CONTEXT.intro}"></h6>
+    <span class="text-center px-3 mb-3" th:text="${SITE_CONTEXT.content}"></span>
 </section>
 <section class="board-section container-fluid container-lg px-3" th:each="page : ${siteExposedBoardPages}">
     <header class="d-flex justify-content-between align-items-center">
-        <h5 class="h5 main-color" th:text="${@siteContext.allCategories.get(page.getKey()).name}"></h5>
-        <p><a class="none d-flex align-items-center" th:href="@{/articles(categoryId=${page.getKey()}, categoryType=${@siteContext.allCategories.get(page.getKey()).type})}" th:title="#{label.more}"><span th:text="#{label.more}">더보기</span> <i class="bi bi-arrow-right ms-1"></i></a></p>
+        <h5 class="h5 main-color" th:text="${ALL_CATEGORIES.get(page.getKey()).name}"></h5>
+        <p><a class="none d-flex align-items-center" th:href="@{/articles(categoryId=${page.getKey()}, categoryType=${ALL_CATEGORIES.get(page.getKey()).type})}" th:title="#{label.more}"><span th:text="#{label.more}">더보기</span> <i class="bi bi-arrow-right ms-1"></i></a></p>
     </header>
     <div class="container-fluid px-0">
         <div class="row row-cols-1 row-cols-lg-3 g-4">
@@ -106,7 +106,7 @@
 </section>
 <section class="schedule-section container-fluid container-lg px-3 mb-5" th:each="schedule : ${siteExposedScheduleEvents}">
     <header class="d-flex justify-content-between align-items-center mb-3">
-        <h5 class="h5 main-color mb-0" th:text="${@siteContext.allCategories.get(schedule.getKey()).name}"></h5>
+        <h5 class="h5 main-color mb-0" th:text="${ALL_CATEGORIES.get(schedule.getKey()).name}"></h5>
         <p class="mb-0"><a class="none d-flex align-items-center" th:href="@{/articles(categoryId=${schedule.getKey()}, categoryType='SCHEDULE')}" th:title="#{label.more}"><span th:text="#{label.more}">더보기</span> <i class="bi bi-arrow-right ms-1"></i></a></p>
     </header>
     <div class="calendar-container" th:id="|calendar-${schedule.getKey()}|"></div>
@@ -130,7 +130,7 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     const events = /*[[${siteExposedScheduleEvents}]]*/ {};
-    const allCategories = /*[[${@siteContext.allCategories}]]*/ {};
+    const allCategories = /*[[${ALL_CATEGORIES}]]*/ {};
 
     Object.entries(events).forEach(([categoryId, events]) => {
       const calendarEl = document.getElementById(`calendar-${categoryId}`);

@@ -23,24 +23,24 @@
               <select class="form-select border-primary-subtle" id="targetCategoryId" name="categoryId" required>
                 <option value="" disabled selected>카테고리 선택</option>
                 <!--/* 하위 카테고리가 있는 경우 그룹화 */-->
-                <optgroup th:each="root : ${@siteContext.nestedCategories}" th:if="${not #lists.isEmpty(root.children)}" th:label="${root.name}">
+                <optgroup th:each="root : ${NESTED_CATEGORIES}" th:if="${not #lists.isEmpty(root.children)}" th:label="${root.name}">
                   <option th:each="child : ${root.children}"
                           th:value="${child.id}"
                           th:text="|${child.name} (${child.type.description})|"
-                          th:disabled="${selectedCategory.type != @siteContext.allCategories.get(child.id).type}"
+                          th:disabled="${CURRENT_CATEGORY.type != ALL_CATEGORIES.get(child.id).type}"
                           th:selected="${child.id == article.categoryId}">
                   </option>
                 </optgroup>
                 <!--/* 하위 카테고리가 없는 경우 단일 항목 */-->
-                <option th:each="root : ${@siteContext.nestedCategories}" th:if="${#lists.isEmpty(root.children)}"
+                <option th:each="root : ${NESTED_CATEGORIES}" th:if="${#lists.isEmpty(root.children)}"
                         th:value="${root.id}"
                         th:text="|${root.name} (${root.type.description})|"
-                        th:disabled="${selectedCategory.type != @siteContext.allCategories.get(root.id).type}"
+                        th:disabled="${CURRENT_CATEGORY.type != ALL_CATEGORIES.get(root.id).type}"
                         th:selected="${root.id == article.categoryId}">
                 </option>
               </select>
-              <div class="form-text mt-2" th:if="${selectedCategory != null}">
-                현재 위치: <span class="fw-medium text-primary" th:text="${selectedCategory.name}"></span>
+              <div class="form-text mt-2" th:if="${CURRENT_CATEGORY != null}">
+                현재 위치: <span class="fw-medium text-primary" th:text="${CURRENT_CATEGORY.name}"></span>
               </div>
             </div>
           </div>

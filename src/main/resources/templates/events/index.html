@@ -7,7 +7,7 @@
       xmlns:th="http://www.thymeleaf.org"
 >
 <head>
-  <title>[[${selectedCategory.name}]] | [[${@siteContext.site.name}]]</title>
+  <title>[[${CURRENT_CATEGORY.name}]] | [[${SITE_CONTEXT.name}]]</title>
   <link href="/static/styles/content.css" rel="stylesheet" th:href="@{/styles/content.css}">
 
   <!--/* Editor */-->
@@ -193,9 +193,9 @@
   <section th:replace="~{components/breadcrumb :: breadcrumbs}"></section>
   <section class="container-sm title-section">
     <div class="d-flex justify-content-between">
-      <h5 class="title" th:text="${selectedCategory.name}"></h5>
+      <h5 class="title" th:text="${CURRENT_CATEGORY.name}"></h5>
       <button class="btn btn-sm btn-primary" data-bs-target="#eventModal" data-bs-toggle="modal" id="btnPrepareCreate"
-              th:if="${#authentication.isAuthenticated() and (#authorization.expression('hasAnyRole(''ROLE_ADMIN'', ''ROLE_MANAGER'')') or @categoryPermissionEvaluator.hasPermission(selectedCategory.id, T(org.springframework.security.acls.domain.BasePermission).WRITE))}">
+              th:if="${#authentication.isAuthenticated() and (#authorization.expression('hasAnyRole(''ROLE_ADMIN'', ''ROLE_MANAGER'')') or @categoryPermissionEvaluator.hasPermission(CURRENT_CATEGORY.id, T(org.springframework.security.acls.domain.BasePermission).WRITE))}">
         <i class="bi bi-calendar-plus"></i> 일정 등록
       </button>
     </div>
@@ -396,7 +396,7 @@
       fetchEvents
     } from /*[[@{/scripts/event-calendar.js}]]*/'/static/scripts/event-calendar.js';
 
-    const categoryId = /*[[${selectedCategory.id}]]*/ 'default-category-id';
+    const categoryId = /*[[${CURRENT_CATEGORY.id}]]*/ 'default-category-id';
     const contextPath = /*[[@{/}]]*/ '/';
     const CSRF = {
       headerName: /*[[${_csrf.headerName}]]*/ 'X-CSRF-TOKEN',
@@ -949,7 +949,7 @@
         calendars: [
           {
             id: categoryId,
-            name: /*[[${selectedCategory.name}]]*/ '캘린더 이름',
+            name: /*[[${CURRENT_CATEGORY.name}]]*/ '캘린더 이름',
             backgroundColor: '#03bd9e',
             borderColor: '#03bd9e',
             dragBackgroundColor: '#03bd9e',

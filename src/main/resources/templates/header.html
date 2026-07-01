@@ -11,17 +11,17 @@
 
 <header id="header" class="d-flex align-items-center justify-content-center" th:fragment="header">
   <div class="container-sm wrapper d-flex align-items-center justify-content-between">
-    <h1 class="logo mb-0 d-lg-none"><a class="none" th:href="@{/}" th:text="${@siteContext.site.name}"></a></h1>
+    <h1 class="logo mb-0 d-lg-none"><a class="none" th:href="@{/}" th:text="${SITE_CONTEXT.name}"></a></h1>
     <nav class="gnb nav d-none d-lg-flex align-items-center justify-content-start">
       <div class="nav-item">
-        <a class="btn nav-link" th:classappend="${selectedCategory == null} ? 'main-color' : ''" th:href="@{/}" th:text="#{label.home}">홈</a>
+        <a class="btn nav-link" th:classappend="${CURRENT_CATEGORY == null} ? 'main-color' : ''" th:href="@{/}" th:text="#{label.home}">홈</a>
       </div>
-      <div class="nav-item" th:each="category : ${@siteContext.nestedCategories}" th:classappend="${category.type.name() == 'NONE' && !category.children.isEmpty()} ? 'dropdown' : ''">
+      <div class="nav-item" th:each="category : ${NESTED_CATEGORIES}" th:classappend="${category.type.name() == 'NONE' && !category.children.isEmpty()} ? 'dropdown' : ''">
         <!--/* Case 1: Type is NOT NONE - Render as a simple anchor */-->
         <th:block th:if="${category.type.name() != 'NONE'}">
           <a class="btn nav-link"
              th:href="${category.url}"
-             th:classappend="${selectedCategory != null && (#strings.equals(category.id, selectedCategory.id) || #strings.equals(category.id, selectedCategory.parentId))} ? 'main-color' : ''"
+             th:classappend="${CURRENT_CATEGORY != null && (#strings.equals(category.id, CURRENT_CATEGORY.id) || #strings.equals(category.id, CURRENT_CATEGORY.parentId))} ? 'main-color' : ''"
           >
             [[${category.name}]]
             <span class="badge bg-primary ms-1" th:if="${!category.recentArticles.isEmpty()}" th:text="${category.recentArticles.size()}"></span>
@@ -41,7 +41,7 @@
             <li th:each="subCategory : ${category.children}">
               <a class="dropdown-item"
                  th:href="${subCategory.url}"
-                 th:classappend="${selectedCategory != null && #strings.equals(subCategory.id, selectedCategory.id)} ? 'active' : ''">
+                 th:classappend="${CURRENT_CATEGORY != null && #strings.equals(subCategory.id, CURRENT_CATEGORY.id)} ? 'active' : ''">
                 [[${subCategory.name}]]
                 <span class="badge bg-primary ms-1" th:if="${!subCategory.recentArticles.isEmpty()}" th:text="${subCategory.recentArticles.size()}"></span>
               </a>

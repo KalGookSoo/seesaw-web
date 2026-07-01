@@ -10,25 +10,25 @@
 <head>
 
   <meta name="description"
-        th:content="|${@siteContext.site.name} ${selectedCategory.name} ${selectedCategory.description != null ? selectedCategory.description : ''}|">
-  <meta name="keywords" th:content="|${@siteContext.site.name} ${selectedCategory.name}|">
+        th:content="|${SITE_CONTEXT.name} ${CURRENT_CATEGORY.name} ${CURRENT_CATEGORY.description != null ? CURRENT_CATEGORY.description : ''}|">
+  <meta name="keywords" th:content="|${SITE_CONTEXT.name} ${CURRENT_CATEGORY.name}|">
 
   <meta property="og:type" content="website">
-  <meta property="og:title" content="페이지 제목" th:content="|${@siteContext.site.name} ${selectedCategory.name}|">
+  <meta property="og:title" content="페이지 제목" th:content="|${SITE_CONTEXT.name} ${CURRENT_CATEGORY.name}|">
   <meta property="og:description" content="페이지 설명"
-        th:content="|${@siteContext.site.name} ${selectedCategory.name} ${selectedCategory.description != null ? selectedCategory.description : ''}|">
-  <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${@siteContext.siteContext.profileImage != null}"
-        th:content="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/api/attachments/' + @siteContext.siteContext.profileImage.id).replaceQuery(null).toUriString()}">
+        th:content="|${SITE_CONTEXT.name} ${CURRENT_CATEGORY.name} ${CURRENT_CATEGORY.description != null ? CURRENT_CATEGORY.description : ''}|">
+  <meta property="og:image" content="페이지 썸네일 이미지 주소" th:if="${SITE_CONTEXT.profileImage != null}"
+        th:content="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/api/attachments/' + SITE_CONTEXT.profileImage.id).replaceQuery(null).toUriString()}">
   <meta property="og:url" content="페이지 주소" th:content="${REQUEST_URI_BUILDER.cloneBuilder().toUriString()}">
 
   <meta property="twitter:card" content="summary">
-  <meta property="twitter:title" content="페이지 제목" th:content="|${@siteContext.site.name}  ${selectedCategory.name}|">
+  <meta property="twitter:title" content="페이지 제목" th:content="|${SITE_CONTEXT.name}  ${CURRENT_CATEGORY.name}|">
   <meta property="twitter:description" content="페이지 설명"
-        th:content="|${@siteContext.site.name} ${selectedCategory.name} ${selectedCategory.description != null ? selectedCategory.description : ''}|">
-  <meta property="twitter:image" content="페이지 썸네일 이미지 주소" th:if="${@siteContext.siteContext.profileImage != null}"
-        th:content="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/api/attachments/' + @siteContext.siteContext.profileImage.id).replaceQuery(null).toUriString()}">
+        th:content="|${SITE_CONTEXT.name} ${CURRENT_CATEGORY.name} ${CURRENT_CATEGORY.description != null ? CURRENT_CATEGORY.description : ''}|">
+  <meta property="twitter:image" content="페이지 썸네일 이미지 주소" th:if="${SITE_CONTEXT.profileImage != null}"
+        th:content="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/api/attachments/' + SITE_CONTEXT.profileImage.id).replaceQuery(null).toUriString()}">
 
-  <title>[[${selectedCategory.name}]] | [[${@siteContext.site.name}]]</title>
+  <title>[[${CURRENT_CATEGORY.name}]] | [[${SITE_CONTEXT.name}]]</title>
   <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
   <script th:inline="javascript">
     document.addEventListener('DOMContentLoaded', e => {
@@ -65,7 +65,7 @@
   <section th:replace="~{components/breadcrumb :: breadcrumbs}"></section>
   <section class="container-sm title-section">
     <div class="d-flex justify-content-between">
-      <h5 class="title pb-1" th:text="${selectedCategory.name}"></h5>
+      <h5 class="title pb-1" th:text="${CURRENT_CATEGORY.name}"></h5>
       <div class="d-flex">
         <div>
           <a class="btn d-flex align-items-center"
@@ -105,7 +105,7 @@
         >
           <i class="bi bi-person"></i><span class="d-none d-sm-inline ms-1" th:text="#{label.my.articles}">내가 쓴 글</span>
         </a>
-        <a class="btn btn-primary d-flex align-items-center" th:if="${#authentication.isAuthenticated() and (#authorization.expression('hasAnyRole(''ROLE_ADMIN'', ''ROLE_MANAGER'')') or @categoryPermissionEvaluator.hasPermission(selectedCategory.id, T(org.springframework.security.acls.domain.BasePermission).WRITE))}"
+        <a class="btn btn-primary d-flex align-items-center" th:if="${#authentication.isAuthenticated() and (#authorization.expression('hasAnyRole(''ROLE_ADMIN'', ''ROLE_MANAGER'')') or @categoryPermissionEvaluator.hasPermission(CURRENT_CATEGORY.id, T(org.springframework.security.acls.domain.BasePermission).WRITE))}"
            th:href="${REQUEST_URI_BUILDER.cloneBuilder().replacePath('/articles/new').build().toUriString()}"
            th:title="#{label.write}"
         >
