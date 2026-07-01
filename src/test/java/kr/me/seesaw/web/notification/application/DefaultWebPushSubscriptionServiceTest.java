@@ -1,14 +1,15 @@
-package kr.me.seesaw.web.domain.service;
+package kr.me.seesaw.web.notification.application;
 
+import kr.me.seesaw.SeesawWebApplication;
+import kr.me.seesaw.core.domain.notification.WebPushSubscription;
+import kr.me.seesaw.core.domain.notification.WebPushSubscriptionRepository;
+import kr.me.seesaw.core.domain.site.Site;
+import kr.me.seesaw.core.domain.site.SiteRepository;
+import kr.me.seesaw.framework.TestDataInitializerConfig;
 import kr.me.seesaw.web.notification.WebPushSubscriptionService;
 import kr.me.seesaw.web.notification.dto.CreateWebPushSubscriptionRequest;
 import kr.me.seesaw.web.notification.dto.DeleteWebPushSubscriptionRequest;
-import kr.me.seesaw.framework.config.TestDataInitializerConfig;
-import kr.me.seesaw.core.domain.site.Site;
-import kr.me.seesaw.core.domain.notification.WebPushSubscription;
 import kr.me.seesaw.web.notification.dto.WebPushSubscriptionResponse;
-import kr.me.seesaw.core.domain.site.SiteRepository;
-import kr.me.seesaw.core.domain.notification.WebPushSubscriptionRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,8 @@ import java.util.NoSuchElementException;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ActiveProfiles("test")
-@Import(TestDataInitializerConfig.class)
-@SpringBootTest
+@Import({TestDataInitializerConfig.class})
+@SpringBootTest(classes = {SeesawWebApplication.class})
 @Transactional
 class DefaultWebPushSubscriptionServiceTest {
 

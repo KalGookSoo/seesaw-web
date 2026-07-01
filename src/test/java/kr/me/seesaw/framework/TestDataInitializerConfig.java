@@ -1,19 +1,20 @@
-package kr.me.seesaw.framework.config;
+package kr.me.seesaw.framework;
 
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import kr.me.seesaw.core.domain.article.Article;
+import kr.me.seesaw.core.domain.article.ArticleType;
 import kr.me.seesaw.core.domain.category.Category;
+import kr.me.seesaw.core.domain.category.CategoryType;
 import kr.me.seesaw.core.domain.mapping.RoleMapping;
+import kr.me.seesaw.core.domain.permission.Permission;
 import kr.me.seesaw.core.domain.reply.Reply;
 import kr.me.seesaw.core.domain.role.Role;
+import kr.me.seesaw.core.domain.role.RoleName;
 import kr.me.seesaw.core.domain.site.Site;
+import kr.me.seesaw.core.domain.user.Email;
 import kr.me.seesaw.core.domain.user.User;
 import kr.me.seesaw.core.domain.view.View;
-import kr.me.seesaw.core.domain.article.ArticleType;
-import kr.me.seesaw.core.domain.category.CategoryType;
-import kr.me.seesaw.core.domain.user.Email;
-import kr.me.seesaw.core.domain.role.RoleName;
 import kr.me.seesaw.core.domain.vote.Vote;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.acls.domain.BasePermission;
 
 /**
  * 테스트 전용 데이터 초기화 구성 클래스.
@@ -89,19 +91,24 @@ public class TestDataInitializerConfig {
                 // site2에도 하나 생성
                 Category catIntro = getOrCreateCategory(entityManager, site2.getId(), "소개", "소개 카테고리", 0, 0);
 
-                // 5) 게시글
+                // 5) 권한(Permission) - targetId를 category.id에 맞춤
+                createPermissionIfNeeded(entityManager, catNotice.getId(), roleAdmin.getId(), BasePermission.READ.getMask() + BasePermission.WRITE.getMask() + BasePermission.CREATE.getMask() + BasePermission.DELETE.getMask());
+                createPermissionIfNeeded(entityManager, catNotice.getId(), roleManager.getId(), BasePermission.READ.getMask() + BasePermission.WRITE.getMask() + BasePermission.CREATE.getMask());
+                createPermissionIfNeeded(entityManager, catFree.getId(), roleUser.getId(), BasePermission.READ.getMask() + BasePermission.WRITE.getMask());
+
+                // 6) 게시글
                 Article a1 = getOrCreateArticle(entityManager, catNotice.getId(), admin.getUsername(), "첫 번째 공지", "공지 본문입니다.");
                 Article a2 = getOrCreateArticle(entityManager, catFree.getId(), manager.getUsername(), "첫 번째 자유글", "자유 본문입니다.");
 
-                // 6) 댓글
+                // 7) 댓글
                 getOrCreateReply(entityManager, a1.getId(), user.getUsername(), "첫 번째 공지 댓글");
                 getOrCreateReply(entityManager, a2.getId(), admin.getUsername(), "첫 번째 자유 댓글");
 
-                // 7) 조회수(View)
+                // 8) 조회수(View)
                 createViewIfNeeded(entityManager, a1.getId());
                 createViewIfNeeded(entityManager, a2.getId());
 
-                // 8) 투표(Vote)
+                // 9) 투표(Vote)
                 createVoteIfNeeded(entityManager, a1.getId(), true);
                 createVoteIfNeeded(entityManager, a2.getId(), false);
 
@@ -173,6 +180,7 @@ public class TestDataInitializerConfig {
                     u.setName(name);
                     u.setEmail(em);
                     u.setContactNumber("010-0000-0000");
+                    u.initializeAccountPolicy();
                     entityManager.persist(u);
                     return u;
                 });
@@ -207,43 +215,60 @@ public class TestDataInitializerConfig {
                     category.setSiteExposedOrder(siteExposedOrder);
                     category.setExposed(true);
                     category.setSequence(sequence);
-                    category.setSite(entityManager.getReference(Site.class, siteId));
+                    
+                    Site site = entityManager.getReference(Site.class, siteId);
+                    category.setSite(site);
+
                     entityManager.persist(category);
                     return category;
                 });
     }
 
+    private void createPermissionIfNeeded(EntityManager entityManager, String targetId, String roleId, int mask) {
+        Long count = entityManager.createQuery("select count(p) from Permission p where p.targetId = :targetId and p.roleId = :roleId", Long.class)
+                .setParameter("targetId", targetId)
+                .setParameter("roleId", roleId)
+                .getSingleResult();
+
+        if (count == 0) {
+            Permission permission = new Permission();
+            permission.setTargetId(targetId);
+            permission.setRoleId(roleId);
+            permission.setMask(mask);
+            entityManager.persist(permission);
+        }
+    }
+
     private Article getOrCreateArticle(EntityManager entityManager, String categoryId, String createdBy, String title, String content) {
-        return entityManager.createQuery("select a from Article a where a.category.id = :categoryId and a.title = :title", Article.class)
-                .setParameter("categoryId", categoryId)
+        return entityManager.createQuery("select a from Article a where a.title = :title", Article.class)
                 .setParameter("title", title)
                 .getResultList()
                 .stream()
                 .findFirst()
                 .orElseGet(() -> {
                     Article article = new Article();
-                    article.setCategory(entityManager.getReference(Category.class, categoryId));
+                    Category category = entityManager.getReference(Category.class, categoryId);
+                    article.setCategory(category);
                     article.setType(ArticleType.HTML);
-                    article.setExposed(true);
                     article.setFixed(false);
                     article.setFixedOrder(0);
                     article.setTitle(title);
                     article.setContent(content);
+
                     entityManager.persist(article);
                     return article;
                 });
     }
 
     private void getOrCreateReply(EntityManager entityManager, String articleId, String createdBy, String content) {
-        boolean exists = !entityManager.createQuery("select r from Reply r where r.article.id = :articleId and r.content = :content", Reply.class)
-                .setParameter("articleId", articleId)
+        Long count = entityManager.createQuery("select count(r) from Reply r where r.content = :content", Long.class)
                 .setParameter("content", content)
-                .getResultList()
-                .isEmpty();
+                .getSingleResult();
 
-        if (!exists) {
+        if (count == 0) {
             Reply reply = new Reply();
-            reply.setArticle(entityManager.getReference(Article.class, articleId));
+            Article article = entityManager.getReference(Article.class, articleId);
+            reply.setArticle(article);
             reply.setContent(content);
             reply.setExposed(true);
             entityManager.persist(reply);
@@ -251,14 +276,14 @@ public class TestDataInitializerConfig {
     }
 
     private void createViewIfNeeded(EntityManager entityManager, String articleId) {
-        boolean exists = !entityManager.createQuery("select v from View v where v.article.id = :articleId", View.class)
+        Long count = entityManager.createQuery("select count(v) from View v where v.article.id = :articleId", Long.class)
                 .setParameter("articleId", articleId)
-                .getResultList()
-                .isEmpty();
+                .getSingleResult();
 
-        if (!exists) {
+        if (count == 0) {
             View view = new View();
-            view.setArticle(entityManager.getReference(Article.class, articleId));
+            Article article = entityManager.getReference(Article.class, articleId);
+            view.setArticle(article);
             entityManager.persist(view);
         }
     }
