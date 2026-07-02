@@ -1,11 +1,15 @@
 package kr.me.seesaw.web.article.presentation;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import kr.me.seesaw.api.article.ArticleContext;
 import kr.me.seesaw.api.article.dto.ArticleResponse;
 import kr.me.seesaw.api.article.dto.SearchArticlesRequest;
 import kr.me.seesaw.api.calendar.dto.SearchEventsRequest;
 import kr.me.seesaw.api.category.CategoryService;
 import kr.me.seesaw.api.category.dto.CategoryResponse;
+import kr.me.seesaw.core.support.pattern.PatternMatcher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,12 +18,14 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RequiredArgsConstructor
+@Validated
 @Controller
 @RequestMapping(value = "/articles", produces = MediaType.TEXT_HTML_VALUE)
 public class ArticleController {
@@ -30,7 +36,7 @@ public class ArticleController {
 
     @GetMapping(params = "categoryType=STATIC_CONTENT")
     public String getArticles(
-            @RequestParam String categoryId,
+            @RequestParam @NotBlank @Pattern(regexp = PatternMatcher.UUID_V4) String categoryId,
             Model model
     ) {
         Sort sort = Sort.by(Sort.Order.asc("fixedOrder"), Sort.Order.desc("createdDate"));
@@ -45,7 +51,7 @@ public class ArticleController {
     @GetMapping
     public String getArticlesInListView(
             @PageableDefault(size = 8, sort = "article.createdDate", direction = Sort.Direction.DESC) Pageable pageable,
-            @ModelAttribute("search") SearchArticlesRequest search,
+            @Valid @ModelAttribute("search") SearchArticlesRequest search,
             Model model
     ) {
         CategoryResponse category = categoryService.getCategoryById(search.getCategoryId());
@@ -66,7 +72,7 @@ public class ArticleController {
 
     @GetMapping(params = "categoryType=SCHEDULE")
     public String getArticlesInCalendarView(
-            @ModelAttribute("search") SearchEventsRequest request,
+            @Valid @ModelAttribute("search") SearchEventsRequest request,
             Model model
     ) {
         return "events/index";
@@ -75,7 +81,7 @@ public class ArticleController {
     @GetMapping(params = {"viewType=CARD"})
     public String getArticlesInCardView(
             @PageableDefault(size = 9, sort = "article.createdDate", direction = Sort.Direction.DESC) Pageable pageable,
-            @ModelAttribute("search") SearchArticlesRequest search,
+            @Valid @ModelAttribute("search") SearchArticlesRequest search,
             Model model
     ) {
         Page<ArticleResponse> page = articleContext.findAll(pageable, search);
@@ -87,8 +93,8 @@ public class ArticleController {
 
     @GetMapping("/{id}")
     public String getArticle(
-            @PathVariable("id") String id,
-            @ModelAttribute("search") SearchArticlesRequest search,
+            @PathVariable("id") @NotBlank @Pattern(regexp = PatternMatcher.UUID_V4) String id,
+            @Valid @ModelAttribute("search") SearchArticlesRequest search,
             Model model
     ) {
         ArticleResponse article = articleContext.getArticleAggregation(id);
@@ -121,8 +127,8 @@ public class ArticleController {
     @PreAuthorize("@articlePermissionContext.isOwner(#id, authentication.name)")
     @GetMapping("/{id}/edit")
     public String getArticleEdit(
-            @PathVariable("id") String id,
-            @ModelAttribute("search") SearchArticlesRequest search,
+            @PathVariable("id") @NotBlank @Pattern(regexp = PatternMatcher.UUID_V4) String id,
+            @Valid @ModelAttribute("search") SearchArticlesRequest search,
             @RequestParam(defaultValue = "0") int page,
             Model model
     ) {
