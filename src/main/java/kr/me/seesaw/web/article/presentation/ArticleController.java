@@ -21,6 +21,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 
@@ -75,6 +76,12 @@ public class ArticleController {
             @Valid @ModelAttribute("search") SearchEventsRequest request,
             Model model
     ) {
+        final String calendarSubscriptionUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/api/calendars/categories/{categoryId}/events.ics")
+                .buildAndExpand(request.categoryId())
+                .toUriString();
+        model.addAttribute("calendarSubscriptionUrl", calendarSubscriptionUrl);
+
         return "events/index";
     }
 

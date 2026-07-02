@@ -194,10 +194,15 @@
   <section class="container-sm title-section">
     <div class="d-flex justify-content-between">
       <h5 class="title" th:text="${CURRENT_CATEGORY.name}"></h5>
-      <button class="btn btn-sm btn-primary" data-bs-target="#eventModal" data-bs-toggle="modal" id="btnPrepareCreate"
-              th:if="${#authentication.isAuthenticated() and (#authorization.expression('hasAnyRole(''ROLE_ADMIN'', ''ROLE_MANAGER'')') or @categoryPermissionEvaluator.hasPermission(CURRENT_CATEGORY.id, T(org.springframework.security.acls.domain.BasePermission).WRITE))}">
-        <i class="bi bi-calendar-plus"></i> 일정 등록
-      </button>
+      <div class="d-flex gap-2">
+        <button class="btn btn-sm btn-outline-primary d-flex align-items-center" data-bs-target="#calendarSubscriptionModal" data-bs-toggle="modal" type="button">
+          <i class="bi bi-link-45deg me-1"></i> 구독 URL
+        </button>
+        <button class="btn btn-sm btn-primary" data-bs-target="#eventModal" data-bs-toggle="modal" id="btnPrepareCreate"
+                th:if="${#authentication.isAuthenticated() and (#authorization.expression('hasAnyRole(''ROLE_ADMIN'', ''ROLE_MANAGER'')') or @categoryPermissionEvaluator.hasPermission(CURRENT_CATEGORY.id, T(org.springframework.security.acls.domain.BasePermission).WRITE))}">
+          <i class="bi bi-calendar-plus"></i> 일정 등록
+        </button>
+      </div>
     </div>
   </section>
   <section class="container-sm">
@@ -218,6 +223,38 @@
     </div>
     <div id="calendar"></div>
   </section>
+
+  <!-- Calendar Subscription Modal -->
+  <div aria-hidden="true" aria-labelledby="calendarSubscriptionModalLabel" class="modal fade" id="calendarSubscriptionModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="calendarSubscriptionModalLabel">캘린더 구독 URL</h5>
+          <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-muted small mb-3">
+            외부 캘린더 앱의 URL 구독 기능에 아래 주소를 등록하면 이 카테고리의 일정을 구독할 수 있습니다.
+          </p>
+          <label class="form-label" for="calendarSubscriptionUrl">구독 URL</label>
+          <div class="input-group">
+            <input class="form-control" id="calendarSubscriptionUrl" readonly
+                   th:value="${calendarSubscriptionUrl}"
+                   type="text">
+            <button class="btn btn-outline-primary d-flex align-items-center" data-bs-placement="top" data-bs-title="복사" data-bs-toggle="tooltip"
+                    id="btnCopyCalendarSubscriptionUrl" type="button">
+              <i class="bi bi-clipboard me-1"></i>
+              <span>복사</span>
+            </button>
+          </div>
+          <small class="text-muted d-block mt-2">외부 캘린더 반영 주기는 각 서비스 정책에 따라 지연될 수 있습니다.</small>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">닫기</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Event Detail/Form Modal -->
   <div aria-hidden="true" aria-labelledby="eventModalLabel" class="modal fade" id="eventModal" tabindex="-1">
@@ -563,7 +600,8 @@
           viewFilesContainer.classList.remove('d-none');
 
           // ZIP 다운로드 버튼 설정
-          btnDownloadZip.href = `/attachments/download-zip?articleId=${item.articleId}`;
+          const zipDownloadUrl = /*[[@{/attachments/download-zip}]]*/'';
+          btnDownloadZip.href = `${zipDownloadUrl}?articleId=${item.articleId}`;
           btnDownloadZip.classList.remove('d-none');
 
           const previewLabel = /*[[#{label.preview}]]*/ '미리보기';
@@ -783,6 +821,27 @@
         }
       };
 
+      const copyCalendarSubscriptionUrl = async () => {
+        const input = $('#calendarSubscriptionUrl');
+        const button = $('#btnCopyCalendarSubscriptionUrl');
+        const tooltip = bootstrap.Tooltip.getOrCreateInstance(button);
+
+        try {
+          await navigator.clipboard.writeText(input.value);
+          button.dataset.bsTitle = '복사됨';
+        } catch (e) {
+          button.dataset.bsTitle = '복사 실패';
+        } finally {
+          tooltip.setContent({ '.tooltip-inner': button.getAttribute('data-bs-title') });
+          tooltip.show();
+          setTimeout(() => {
+            tooltip.hide();
+            button.dataset.bsTitle = '복사';
+            tooltip.setContent({ '.tooltip-inner': '복사' });
+          }, 1500);
+        }
+      };
+
       const clickHandlers = {
         'delete-attachment': async (e) => {
           const target = e.target.closest('[data-action="delete-attachment"]');
@@ -815,6 +874,7 @@
         'btnPrepareCreate': () => prepareCreate(),
         'btnDeleteEvent': () => deleteEvent(),
         'btnEditEvent': () => editEvent(),
+        'btnCopyCalendarSubscriptionUrl': () => copyCalendarSubscriptionUrl(),
         /*[# sec:authorize="isAuthenticated()"]*/
         'edit-reply': (e) => {
           const btn = e.target.closest('[data-action="edit-reply"]');
@@ -929,6 +989,8 @@
         el: $('#viewer'),
         viewer: true
       });
+
+      bootstrap.Tooltip.getOrCreateInstance($('#btnCopyCalendarSubscriptionUrl'));
 
       // TUI Calendar Initialize
       const calendarEl = $('#calendar');
