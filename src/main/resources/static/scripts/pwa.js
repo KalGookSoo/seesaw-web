@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       return null;
     }
 
-    return navigator.serviceWorker.register('/sw.js', { scope: '/' });
+    return navigator.serviceWorker.register(`/sw.js?siteId=${siteId}`, { scope: '/' });
   };
 
   const getVapidPublicKey = async () => {

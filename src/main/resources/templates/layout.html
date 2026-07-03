@@ -28,7 +28,7 @@
   <!--/* CSS */-->
   <!--/*@thymesVar id="REQUEST_URI_BUILDER" type="org.springframework.web.util.UriComponentsBuilder"*/-->
   <link rel="canonical" th:href="${REQUEST_URI_BUILDER.cloneBuilder().toUriString()}">
-  <link rel="manifest" th:href="@{/manifest.webmanifest}">
+  <link rel="manifest" th:href="@{/manifest.webmanifest(domainName=${SITE_CONTEXT.domainName})}">
   <link rel="icon" th:href="@{/favicon.png}">
   <link rel="stylesheet" th:href="@{/styles/bootstrap.css}">
   <link rel="stylesheet" th:href="@{/styles/bootstrap-icons.min.css}">

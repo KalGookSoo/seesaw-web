@@ -2,14 +2,19 @@ package kr.me.seesaw.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.me.seesaw.api.site.SiteContext;
-import kr.me.seesaw.core.domain.site.SiteColor;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import kr.me.seesaw.api.site.SiteService;
 import kr.me.seesaw.api.site.dto.SiteResponse;
+import kr.me.seesaw.core.domain.site.SiteColor;
+import kr.me.seesaw.core.support.pattern.PatternMatcher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
@@ -18,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
+@Validated
 @RestController
 public class PwaController {
 
@@ -27,13 +33,13 @@ public class PwaController {
 
     private static final String SERVICE_WORKER_ALLOWED_HEADER = "Service-Worker-Allowed";
 
-    private final SiteContext siteContext;
+    private final SiteService siteService;
 
     private final ObjectMapper objectMapper;
 
     @GetMapping(value = "/manifest.webmanifest", produces = "application/manifest+json")
-    public ResponseEntity<Map<String, Object>> getManifest() {
-        SiteResponse site = siteContext.getSite();
+    public ResponseEntity<Map<String, Object>> getManifest(@RequestParam @NotBlank String domainName) {
+        SiteResponse site = siteService.getSiteByDomainName(domainName);
         Map<String, Object> manifest = new LinkedHashMap<>();
         manifest.put("id", site.getId());
         manifest.put("name", site.getName());
@@ -70,9 +76,7 @@ public class PwaController {
     }
 
     @GetMapping(value = "/sw.js", produces = "application/javascript")
-    public ResponseEntity<String> getServiceWorker() {
-        SiteResponse site = siteContext.getSite();
-        String siteId = site.getId();
+    public ResponseEntity<String> getServiceWorker(@RequestParam @NotBlank @Pattern(regexp = PatternMatcher.UUID_V4) String siteId) {
         String cacheName = "seesaw-" + siteId + "-v1";
         String serviceWorker = """
                 const SITE_ID = %s;
