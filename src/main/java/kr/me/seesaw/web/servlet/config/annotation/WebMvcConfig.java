@@ -8,6 +8,7 @@ import kr.me.seesaw.web.servlet.GlobalModelInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -26,6 +27,8 @@ import java.util.Locale;
 public class WebMvcConfig implements WebMvcConfigurer {
 
     private final SiteContext siteContext;
+
+    private final Environment environment;
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
@@ -49,7 +52,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Bean
     public GlobalModelInterceptor globalModelInterceptor() {
-        return new GlobalModelInterceptor(siteContext);
+        return new GlobalModelInterceptor(siteContext, environment);
     }
 
     @Override

@@ -8,6 +8,7 @@ import kr.me.seesaw.api.site.dto.SiteResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -29,6 +30,8 @@ public class GlobalModelInterceptor implements HandlerInterceptor {
 
     private final SiteContext siteContext;
 
+    private final Environment environment;
+
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable ModelAndView modelAndView) {
         if (modelAndView == null || modelAndView.getViewName() == null || modelAndView.getViewName().startsWith("redirect:")) {
@@ -42,7 +45,11 @@ public class GlobalModelInterceptor implements HandlerInterceptor {
 
         final Map<String, Object> model = modelAndView.getModel();
 
-        final SiteResponse site = getOrAdd(modelAndView, "SITE_CONTEXT", siteContext::getSiteContext);
+        final SiteResponse site = getOrAdd(modelAndView, "SITE_CONTEXT", () -> {
+            final String applicationName = environment.getProperty("spring.application.name");
+            final String domainName = applicationName + ".seesaw.me.kr";
+            return siteContext.getSiteContext(domainName);
+        });
 
         final Map<String, CategoryResponse> allCategories = getOrAdd(modelAndView, "ALL_CATEGORIES", () -> site.getCategories()
                 .stream()

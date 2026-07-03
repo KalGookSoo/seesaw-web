@@ -13,6 +13,7 @@ import kr.me.seesaw.core.domain.event.EventStatus;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -48,6 +49,8 @@ public class IndexController {
 
     private final SiteContext siteContext;
 
+    private final Environment environment;
+
     /**
      * 메인 화면을 반환합니다.
      *
@@ -60,7 +63,9 @@ public class IndexController {
     ) {
 
         logger.debug("하위 카테고리 중 사이트 노출 카테고리 목록을 추출");
-        final SiteResponse site = siteContext.getSiteContext();
+        String applicationName = environment.getProperty("spring.application.name");
+        String domainName = applicationName + ".seesaw.me.kr";
+        final SiteResponse site = siteContext.getSiteContext(domainName);
         model.addAttribute("SITE_CONTEXT", site);
 
         final Map<String, CategoryResponse> allCategories = site.getCategories()
