@@ -190,6 +190,9 @@
           form.elements.content.focus();
         },
         '.reply-item button[name="delete"]': e => {
+          if (!confirm(/*[[#{message.confirm.delete.reply}]]*/'')) {
+            return;
+          }
           const button = e.target.closest('.reply-item button[name="delete"]');
           const httpEntity = {
             method: 'delete',
