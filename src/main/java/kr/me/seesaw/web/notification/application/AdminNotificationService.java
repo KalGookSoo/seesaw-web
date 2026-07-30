@@ -125,7 +125,7 @@ public class AdminNotificationService implements NotificationService {
                 .map(Email::toString)
                 .toArray(String[]::new);
 
-        mailService.send(properties.getUsername(), emails, "[알림] 게시글이 생성되었습니다.", "mail/reply_created", values);
+        mailService.send(properties.getUsername(), emails, "[알림] 댓글이 생성되었습니다.", "mail/reply_created", values);
         webPushNotificationService.sendOnReplyCreated(article, replyId, content, articleUrl);
         logPreviewUrl("/mail/preview/reply-created", values);
     }
