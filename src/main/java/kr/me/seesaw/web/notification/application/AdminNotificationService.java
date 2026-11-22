@@ -1,6 +1,6 @@
 package kr.me.seesaw.web.notification.application;
 
-import kr.me.seesaw.web.notification.MailService;
+import kr.me.seesaw.api.notification.MailService;
 import kr.me.seesaw.web.notification.NotificationService;
 import kr.me.seesaw.web.notification.WebPushNotificationService;
 import kr.me.seesaw.core.domain.article.Article;

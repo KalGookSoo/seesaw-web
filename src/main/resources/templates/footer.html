@@ -354,7 +354,7 @@
           <h5 class="modal-title" id="reportModalLabel" th:text="#{label.report.title}">신고하기</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <form id="reportForm" name="reportForm" th:action="@{/api/mail/send-to-report}" th:method="post">
+        <form id="reportForm" name="reportForm" th:action="|${@seesawWebProperties.apiHost}/seesaw-api/api/mail/send-to-report|" th:method="post">
           <input type="hidden" name="siteId" th:value="${SITE_CONTEXT.id}">
           <div class="modal-body">
             <div class="mb-3">
@@ -428,7 +428,7 @@
           <h5 class="modal-title" id="inquiryModalLabel" th:text="#{label.inquiry.title}">문의하기</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <form id="inquiryForm" name="inquiryForm" th:action="@{/api/mail/send-to-helpdesk}" th:method="post">
+        <form id="inquiryForm" name="inquiryForm" th:action="|${@seesawWebProperties.apiHost}/seesaw-api/api/mail/send-to-helpdesk|" th:method="post">
           <input type="hidden" name="siteId" th:value="${SITE_CONTEXT.id}">
           <div class="modal-body">
             <div class="mb-3">

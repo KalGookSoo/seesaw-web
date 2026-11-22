@@ -25,6 +25,7 @@ export async function requestApi(requestUri, payload) {
     const response = await fetch(requestUri, {
       method: 'POST',
       headers: headers,
+      credentials: 'include',
       body: JSON.stringify(payload)
     });
     return response.ok;
