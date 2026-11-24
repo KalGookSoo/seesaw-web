@@ -499,8 +499,43 @@ create index idx7agj6x250qwntq68jyksh6323
 
 create table public.tb_notification
 (
-    id                 varchar(36) not null
-        primary key,
+    id                 varchar(36)  not null primary key,
+    created_by         varchar(255),
+    created_date       timestamp(6),
+    created_ip         varchar(45),
+    last_modified_by   varchar(255),
+    last_modified_date timestamp(6),
+    last_modified_ip   varchar(45),
+    version            integer      not null,
+    site_id            varchar(36)  not null references public.tb_site,
+    recipient_id       varchar(36)  not null references public.tb_user,
+    actor_username     varchar(255),
+    type               varchar(50)  not null,
+    title              varchar(255) not null,
+    message            text         not null,
+    target_type        varchar(50),
+    target_id          varchar(36),
+    target_url         varchar(1000),
+    source_event_id    varchar(100) not null,
+    read_at            timestamp(6),
+    expires_at         timestamp(6),
+    constraint uk_notification_source_recipient_type unique (recipient_id, source_event_id, type)
+);
+
+comment on table public.tb_notification is '알림';
+
+create index idx_notification_inbox
+    on public.tb_notification (site_id, recipient_id, read_at, created_date);
+
+create index idx_notification_expiry
+    on public.tb_notification (expires_at);
+
+alter table public.tb_notification
+    owner to seesaw_admin;
+
+create table public.tb_notification_preference
+(
+    id                 varchar(36) not null primary key,
     created_by         varchar(255),
     created_date       timestamp(6),
     created_ip         varchar(45),
@@ -508,38 +543,68 @@ create table public.tb_notification
     last_modified_date timestamp(6),
     last_modified_ip   varchar(45),
     version            integer     not null,
-    category_id        varchar(36)
-        constraint fk_tb_notification_category
-            references public.tb_category,
-    type               varchar(255)
-        constraint tb_notification_type_check
-            check ((type)::text = ANY
-        (ARRAY [('TOKTOK'::character varying)::text, ('SMS'::character varying)::text, ('EMAIL'::character varying)::text]))
-    );
+    site_id            varchar(36) not null references public.tb_site,
+    user_id            varchar(36) not null references public.tb_user,
+    type               varchar(50) not null,
+    in_app_enabled     boolean     not null,
+    web_push_enabled   boolean     not null,
+    email_enabled      boolean     not null,
+    constraint uk_notification_preference_user_type unique (site_id, user_id, type)
+);
 
-comment on table public.tb_notification is '알림';
+create index idx_notification_preference_user
+    on public.tb_notification_preference (site_id, user_id);
 
-comment on column public.tb_notification.id is '식별자';
+alter table public.tb_notification_preference
+    owner to seesaw_admin;
 
-comment on column public.tb_notification.created_by is '생성자';
+create table public.tb_notification_subscription
+(
+    id                 varchar(36) not null primary key,
+    created_by         varchar(255),
+    created_date       timestamp(6),
+    created_ip         varchar(45),
+    last_modified_by   varchar(255),
+    last_modified_date timestamp(6),
+    last_modified_ip   varchar(45),
+    version            integer     not null,
+    site_id            varchar(36) not null references public.tb_site,
+    user_id            varchar(36) not null references public.tb_user,
+    category_id        varchar(36) not null references public.tb_category,
+    enabled            boolean     not null,
+    constraint uk_notification_subscription_user_category unique (site_id, user_id, category_id)
+);
 
-comment on column public.tb_notification.created_date is '생성일시';
+create index idx_notification_subscription_category
+    on public.tb_notification_subscription (site_id, category_id, enabled);
 
-comment on column public.tb_notification.created_ip is '생성 IP';
+alter table public.tb_notification_subscription
+    owner to seesaw_admin;
 
-comment on column public.tb_notification.last_modified_by is '수정자';
+create table public.tb_notification_delivery
+(
+    id                 varchar(36) not null primary key,
+    created_by         varchar(255),
+    created_date       timestamp(6),
+    created_ip         varchar(45),
+    last_modified_by   varchar(255),
+    last_modified_date timestamp(6),
+    last_modified_ip   varchar(45),
+    version            integer     not null,
+    notification_id    varchar(36) not null references public.tb_notification,
+    channel            varchar(30) not null,
+    status             varchar(30) not null,
+    attempt_count      integer     not null,
+    delivered_at       timestamp(6),
+    next_attempt_at    timestamp(6),
+    failure_reason     varchar(1000),
+    constraint uk_notification_delivery_channel unique (notification_id, channel)
+);
 
-comment on column public.tb_notification.last_modified_date is '수정일시';
+create index idx_notification_delivery_status
+    on public.tb_notification_delivery (status, next_attempt_at);
 
-comment on column public.tb_notification.last_modified_ip is '수정 IP';
-
-comment on column public.tb_notification.version is '버전';
-
-comment on column public.tb_notification.category_id is '카테고리 식별자';
-
-comment on column public.tb_notification.type is '유형';
-
-alter table public.tb_notification
+alter table public.tb_notification_delivery
     owner to seesaw_admin;
 
 create table public.tb_reply

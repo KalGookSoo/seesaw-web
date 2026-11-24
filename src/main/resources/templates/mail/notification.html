@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${title}">새 알림</title>
+</head>
+<body>
+  <h1 th:text="${title}">새 알림</h1>
+  <p th:text="${message}">알림 내용</p>
+  <p th:if="${targetUrl != null and !#strings.isEmpty(targetUrl)}">
+    <a th:href="${targetUrl}">내용 확인하기</a>
+  </p>
+</body>
+</html>
