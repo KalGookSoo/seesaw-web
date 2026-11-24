@@ -829,6 +829,12 @@ comment on column public.tb_vote.reference_id is '참조 식별자';
 alter table public.tb_vote
     owner to seesaw_admin;
 
+create index idx_vote_reference_id_approved
+    on public.tb_vote (reference_id, approved);
+
+alter table public.tb_vote
+    add constraint uk_vote_created_by_reference_id unique (created_by, reference_id);
+
 create table public.tb_permission
 (
     id                 varchar(36) not null
