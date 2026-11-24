@@ -8,6 +8,7 @@
 <head>
   <title>에디토리얼 컴포넌트</title>
   <link rel="stylesheet" th:href="@{/styles/vote.css}">
+  <link rel="stylesheet" th:href="@{/styles/notifications.css}">
   <link rel="stylesheet" th:href="@{/styles/style-guide-editorial.css}">
 </head>
 <body>
@@ -63,6 +64,62 @@
       <div>
         <dt>반응형</dt>
         <dd>좁은 화면에서는 설명과 버튼을 세로로 쌓아 터치 영역을 확보합니다.</dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="editorial-guide__section" aria-labelledby="notification-heading">
+    <div class="editorial-guide__section-heading">
+      <p class="editorial-guide__eyebrow">ACTIVITY</p>
+      <h2 id="notification-heading">알림</h2>
+      <p>새로운 활동을 놓치지 않도록 얇은 선과 짧은 문장으로 정리합니다.</p>
+    </div>
+
+    <div class="notification-styleguide">
+      <div class="notification-popover notification-styleguide__popover">
+        <header class="notification-popover__header">
+          <div>
+            <p class="notification-popover__eyebrow">ACTIVITY</p>
+            <h2>알림</h2>
+          </div>
+          <button class="notification-text-button" type="button">모두 읽음</button>
+        </header>
+        <div class="notification-list">
+          <button class="notification-item is-unread" type="button">
+            <span class="notification-item__icon"><i class="bi bi-chat-square-text" aria-hidden="true"></i></span>
+            <span class="notification-item__body">
+              <span class="notification-item__meta">새 댓글 · 방금 전</span>
+              <strong class="notification-item__title">내 게시글에 댓글이 등록되었습니다.</strong>
+              <span class="notification-item__message">좋은 기록을 잘 읽었습니다.</span>
+            </span>
+            <span class="notification-item__state">새 알림</span>
+          </button>
+          <button class="notification-item" type="button">
+            <span class="notification-item__icon"><i class="bi bi-file-earmark-text" aria-hidden="true"></i></span>
+            <span class="notification-item__body">
+              <span class="notification-item__meta">새 게시글 · 어제</span>
+              <strong class="notification-item__title">새 게시글이 등록되었습니다.</strong>
+              <span class="notification-item__message">이번 주 모임 안내를 확인해보세요.</span>
+            </span>
+            <span class="notification-item__state"></span>
+          </button>
+        </div>
+        <footer class="notification-popover__footer"><a href="#">모든 알림 보기 <span aria-hidden="true">→</span></a></footer>
+      </div>
+    </div>
+
+    <dl class="editorial-guide__notes">
+      <div>
+        <dt>상태</dt>
+        <dd>읽지 않은 알림은 옅은 primary 배경과 짧은 상태 문구로 구분합니다.</dd>
+      </div>
+      <div>
+        <dt>구조</dt>
+        <dd>아이콘, 유형·시간, 제목·내용 순서로 정보를 빠르게 훑을 수 있습니다.</dd>
+      </div>
+      <div>
+        <dt>반응형</dt>
+        <dd>모바일에서는 화면 안쪽으로 팝오버 폭을 제한해 알림을 안정적으로 읽습니다.</dd>
       </div>
     </dl>
   </section>

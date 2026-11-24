@@ -96,6 +96,23 @@
   line-height: 1.6;
 }
 
+.notification-styleguide {
+  position: relative;
+  min-height: 25rem;
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background: var(--notification-paper);
+}
+
+.notification-styleguide__popover {
+  position: relative;
+  top: auto;
+  right: auto;
+  width: min(100%, 28rem);
+  margin-left: auto;
+  box-shadow: 0.4rem 0.4rem 0 var(--notification-line);
+}
+
 @media (max-width: 767.98px) {
   .editorial-guide {
     padding: 3rem 1rem 5rem;

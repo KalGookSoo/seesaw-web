@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko"
+      layout:decorate="~{layout}"
+      th:lang="${#locale.language}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>알림</title>
+</head>
+<body>
+<main layout:fragment="content" class="notification-page" data-notification-page>
+  <header class="notification-page__header">
+    <div>
+      <p class="notification-page__eyebrow">ACTIVITY · INBOX</p>
+      <h1>알림</h1>
+      <p>내 활동과 관련된 소식을 한 곳에서 확인합니다.</p>
+    </div>
+    <div class="notification-page__actions">
+      <a class="notification-secondary-button" th:href="@{/notifications/settings}">알림 설정</a>
+      <button class="notification-primary-button" type="button" data-notification-page-read-all>모두 읽음</button>
+    </div>
+  </header>
+  <section class="notification-page__section">
+    <div class="notification-page__section-heading">
+      <h2>최근 활동</h2>
+      <span data-notification-page-count>읽지 않은 알림을 확인하는 중입니다.</span>
+    </div>
+    <div class="notification-list notification-list--page" data-notification-page-list>
+      <p class="notification-empty">알림을 불러오는 중입니다.</p>
+    </div>
+  </section>
+</main>
+</body>
+</html>

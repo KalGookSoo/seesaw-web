@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<body>
+<div class="notification-menu" th:fragment="notification_menu" sec:authorize="isAuthenticated()">
+  <button class="notification-trigger" type="button" data-notification-toggle
+          aria-controls="notification-popover" aria-expanded="false" aria-label="알림">
+    <i class="bi bi-bell" aria-hidden="true"></i>
+    <span class="notification-trigger__count" data-notification-count hidden>0</span>
+  </button>
+  <section class="notification-popover" id="notification-popover" data-notification-popover hidden aria-label="최근 알림">
+    <header class="notification-popover__header">
+      <div>
+        <p class="notification-popover__eyebrow">ACTIVITY</p>
+        <h2>알림</h2>
+      </div>
+      <button class="notification-text-button" type="button" data-notification-read-all>모두 읽음</button>
+    </header>
+    <div class="notification-list notification-list--popover" data-notification-list>
+      <p class="notification-empty">알림을 불러오는 중입니다.</p>
+    </div>
+    <footer class="notification-popover__footer">
+      <a th:href="@{/notifications}">모든 알림 보기 <span aria-hidden="true">→</span></a>
+    </footer>
+  </section>
+</div>
+</body>
+</html>
