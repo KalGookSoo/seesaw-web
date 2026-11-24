@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
+<body>
+<div class="vote-widget"
+     th:fragment="vote(referenceId, targetLabel)"
+     th:data-vote-widget="${referenceId}"
+     th:data-vote-endpoint="@{/api/votes}"
+     th:data-vote-login-url="@{/oauth2/authorization/naver}">
+  <div class="vote-widget__context">
+    <span class="vote-widget__eyebrow">EDITORIAL RESPONSE</span>
+    <span class="vote-widget__label" th:text="${targetLabel} + '에 좋아요를 남겨보세요'">게시글에 좋아요를 남겨보세요</span>
+  </div>
+  <button class="vote-button" type="button" data-vote-toggle aria-pressed="false" aria-label="좋아요">
+    <i class="bi bi-heart" data-vote-icon aria-hidden="true"></i>
+    <span class="vote-button__label">좋아요</span>
+    <span class="vote-button__count" data-vote-count aria-live="polite">0</span>
+  </button>
+</div>
+</body>
+</html>

@@ -31,6 +31,8 @@
 
   <title>[[${article.title}]]</title>
   <link rel="stylesheet" href="/static/styles/content.css" th:href="@{/styles/content.css}">
+  <link rel="stylesheet" th:href="@{/styles/vote.css}">
+  <script defer th:src="@{/scripts/vote.js}"></script>
 
   <!--/* Editor */-->
   <link rel="stylesheet" th:href="@{/styles/toastui-editor.min.css}">
@@ -307,6 +309,7 @@
           </div>
           <div th:replace="~{components/attachments :: attachment_list(${article.attachments})}"></div>
         </div>
+        <div th:replace="~{components/vote :: vote(${article.id}, '게시글')}"></div>
       </div>
     </div>
   </section>
@@ -363,6 +366,7 @@
           <div class="reply-content bg-light p-3 rounded">
             <pre class="mb-0" th:utext="${reply.content}"></pre>
           </div>
+          <div th:replace="~{components/vote :: vote(${reply.id}, '댓글')}"></div>
           <form class="d-none mt-3"
                 enctype="multipart/form-data"
                 name="updateReplyForm"

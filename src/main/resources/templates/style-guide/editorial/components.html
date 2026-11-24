@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko"
+      layout:decorate="~{layout}"
+      th:lang="${#locale.language}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+  <title>에디토리얼 컴포넌트</title>
+  <link rel="stylesheet" th:href="@{/styles/vote.css}">
+  <link rel="stylesheet" th:href="@{/styles/style-guide-editorial.css}">
+</head>
+<body>
+<main layout:fragment="content" class="editorial-guide">
+  <header class="editorial-guide__header">
+    <p class="editorial-guide__eyebrow">SEESAW WEB · EDITORIAL UI</p>
+    <h1>컴포넌트</h1>
+    <p>콘텐츠를 읽는 흐름을 방해하지 않는 반응 컴포넌트 모음입니다.</p>
+  </header>
+
+  <section class="editorial-guide__section" aria-labelledby="feedback-heading">
+    <div class="editorial-guide__section-heading">
+      <p class="editorial-guide__eyebrow">FEEDBACK</p>
+      <h2 id="feedback-heading">좋아요</h2>
+      <p>잉크와 종이 사이에 최소한의 신호만 남깁니다. 하나의 게시글과 댓글에 각각 사용할 수 있습니다.</p>
+    </div>
+
+    <div class="vote-styleguide">
+      <div class="vote-widget">
+        <div class="vote-widget__context">
+          <span class="vote-widget__eyebrow">EDITORIAL RESPONSE</span>
+          <span class="vote-widget__label">게시글에 좋아요를 남겨보세요</span>
+        </div>
+        <button class="vote-button" type="button" aria-pressed="false" aria-label="좋아요">
+          <i class="bi bi-heart" aria-hidden="true"></i>
+          <span class="vote-button__label">좋아요</span>
+          <span class="vote-button__count">12</span>
+        </button>
+      </div>
+
+      <div class="vote-widget">
+        <div class="vote-widget__context">
+          <span class="vote-widget__eyebrow">ACTIVE STATE</span>
+          <span class="vote-widget__label">이미 좋아요를 남긴 상태</span>
+        </div>
+        <button class="vote-button is-liked" type="button" aria-pressed="true" aria-label="좋아요 취소">
+          <i class="bi bi-heart-fill" aria-hidden="true"></i>
+          <span class="vote-button__label">좋아요</span>
+          <span class="vote-button__count">13</span>
+        </button>
+      </div>
+    </div>
+
+    <dl class="editorial-guide__notes">
+      <div>
+        <dt>색상</dt>
+        <dd>기본은 잉크 외곽선, 활성 상태는 primary green을 사용합니다.</dd>
+      </div>
+      <div>
+        <dt>상태</dt>
+        <dd>마우스 호버와 키보드 포커스는 서로 다른 버튼 영역을 침범하지 않습니다.</dd>
+      </div>
+      <div>
+        <dt>반응형</dt>
+        <dd>좁은 화면에서는 설명과 버튼을 세로로 쌓아 터치 영역을 확보합니다.</dd>
+      </div>
+    </dl>
+  </section>
+</main>
+</body>
+</html>
