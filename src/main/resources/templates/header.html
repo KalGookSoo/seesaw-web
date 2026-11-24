@@ -58,7 +58,6 @@
       </div>
     </nav>
     <div class="utility d-none d-lg-flex align-items-center">
-      <div th:replace="~{components/notification :: notification_menu}"></div>
       <button class="btn site-map open-aside"
               th:title="#{label.view.all}"
               th:text="#{label.view.all}"
@@ -80,7 +79,6 @@
       </form>
     </div>
     <div class="d-lg-none d-flex align-items-center gap-2">
-      <div th:replace="~{components/notification :: notification_menu}"></div>
       <button type="button" class="btn site-map open-aside navbar-toggler" th:title="#{label.view.all}"><i class="bi bi-list h4"></i>
       </button>
       <a class="btn" sec:authorize="isAnonymous()" th:href="@{/oauth2/authorization/naver}" th:title="|#{label.sign.in}|">

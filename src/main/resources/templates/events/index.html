@@ -9,8 +9,6 @@
 <head>
   <title>[[${CURRENT_CATEGORY.name}]] | [[${SITE_CONTEXT.name}]]</title>
   <link href="/static/styles/content.css" rel="stylesheet" th:href="@{/styles/content.css}">
-  <link rel="stylesheet" th:href="@{/styles/vote.css}">
-  <script defer th:src="@{/scripts/vote.js}"></script>
 
   <!--/* Editor */-->
   <link rel="stylesheet" th:href="@{/styles/toastui-editor.min.css}">
@@ -371,23 +369,6 @@
               </div>
               <div class="list-group list-group-flush border rounded mb-3" id="viewFiles"></div>
             </div>
-            <div class="d-none" id="viewVoteContainer">
-              <div class="vote-widget" id="viewVoteWidget"
-                   data-vote-endpoint="/api/votes"
-                   data-vote-login-url="/oauth2/authorization/naver"
-                   data-vote-widget>
-                <div class="vote-widget__context">
-                  <span class="vote-widget__eyebrow">반응</span>
-                  <span class="vote-widget__label">게시글에 좋아요를 남겨보세요</span>
-                </div>
-                <button aria-label="좋아요" aria-pressed="false" class="vote-button" data-vote-toggle type="button">
-                  <i aria-hidden="true" class="bi bi-heart" data-vote-icon></i>
-                  <span class="vote-button__label">좋아요</span>
-                  <span aria-live="polite" class="vote-button__count" data-vote-count>0</span>
-                </button>
-                <p class="vote-widget__status" data-vote-status hidden role="status"></p>
-              </div>
-            </div>
             <div class="d-none" id="viewRepliesContainer">
               <hr>
               <h6><i class="bi bi-chat-dots me-2"></i>댓글</h6>
@@ -557,21 +538,6 @@
                   <div class="reply-content bg-light p-3 rounded">
                     <pre class="mb-0" style="white-space: pre-wrap;">${reply.content}</pre>
                   </div>
-                  <div class="vote-widget"
-                       data-vote-endpoint="/api/votes"
-                       data-vote-login-url="/oauth2/authorization/naver"
-                       data-vote-widget="${reply.id}">
-                    <div class="vote-widget__context">
-                      <span class="vote-widget__eyebrow">반응</span>
-                      <span class="vote-widget__label">댓글에 좋아요를 남겨보세요</span>
-                    </div>
-                    <button aria-label="좋아요" aria-pressed="false" class="vote-button" data-vote-toggle type="button">
-                      <i aria-hidden="true" class="bi bi-heart" data-vote-icon></i>
-                      <span class="vote-button__label">좋아요</span>
-                      <span aria-live="polite" class="vote-button__count" data-vote-count>0</span>
-                    </button>
-                    <p class="vote-widget__status" data-vote-status hidden role="status"></p>
-                  </div>
                   <form class="d-none mt-3" data-action="update-reply-form" data-id="${reply.id}">
                     <div class="input-group">
                       <textarea class="form-control" name="content" rows="3">${reply.content}</textarea>
@@ -583,7 +549,6 @@
                   </form>
                 `;
                 container.appendChild(div);
-                window.initializeVoteWidgets(div);
               });
             } else {
               viewRepliesContainer.classList.add('d-none');
@@ -672,12 +637,6 @@
           viewFilesContainer.classList.add('d-none');
         }
 
-        const viewVoteContainer = $('#viewVoteContainer');
-        const viewVoteWidget = $('#viewVoteWidget');
-        viewVoteWidget.dataset.voteWidget = item.articleId;
-        viewVoteContainer.classList.remove('d-none');
-        window.initializeVoteWidgets(viewVoteWidget, true);
-
         loadReplies(item.articleId);
 
         // Show/Hide Edit and Delete buttons based on ownership
@@ -701,7 +660,6 @@
         $('#eventDetail').classList.add('d-none');
         $('#formFooter').classList.remove('d-none');
         $('#viewFooter').classList.add('d-none');
-        $('#viewVoteContainer').classList.add('d-none');
         form.elements['id'].value = '';
         form.reset();
         editor.setMarkdown('');
