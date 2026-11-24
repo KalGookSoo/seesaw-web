@@ -522,7 +522,47 @@ create table public.tb_notification
     constraint uk_notification_source_recipient_type unique (recipient_id, source_event_id, type)
 );
 
-comment on table public.tb_notification is '알림';
+comment on table public.tb_notification is '인앱 알림';
+
+comment on column public.tb_notification.id is '식별자';
+
+comment on column public.tb_notification.created_by is '생성자';
+
+comment on column public.tb_notification.created_date is '생성일시';
+
+comment on column public.tb_notification.created_ip is '생성 IP';
+
+comment on column public.tb_notification.last_modified_by is '수정자';
+
+comment on column public.tb_notification.last_modified_date is '수정일시';
+
+comment on column public.tb_notification.last_modified_ip is '수정 IP';
+
+comment on column public.tb_notification.version is '버전';
+
+comment on column public.tb_notification.site_id is '사이트 식별자';
+
+comment on column public.tb_notification.recipient_id is '알림 수신자 식별자';
+
+comment on column public.tb_notification.actor_username is '알림 발생자 계정명';
+
+comment on column public.tb_notification.type is '알림 유형';
+
+comment on column public.tb_notification.title is '알림 제목';
+
+comment on column public.tb_notification.message is '알림 내용';
+
+comment on column public.tb_notification.target_type is '이동 대상 유형';
+
+comment on column public.tb_notification.target_id is '이동 대상 식별자';
+
+comment on column public.tb_notification.target_url is '이동 URL';
+
+comment on column public.tb_notification.source_event_id is '원천 이벤트 식별자';
+
+comment on column public.tb_notification.read_at is '읽은 일시';
+
+comment on column public.tb_notification.expires_at is '만료 일시';
 
 create index idx_notification_inbox
     on public.tb_notification (site_id, recipient_id, read_at, created_date);
@@ -558,6 +598,36 @@ create index idx_notification_preference_user
 alter table public.tb_notification_preference
     owner to seesaw_admin;
 
+comment on table public.tb_notification_preference is '알림 수신 설정';
+
+comment on column public.tb_notification_preference.id is '식별자';
+
+comment on column public.tb_notification_preference.created_by is '생성자';
+
+comment on column public.tb_notification_preference.created_date is '생성일시';
+
+comment on column public.tb_notification_preference.created_ip is '생성 IP';
+
+comment on column public.tb_notification_preference.last_modified_by is '수정자';
+
+comment on column public.tb_notification_preference.last_modified_date is '수정일시';
+
+comment on column public.tb_notification_preference.last_modified_ip is '수정 IP';
+
+comment on column public.tb_notification_preference.version is '버전';
+
+comment on column public.tb_notification_preference.site_id is '사이트 식별자';
+
+comment on column public.tb_notification_preference.user_id is '계정 식별자';
+
+comment on column public.tb_notification_preference.type is '알림 유형';
+
+comment on column public.tb_notification_preference.in_app_enabled is '서비스 내부 알림함·알림 벨 활성화 여부';
+
+comment on column public.tb_notification_preference.web_push_enabled is '웹 푸시 알림 활성화 여부';
+
+comment on column public.tb_notification_preference.email_enabled is '이메일 알림 활성화 여부';
+
 create table public.tb_notification_subscription
 (
     id                 varchar(36) not null primary key,
@@ -580,6 +650,32 @@ create index idx_notification_subscription_category
 
 alter table public.tb_notification_subscription
     owner to seesaw_admin;
+
+comment on table public.tb_notification_subscription is '게시판 알림 구독';
+
+comment on column public.tb_notification_subscription.id is '식별자';
+
+comment on column public.tb_notification_subscription.created_by is '생성자';
+
+comment on column public.tb_notification_subscription.created_date is '생성일시';
+
+comment on column public.tb_notification_subscription.created_ip is '생성 IP';
+
+comment on column public.tb_notification_subscription.last_modified_by is '수정자';
+
+comment on column public.tb_notification_subscription.last_modified_date is '수정일시';
+
+comment on column public.tb_notification_subscription.last_modified_ip is '수정 IP';
+
+comment on column public.tb_notification_subscription.version is '버전';
+
+comment on column public.tb_notification_subscription.site_id is '사이트 식별자';
+
+comment on column public.tb_notification_subscription.user_id is '계정 식별자';
+
+comment on column public.tb_notification_subscription.category_id is '카테고리 식별자';
+
+comment on column public.tb_notification_subscription.enabled is '게시판 알림 구독 활성화 여부';
 
 create table public.tb_notification_delivery
 (
@@ -606,6 +702,38 @@ create index idx_notification_delivery_status
 
 alter table public.tb_notification_delivery
     owner to seesaw_admin;
+
+comment on table public.tb_notification_delivery is '알림 전달 기록';
+
+comment on column public.tb_notification_delivery.id is '식별자';
+
+comment on column public.tb_notification_delivery.created_by is '생성자';
+
+comment on column public.tb_notification_delivery.created_date is '생성일시';
+
+comment on column public.tb_notification_delivery.created_ip is '생성 IP';
+
+comment on column public.tb_notification_delivery.last_modified_by is '수정자';
+
+comment on column public.tb_notification_delivery.last_modified_date is '수정일시';
+
+comment on column public.tb_notification_delivery.last_modified_ip is '수정 IP';
+
+comment on column public.tb_notification_delivery.version is '버전';
+
+comment on column public.tb_notification_delivery.notification_id is '알림 식별자';
+
+comment on column public.tb_notification_delivery.channel is '전달 채널';
+
+comment on column public.tb_notification_delivery.status is '전달 상태';
+
+comment on column public.tb_notification_delivery.attempt_count is '전달 시도 횟수';
+
+comment on column public.tb_notification_delivery.delivered_at is '전달 완료 일시';
+
+comment on column public.tb_notification_delivery.next_attempt_at is '다음 전달 시도 일시';
+
+comment on column public.tb_notification_delivery.failure_reason is '전달 실패 사유';
 
 create table public.tb_reply
 (
